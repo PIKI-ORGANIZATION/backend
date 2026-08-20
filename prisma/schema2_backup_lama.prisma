@@ -1,0 +1,339 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//////////////////////////////////////////////////
+// AKUN (AUTH + AUTHOR NEWS)
+//////////////////////////////////////////////////
+model Akun {
+  uuid        String   @id @default(uuid()) @db.Uuid
+
+  email       String   @unique
+  username    String   @unique @default(uuid())
+  password    String
+  statusAkun  String   @default("ACTIVE")
+
+  lastLogin   DateTime?
+  ipLogin     String?
+
+  // ========================
+  // RELASI 1-1 KE SENIOR
+  // ========================
+  seniorUuid  String   @unique @db.Uuid
+  senior      Senior   @relation(fields: [seniorUuid], references: [uuid])
+
+  ketua Cabang? @relation("Ketua")
+
+  // ========================
+  // RBAC
+  // ========================
+  roles       AkunRole[]
+
+  // ========================
+  // NEWS RELATION
+  // ========================
+  newsAuthor    NewsUtama[] @relation("NewsAuthor")
+  newsPublisher NewsUtama[] @relation("NewsPublisher")
+
+  // ========================
+  // AUDIT
+  // ========================
+  insert_at   DateTime @default(now())
+  insert_by   String?  @db.Uuid
+  update_at   DateTime @updatedAt
+  update_by   String?  @db.Uuid
+
+  createdBy   Akun? @relation("AkunInsertBy", fields: [insert_by], references: [uuid])
+  updatedBy   Akun? @relation("AkunUpdateBy", fields: [update_by], references: [uuid])
+
+  created     Akun[] @relation("AkunInsertBy")
+  updated     Akun[] @relation("AkunUpdateBy")
+}
+
+model Senior {
+  uuid        String   @id @default(uuid()) @db.Uuid
+
+  namaLengkap String
+  namaPanggil String?
+  bio         String?
+  angkatan    String?
+  jabatan     String?
+  bidangStudi String?
+  bidangMinat String?
+  profileImg  String?
+  noWa        String?
+  instagram   String?
+  facebook    String?
+  statusKeanggotaan String @default("NON_MEMBER") 
+  isApprovedByPCPS Boolean @default(false)
+  isApprovedByPNPS Boolean @default(false)
+
+  // ========================
+  // APPROVAL TRACKING
+  // ========================
+  approvedByPCPSUuid String?   @db.Uuid
+  approvedAtPCPS     DateTime?
+  approvedByPNPSUuid String?   @db.Uuid
+  approvedAtPNPS     DateTime?
+
+  approverPCPS  Senior? @relation("ApproverPCPS", fields: [approvedByPCPSUuid], references: [uuid])
+  approverPNPS  Senior? @relation("ApproverPNPS", fields: [approvedByPNPSUuid], references: [uuid])
+
+  approvedPCPS  Senior[] @relation("ApproverPCPS")
+  approvedPNPS  Senior[] @relation("ApproverPNPS")
+
+  // ========================
+  // RELASI KE CABANG
+  // ========================
+  cabangUuid  String?  @db.Uuid
+  cabang      Cabang?  @relation(fields: [cabangUuid], references: [uuid])
+
+  // ========================
+  // OPTIONAL RELASI KE AKUN
+  // ========================
+  akun        Akun?
+
+  // ========================
+  // AUDIT
+  // ========================
+  insert_at   DateTime @default(now())
+  insert_by   String?  @db.Uuid
+  update_at   DateTime @updatedAt
+  update_by   String?  @db.Uuid
+
+  createdBy   Senior? @relation("SeniorInsertBy", fields: [insert_by], references: [uuid])
+  updatedBy   Senior? @relation("SeniorUpdateBy", fields: [update_by], references: [uuid])
+
+  created     Senior[] @relation("SeniorInsertBy")
+  updated     Senior[] @relation("SeniorUpdateBy")
+}
+
+model Cabang {
+  uuid           String   @id @default(uuid()) @db.Uuid
+
+  namaCabang     String
+  alamat         String?
+  kabupatenKota  String
+  provinsi       String
+  wilayah        String?
+  statusCabang   String   @default("ACTIVE")
+  isCabang       Boolean  @default(true) // true = cabang, false = pusat
+  deskripsiCabang String
+
+  // VISI MISI
+  visi            String
+  misi            String
+
+  // KONTAK CABANG
+  noWa            String
+  instagram       String
+  facebook        String
+  youtube         String
+  email           String  @unique
+
+  // ========================
+  // KETUA CABANG (AKUN)
+  // ========================
+  ketuaUuid String? @unique @db.Uuid
+  ketua     Akun?   @relation("Ketua", fields: [ketuaUuid], references: [uuid])
+
+  // ========================
+  // RELASI KE SENIOR
+  // ========================
+  seniors        Senior[]
+
+  // RELASI KE SEJARAH CABANG
+  sejarahCabang  SejarahCabang[]
+
+  // ========================
+  // AUDIT
+  // ========================
+  insert_at      DateTime @default(now())
+  insert_by      String?  @db.Uuid
+  update_at      DateTime @updatedAt
+  update_by      String?  @db.Uuid
+}
+
+model SejarahCabang {
+  uuid              String   @id @default(uuid()) @db.Uuid
+  timeline          String
+  deskripsiTimeline String
+
+  cabang_uuid       String   @db.Uuid
+
+  cabang            Cabang @relation(fields: [cabang_uuid], references: [uuid])
+
+  insert_at         DateTime @default(now())
+  insert_by         String?  @db.Uuid
+  update_at         DateTime @updatedAt
+  update_by         String?  @db.Uuid
+}
+
+//////////////////////////////////////////////////
+// NEWS UTAMA
+//////////////////////////////////////////////////
+model NewsUtama {
+  uuid              String   @id @default(uuid()) @db.Uuid
+
+  judul             String
+  ringkasan         String?
+  konten            String   @db.Text
+  slug              String   @unique
+  url_thumbnail_img String?
+  statusNewsUtama   String   @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+
+  author_akun_uuid  String   @db.Uuid
+  published_at      DateTime?
+  published_by      String?  @db.Uuid
+
+  author            Akun     @relation("NewsAuthor", fields: [author_akun_uuid], references: [uuid])
+  publisher         Akun?    @relation("NewsPublisher", fields: [published_by], references: [uuid])
+
+  tags              NewsUtamaTag[]
+  kategori          NewsUtamaKategori[]
+
+  insert_at         DateTime @default(now())
+  insert_by         String?  @db.Uuid
+  update_at         DateTime @updatedAt
+  update_by         String?  @db.Uuid
+}
+
+//////////////////////////////////////////////////
+// NEWS TAG
+//////////////////////////////////////////////////
+
+model NewsTag {
+  uuid               String   @id @default(uuid()) @db.Uuid
+  nama_tag           String   @unique
+  jumlah_penggunaan  Int      @default(0)
+  status_tag         String   @default("ACTIVE")
+
+  news               NewsUtamaTag[]
+
+  insert_at          DateTime @default(now())
+  insert_by          String?  @db.Uuid
+  update_at          DateTime @updatedAt
+  update_by          String?  @db.Uuid
+}
+
+//////////////////////////////////////////////////
+// NEWS KATEGORI
+//////////////////////////////////////////////////
+
+model NewsKategori {
+  uuid           String   @id @default(uuid()) @db.Uuid
+  nama_kategori  String
+  slug           String   @unique
+  deskripsi      String?
+  status_kategori         String   @default("ACTIVE")
+
+  news           NewsUtamaKategori[]
+
+  insert_at      DateTime @default(now())
+  insert_by      String?  @db.Uuid
+  update_at      DateTime @updatedAt
+  update_by      String?  @db.Uuid
+}
+
+model NewsUtamaTag {
+  uuid             String   @id @default(uuid()) @db.Uuid
+
+  news_utama_uuid  String   @db.Uuid
+  news_tag_uuid    String   @db.Uuid
+
+  news             NewsUtama @relation(fields: [news_utama_uuid], references: [uuid])
+  tag              NewsTag   @relation(fields: [news_tag_uuid], references: [uuid])
+
+  insert_at        DateTime @default(now())
+  insert_by        String?  @db.Uuid
+  update_at        DateTime @updatedAt
+  update_by        String?  @db.Uuid
+
+  @@unique([news_utama_uuid, news_tag_uuid])
+}
+
+model NewsUtamaKategori {
+  uuid                String   @id @default(uuid()) @db.Uuid
+
+  news_utama_uuid     String   @db.Uuid
+  news_kategori_uuid  String   @db.Uuid
+
+  news                NewsUtama    @relation(fields: [news_utama_uuid], references: [uuid])
+  kategori            NewsKategori @relation(fields: [news_kategori_uuid], references: [uuid])
+
+  insert_at           DateTime @default(now())
+  insert_by           String?  @db.Uuid
+  update_at           DateTime @updatedAt
+  update_by           String?  @db.Uuid
+
+  @@unique([news_utama_uuid, news_kategori_uuid])
+}
+
+// ================================================ RBAC MODELS ================================================
+model Role {
+  uuid        String   @id @default(uuid()) @db.Uuid
+  namaRole    String   @unique
+  deskripsi   String?
+  statusRole  String   @default("ACTIVE")
+
+  akuns       AkunRole[]
+  permissions PermissionRole[]
+
+  insert_at   DateTime @default(now())
+  insert_by   String?  @db.Uuid
+  update_at   DateTime @updatedAt
+  update_by   String?  @db.Uuid
+}
+
+model Permission {
+  uuid             String   @id @default(uuid()) @db.Uuid
+  namaPermission   String   @unique
+  deskripsi        String?
+  statusPermission String   @default("ACTIVE")
+
+  roles            PermissionRole[]
+
+  insert_at        DateTime @default(now())
+  insert_by        String?  @db.Uuid
+  update_at        DateTime @updatedAt
+  update_by        String?  @db.Uuid
+}
+
+model AkunRole {
+  uuid      String @id @default(uuid()) @db.Uuid
+
+  akunUuid  String @db.Uuid
+  roleUuid  String @db.Uuid
+
+  akun      Akun   @relation(fields: [akunUuid], references: [uuid])
+  role      Role   @relation(fields: [roleUuid], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  @@unique([akunUuid, roleUuid])
+}
+
+model PermissionRole {
+  uuid           String @id @default(uuid()) @db.Uuid
+
+  permissionUuid String @db.Uuid
+  roleUuid       String @db.Uuid
+
+  permission     Permission @relation(fields: [permissionUuid], references: [uuid])
+  role           Role       @relation(fields: [roleUuid], references: [uuid])
+
+  insert_at      DateTime @default(now())
+  insert_by      String?  @db.Uuid
+  update_at      DateTime @updatedAt
+  update_by      String?  @db.Uuid
+
+  @@unique([permissionUuid, roleUuid])
+}

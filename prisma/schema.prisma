@@ -1,0 +1,1301 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//////////////////////////////////////////////////
+// AKUN (AUTH + AUTHOR NEWS)
+//////////////////////////////////////////////////
+model Akun {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  email      String @unique
+  username   String @unique @default(uuid())
+  password   String
+  statusAkun String @default("PENDING_VERIFICATION")
+
+  emailVerifyToken  String?   @unique
+  emailVerifyExpiry DateTime?
+
+  resetPasswordToken  String?   @unique
+  resetPasswordExpiry DateTime?
+
+  lastLogin DateTime?
+  ipLogin   String?
+
+  // ========================
+  // RELASI 1-1 KE SENIOR
+  // ========================
+  seniorUuid String @unique @db.Uuid
+  senior     Senior @relation(fields: [seniorUuid], references: [uuid])
+
+  ulasanProduk UlasanProduk[]
+
+  logAktivitas LogAktivitas[]
+
+  ketua Cabang? @relation("Ketua")
+
+  // ========================
+  // RBAC
+  // ========================
+  roles AkunRole[]
+
+  // ========================
+  // NEWS RELATION
+  // ========================
+  newsAuthor    NewsUtama[] @relation("NewsAuthor")
+  newsPublisher NewsUtama[] @relation("NewsPublisher")
+
+  // ========================
+  // PROGRAM RELATION
+  // ========================
+  programInsert ProgramKerja[]   @relation("ProgramInsertBy")
+  agendaInsert  AgendaKegiatan[] @relation("AgendaInsertBy")
+  arsipInsert   ArsipKegiatan[]  @relation("ArsipInsertBy")
+
+  // ========================
+  // GALERI RELATION
+  // ========================
+  albumInsert AlbumGaleri[] @relation("AlbumInsertBy")
+  mediaInsert MediaGaleri[] @relation("MediaInsertBy")
+
+  // ========================
+  // KRITIK SARAN RELATION
+  // ========================
+  pengaduanInsert FormPengaduan[] @relation("PengaduanInsertBy")
+  faqInsert       FAQ[]           @relation("FAQInsertBy")
+
+  // ========================
+  // GRIT INSTITUT RELATION
+  // ========================
+  layananInsert TopikEdukasi[] @relation("TopikEdukasiInsertBy")
+  mentorInsert  Mentor[]       @relation("MentorInsertBy")
+  kelasInsert   Kelas[]        @relation("KelasInsertBy")
+
+  keranjangList KeranjangBelanja[]
+  pesananList   Pesanan[]
+
+  // ========================
+  // AUDIT
+  // ========================
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  createdBy Akun? @relation("AkunInsertBy", fields: [insert_by], references: [uuid])
+  updatedBy Akun? @relation("AkunUpdateBy", fields: [update_by], references: [uuid])
+
+  created Akun[] @relation("AkunInsertBy")
+  updated Akun[] @relation("AkunUpdateBy")
+
+  createdSenior Senior[] @relation("SeniorInsertBy")
+  updatedSenior Senior[] @relation("SeniorUpdateBy")
+}
+
+//////////////////////////////////////////////////
+// SENIOR
+//////////////////////////////////////////////////
+model Senior {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaLengkap  String
+  namaPanggil  String?
+  tempatLahir  String?
+  tanggalLahir DateTime? @db.Date
+  alamat       String?   @db.Text
+  bio          String?   @db.Text
+  pesanKesan   String?   @db.Text
+  angkatan     String?
+  // jabatan           String?
+  
+  provinsi       String?
+  kotaDomisili   String?
+
+  // ========================
+  // MASTER DATA RELATIONS (NEW)
+  // ========================
+  pendidikanUuid   String? @db.Uuid
+  pekerjaanUuid    String? @db.Uuid
+  bidangStudiUuid  String? @db.Uuid
+  bidangMinatUuid  String? @db.Uuid
+
+  pendidikanRef     MasterPendidikan?  @relation(fields: [pendidikanUuid], references: [uuid])
+  pekerjaanRef      MasterPekerjaan?   @relation(fields: [pekerjaanUuid], references: [uuid])
+  bidangStudiRef    MasterBidangStudi? @relation(fields: [bidangStudiUuid], references: [uuid])
+  bidangMinatRef    MasterBidangMinat? @relation(fields: [bidangMinatUuid], references: [uuid])
+  profileImg        String?
+  noWa              String?
+  instagram         String?
+  facebook          String?
+  statusKeanggotaan String             @default("NON_MEMBER")
+  isApprovedByPCPS  Boolean            @default(false)
+  isApprovedByPNPS  Boolean            @default(false)
+
+  // ========================
+  // APPROVAL TRACKING
+  // ========================
+  approvedByPCPSUuid String?   @db.Uuid
+  approvedAtPCPS     DateTime?
+  approvedByPNPSUuid String?   @db.Uuid
+  approvedAtPNPS     DateTime?
+
+  approverPCPS Senior? @relation("ApproverPCPS", fields: [approvedByPCPSUuid], references: [uuid])
+  approverPNPS Senior? @relation("ApproverPNPS", fields: [approvedByPNPSUuid], references: [uuid])
+
+  approvedPCPS Senior[] @relation("ApproverPCPS")
+  approvedPNPS Senior[] @relation("ApproverPNPS")
+
+  // ========================
+  // RELASI KE CABANG
+  // ========================
+  cabangUuid String? @db.Uuid
+  cabang     Cabang? @relation(fields: [cabangUuid], references: [uuid])
+
+  // ========================
+  // RELASI KE STRUKTUR ORGANISASI
+  // ========================
+  strukturPNPS StrukturOrganisasi[] @relation("StrukturSenior")
+
+  // ========================
+  // OPTIONAL RELASI KE AKUN
+  // ========================
+  akun Akun?
+
+  produkList  Produk[]
+  pesananList Pesanan[]
+
+  // ========================
+  // AUDIT
+  // ========================
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  createdBy Akun? @relation("SeniorInsertBy", fields: [insert_by], references: [uuid])
+  updatedBy Akun? @relation("SeniorUpdateBy", fields: [update_by], references: [uuid])
+}
+
+//////////////////////////////////////////////////
+// CABANG
+//////////////////////////////////////////////////
+model Cabang {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaCabang      String
+  alamat          String?
+  kabupatenKota   String
+  provinsi        String
+  wilayah         String?
+  statusCabang    String  @default("ACTIVE")
+  isCabang        Boolean @default(true) // true = cabang daerah, false = pusat
+  deskripsiCabang String
+
+  // VISI MISI
+  visi String
+  misi MisiCabang[]
+
+  // KONTAK CABANG
+  noWa      String
+  instagram String
+  facebook  String
+  youtube   String
+  email     String @unique
+
+  // SETTINGAN HOMEHERO PAGE BANNER
+  urlBannerImg     String?
+  titleHomeHero    String?
+  headlineHomeHero String?
+
+  // COUNTDWON SETTING
+  isCountdownActive   Boolean   @default(false)
+  endTimeCountdown    DateTime?
+  keteranganCountdown String?
+
+  // ========================
+  // KETUA CABANG (AKUN)
+  // ========================
+  ketuaUuid String? @unique @db.Uuid
+  ketua     Akun?   @relation("Ketua", fields: [ketuaUuid], references: [uuid])
+
+  // ========================
+  // RELASI KE SENIOR
+  // ========================
+  seniors Senior[]
+
+  // ========================
+  // RELASI KE PERIODE KEPENGURUSAN
+  // ========================
+  periodeList PeriodeKepengurusan[]
+
+  // RELASI KE SEJARAH CABANG
+  sejarahCabang SejarahCabang[]
+
+  // RELASI KE NEWS UTAMA
+  newsList NewsUtama[]
+
+  // RELASI KE GALERI
+  AlbumGaleriList AlbumGaleri[]
+
+  // ========================
+  // AUDIT
+  // ========================
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model MisiCabang {
+  uuid String @id @default(uuid()) @db.Uuid
+  teks String @db.Text
+
+  cabang_uuid String @db.Uuid
+  cabang      Cabang @relation(fields: [cabang_uuid], references: [uuid])
+
+  insert_at DateTime @default(now())
+  update_at DateTime @updatedAt
+}
+
+model SejarahCabang {
+  uuid                String  @id @default(uuid()) @db.Uuid
+  timeline            String
+  deskripsiTimeline   String
+  gambar              String?
+  statusSejarahCabang String  @default("ACTIVE") // "ACTIVE" | "NON_ACTIVE"
+
+  cabang_uuid String @db.Uuid
+  cabang      Cabang @relation(fields: [cabang_uuid], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+// ================================================
+// STRUKTUR ORGANISASI
+// Mendukung: PNPS (pusat) & PCPS (cabang)
+// ================================================
+
+// Periode kepengurusan
+model PeriodeKepengurusan {
+  uuid         String  @id @default(uuid()) @db.Uuid
+  namaPeriode  String // e.g. "2025-2028"
+  tahunMulai   Int
+  tahunSelesai Int
+  isAktif      Boolean @default(false)
+
+  // RELASI KE CABANG
+  cabangUuid String? @db.Uuid
+  cabang     Cabang? @relation(fields: [cabangUuid], references: [uuid])
+
+  strukturList StrukturOrganisasi[]
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model StrukturOrganisasi {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  // ATASAN (SELF RELATION)
+  atasanUuid String? @db.Uuid
+
+  // RELASI PERIODE
+  periodeUuid String              @db.Uuid
+  periode     PeriodeKepengurusan @relation(fields: [periodeUuid], references: [uuid])
+
+  // RELASI SENIOR
+  seniorUuid String @db.Uuid
+  senior     Senior @relation("StrukturSenior", fields: [seniorUuid], references: [uuid])
+
+  // RELASI JABATAN
+  jabatanUuid String  @db.Uuid
+  jabatan     Jabatan @relation(fields: [jabatanUuid], references: [uuid])
+
+  // RELASI BIDANG (optional)
+  bidangUuid String? @db.Uuid
+  bidang     Bidang? @relation(fields: [bidangUuid], references: [uuid])
+
+  urutan        Int  @default(0)
+  levelOverride Int? // Override level spesifik untuk struktur ini, menimpa Jabatan.levelJabatan
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  @@index([periodeUuid])
+  @@index([seniorUuid])
+}
+
+model Jabatan {
+  uuid         String @id @default(uuid()) @db.Uuid
+  namaJabatan  String @unique
+  levelJabatan Int // untuk menentukan hierarki (0 = tertinggi, 1, 2, dst)
+
+  strukturList StrukturOrganisasi[]
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model Bidang {
+  uuid       String @id @default(uuid()) @db.Uuid
+  namaBidang String @unique
+
+  strukturList StrukturOrganisasi[]
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+// ================================================
+// PROGRAM KERJA
+// Mendukung: Katalog Program Kerja, Agenda Kegiatan,
+//            Arsip Kegiatan (Laporan)
+// ================================================
+
+model ProgramKerja {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaProgram   String
+  deskripsi     String? @db.Text
+  tujuan        String? @db.Text
+  sasaran       String?
+  bidang        String? // bidang terkait
+  statusProgram String  @default("AKTIF") // "AKTIF" | "SELESAI" | "DIBATALKAN"
+  tahun         Int
+  thumbnail     String?
+
+  // Agenda terkait program ini
+  agendaList AgendaKegiatan[]
+
+  insertBy Akun? @relation("ProgramInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model AgendaKegiatan {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaAgenda      String
+  deskripsi       String?   @db.Text
+  tanggalMulai    DateTime
+  tanggalSelesai  DateTime?
+  lokasi          String?
+  jenisKegiatan   String    @default("OFFLINE") // "OFFLINE" | "ONLINE" | "HYBRID"
+  statusAgenda    String    @default("SEGERA") // "SEGERA" | "BERLANGSUNG" | "SELESAI" | "DIBATALKAN" | "DITUNDA"
+  thumbnail       String?
+  linkPendaftaran String?
+
+  // Relasi ke program kerja (opsional)
+  programUuid String?       @db.Uuid
+  program     ProgramKerja? @relation(fields: [programUuid], references: [uuid])
+
+  // Arsip laporan kegiatan
+  arsipList ArsipKegiatan[]
+
+  insertBy Akun? @relation("AgendaInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model ArsipKegiatan {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  judul        String
+  deskripsi    String?  @db.Text
+  tanggalArsip DateTime
+  jenisArsip   String   @default("LAPORAN") // "LAPORAN" | "DOKUMENTASI" | "NOTULENSI" | "SK"
+  fileUrl      String? // URL file laporan/dokumen
+  thumbnail    String?
+  isPublic     Boolean  @default(true)
+
+  // Relasi ke agenda (opsional)
+  agendaUuid String?         @db.Uuid
+  agenda     AgendaKegiatan? @relation(fields: [agendaUuid], references: [uuid])
+
+  insertBy Akun? @relation("ArsipInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+// ================================================
+// GALERI
+// Mendukung: Album Foto Kegiatan, Video Dokumentasi
+// ================================================
+model AlbumGaleri {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaAlbum       String
+  deskripsi       String?
+  tanggalKegiatan DateTime
+  coverMedia      String? // bisa foto atau thumbnail video
+  isPublic        Boolean  @default(true) // apakah album ini boleh dilihat publik atau hanya internal
+  statusAlbum     String   @default("ACTIVE") // "ACTIVE" | "ARCHIVED"
+
+  // RELASI CABANG
+  cabangUuid String? @db.Uuid
+  cabang     Cabang? @relation(fields: [cabangUuid], references: [uuid])
+
+  // RELASI NEWS UTAMA (opsional, jika album terkait dengan berita tertentu)
+  newsUtamaUuid String?    @db.Uuid
+  newsUtama     NewsUtama? @relation(fields: [newsUtamaUuid], references: [uuid])
+
+  // RELASI THE GRIT INSTITUT (opsional, jika album terkait dengan kelas/layanan tertentu)
+  kelasUuid String? @db.Uuid
+  kelas     Kelas?  @relation(fields: [kelasUuid], references: [uuid])
+
+  // ISI GALERI (gabungan foto + video)
+  mediaList MediaGaleri[]
+
+  insertBy Akun? @relation("AlbumInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  // INDEX UNTUK PERFORMA QUERY ALBUM PER CABANG
+  @@index([cabangUuid])
+}
+
+// Media dalam galeri (bisa foto atau video)
+model MediaGaleri {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  // TIPE MEDIA
+  tipeMedia String // "FOTO" | "VIDEO"
+
+  // FILE / URL
+  urlMedia  String
+  thumbnail String? // khusus video atau optional
+
+  // META
+  keterangan String?
+  urutan     Int     @default(0)
+
+  // OPTIONAL (khusus video)
+  durasi String?
+
+  // RELASI KE ALBUM (Media Galeri bisa harus punya album)
+  albumUuid String      @db.Uuid
+  album     AlbumGaleri @relation(fields: [albumUuid], references: [uuid])
+
+  insertBy Akun? @relation("MediaInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  // INDEX UNTUK PERFORMA QUERY MEDIA DALAM ALBUM
+  @@index([albumUuid])
+}
+
+// ================================================
+// KRITIK & SARAN
+// Mendukung: Form Pengaduan, FAQ
+// ================================================
+
+model FormPengaduan {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaPelapor      String
+  emailPelapor     String
+  noWaPelapor      String?
+  subjek           String
+  isiBadan         String    @db.Text
+  kategoriAduan    String    @default("UMUM") // "UMUM" | "ORGANISASI" | "PELAYANAN" | "LAINNYA"
+  statusPengaduan  String    @default("MASUK") // "MASUK" | "DIPROSES" | "SELESAI" | "DITOLAK"
+  tanggapan        String?   @db.Text // respon dari admin
+  tanggalTanggapan DateTime?
+  isAnonymous      Boolean   @default(false)
+
+  // Akun yang merespons (opsional, bisa admin)
+  respondedBy Akun? @relation("PengaduanInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model FAQ {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  pertanyaan String  @db.Text
+  jawaban    String  @db.Text
+  kategori   String  @default("UMUM") // "UMUM" | "KEANGGOTAAN" | "PROGRAM" | "ORGANISASI"
+  urutan     Int     @default(0) // untuk sorting tampilan
+  isPublish  Boolean @default(true)
+  statusFAQ  String  @default("ACTIVE") // "ACTIVE" | "ARCHIVED"
+
+  insertBy Akun? @relation("FAQInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+// ================================================
+// THE GRIT INSTITUT
+// Mendukung: Layanan Edukasi/Kurikulum,
+//            Profil Mentor/Pengajar,
+//            Daftar Kelas/Workshop
+// ================================================
+// Layanan atau Kategori atau Tema Edukasi
+// model TopikEdukasi {
+//   uuid                      String @id @default(uuid()) @db.Uuid
+
+//    // ex: Hukum, Sosial Budaya, Ekonomi, Olahraga, Keuangan, Entrepeneur, Digital Transformation & Entrepreneurship
+//    // Community Development & Social Impact, Leadership Development Program, Science & Technology, etc ...
+//   namaTopikEdukasi          String
+//    // bisa memuat tujuan, manfaat, KPI (target),
+//    // latar belakang topik, kurikulum, dll (bisa diisi dinamis oleh admin pembuat topik mirip sperti isian news)
+//   deskripsiTopikEdukasi     String?  @db.Text
+//   // kurikulum     String?  @db.Text  // detail kurikulum / silabus
+//   // tujuan        String?  @db.Text
+//   targetPeserta             String?
+//   thumbnailTopikEdukasi     String?
+//   statusTopikEdukasi String   @default("ACTIVE") // "ACTIVE" | "ARCHIVED"
+
+//   // Kelas-kelas yang menggunakan topik ini
+//   kelasList     Kelas[]
+
+//   insertBy      Akun?   @relation("TopikEdukasiInsertBy", fields: [insert_by], references: [uuid])
+
+//   insert_at DateTime @default(now())
+//   insert_by String?  @db.Uuid
+//   update_at DateTime @updatedAt
+//   update_by String?  @db.Uuid
+// }
+
+model TopikEdukasi {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaTopikEdukasi      String
+  deskripsiTopikEdukasi String? @db.Text
+  targetPeserta         String?
+  thumbnailTopikEdukasi String?
+  statusTopikEdukasi    String  @default("ACTIVE")
+
+  // MANY TO MANY
+  kelasList KelasTopikEdukasi[]
+
+  insertBy Akun? @relation("TopikEdukasiInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model Mentor {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaLengkap  String
+  namaPanggil  String?
+  bio          String? @db.Text
+  keahlian     String? // bidang keahlian
+  pendidikan   String?
+  pengalaman   String? @db.Text
+  profileImg   String?
+  instagram    String?
+  linkedin     String?
+  email        String?
+  statusMentor String  @default("ACTIVE") // "ACTIVE" | "INACTIVE"
+
+  // Kelas yang diajar
+  // MANY TO MANY
+  kelasList KelasMentor[]
+
+  insertBy Akun? @relation("MentorInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model Kelas {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaKelas          String
+  deskripsiKelas     String?   @db.Text
+  jenisKelas         String    @default("WORKSHOP") // "WORKSHOP" | "KURSUS" | "SEMINAR" | "BOOTCAMP"
+  metodePembelajaran String    @default("OFFLINE") // "OFFLINE" | "ONLINE" | "HYBRID"
+  tanggalMulai       DateTime
+  tanggalSelesai     DateTime?
+  lokasi             String?
+  linkOnline         String?
+  harga              Decimal?  @default(0.0) @db.Decimal(12, 2) // null = gratis
+  maxPeserta         Int?
+  thumbnail          String?
+  statusKelas        String    @default("UPCOMING") // "UPCOMING" | "BERLANGSUNG" | "SELESAI" | "DIBATALKAN"
+
+  // Relasi many to many
+  mentorList KelasMentor[]
+  topikList  KelasTopikEdukasi[]
+
+  // ONE TO ONE (reverse, 1 kelas punya 1 newsUtama)
+  newsUtama NewsUtama?
+
+  // Pendaftaran peserta
+  pendaftaranList PendaftaranKelas[]
+
+  // RELASI KE ALBUM GALERI (opsional, jika kelas punya dokumentasi foto/video)
+  albumList AlbumGaleri[]
+
+  // RELASI KE NEWS UTAMA (opsional, jika kelas punya news)
+  // newsUtamaList NewsUtama[]
+
+  insertBy Akun? @relation("KelasInsertBy", fields: [insert_by], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model KelasMentor {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  kelasUuid  String @db.Uuid
+  mentorUuid String @db.Uuid
+
+  kelas  Kelas  @relation(fields: [kelasUuid], references: [uuid])
+  mentor Mentor @relation(fields: [mentorUuid], references: [uuid])
+
+  // optional: role mentor di kelas
+  role String? // "MAIN_MENTOR" -> Mentor Utama | "CO_MENTOR" -> Mentor Pendamping
+
+  insert_at DateTime @default(now())
+
+  @@unique([kelasUuid, mentorUuid])
+}
+
+model KelasTopikEdukasi {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  kelasUuid        String @db.Uuid
+  topikEdukasiUuid String @db.Uuid
+
+  kelas        Kelas        @relation(fields: [kelasUuid], references: [uuid])
+  topikEdukasi TopikEdukasi @relation(fields: [topikEdukasiUuid], references: [uuid])
+
+  insert_at DateTime @default(now())
+
+  @@unique([kelasUuid, topikEdukasiUuid])
+}
+
+// Pendaftaran peserta kelas (join table + data tambahan)
+model PendaftaranKelas {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  kelasUuid String @db.Uuid
+  kelas     Kelas  @relation(fields: [kelasUuid], references: [uuid])
+
+  // Data peserta (tidak harus senior/akun — bisa publik)
+  namaPeserta       String
+  emailPeserta      String
+  noWaPeserta       String?
+  statusPendaftaran String   @default("PENDING") // "PENDING" | "DITERIMA" | "DITOLAK" | "HADIR"
+  catatanPeserta    String? // catatan/harapan dari peserta
+  buktiTransferUrl  String? // url foto bukti transfer
+  tanggalDaftar     DateTime @default(now())
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  @@unique([kelasUuid, emailPeserta])
+}
+
+//////////////////////////////////////////////////
+// NEWS UTAMA
+//////////////////////////////////////////////////
+model NewsUtama {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  judul             String
+  ringkasan         String?
+  konten            String  @db.Text
+  slug              String  @unique
+  url_thumbnail_img String?
+  statusNewsUtama   String  @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+
+  author_akun_uuid String    @db.Uuid
+  published_at     DateTime?
+  published_by     String?   @db.Uuid
+
+  jumlah_dibaca   Int  @default(0)
+  jumlah_disukai  Int  @default(0)
+  jumlah_komentar Int  @default(0)
+  durasi_baca     Int? // estimasi durasi baca dalam menit
+
+  author    Akun  @relation("NewsAuthor", fields: [author_akun_uuid], references: [uuid])
+  publisher Akun? @relation("NewsPublisher", fields: [published_by], references: [uuid])
+
+  tags     NewsUtamaTag[]
+  kategori NewsUtamaKategori[]
+
+  cabangUuid String? @db.Uuid
+  cabang     Cabang? @relation(fields: [cabangUuid], references: [uuid])
+
+  // Tambahkan @unique di kelasUuid apabila ingin 1 News hanya bisa 1 Kelas TGI atau sebaliknya
+  kelasUuid String? @unique @db.Uuid
+  kelas     Kelas?  @relation(fields: [kelasUuid], references: [uuid])
+
+  // RELASI KE GALERI (opsional, jika berita punya dokumentasi foto/video)
+  albumList AlbumGaleri[]
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+//////////////////////////////////////////////////
+// NEWS TAG
+//////////////////////////////////////////////////
+model NewsTag {
+  uuid              String @id @default(uuid()) @db.Uuid
+  nama_tag          String @unique
+  jumlah_penggunaan Int    @default(0)
+  status_tag        String @default("ACTIVE")
+
+  news NewsUtamaTag[]
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+//////////////////////////////////////////////////
+// NEWS KATEGORI
+//////////////////////////////////////////////////
+model NewsKategori {
+  uuid            String  @id @default(uuid()) @db.Uuid
+  nama_kategori   String
+  slug            String  @unique
+  deskripsi       String?
+  status_kategori String  @default("ACTIVE")
+
+  news NewsUtamaKategori[]
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model NewsUtamaTag {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  news_utama_uuid String @db.Uuid
+  news_tag_uuid   String @db.Uuid
+
+  news NewsUtama @relation(fields: [news_utama_uuid], references: [uuid])
+  tag  NewsTag   @relation(fields: [news_tag_uuid], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  @@unique([news_utama_uuid, news_tag_uuid])
+}
+
+model NewsUtamaKategori {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  news_utama_uuid    String @db.Uuid
+  news_kategori_uuid String @db.Uuid
+
+  news     NewsUtama    @relation(fields: [news_utama_uuid], references: [uuid])
+  kategori NewsKategori @relation(fields: [news_kategori_uuid], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  @@unique([news_utama_uuid, news_kategori_uuid])
+}
+
+// ================================================
+// E-COMMERCE
+// ================================================
+
+enum JenisProduk {
+  JASA
+  PRODUK_FISIK
+}
+
+enum StatusProduk {
+  ACTIVE
+  INACTIVE
+  OUT_OF_STOCK
+}
+
+enum StatusOrder {
+  WAITING_ONGKIR
+  WAITING_CONFIRMATION
+  DELIVERING
+  COMPLETED
+  CANCELED
+}
+
+enum StatusPembayaran {
+  PENDING
+  PAID
+  CANCELED // misal karena timeout atau bukti transfer tidak valid
+  REFUNDED
+  // status khusus untuk pembayaran yang sudah diterima admin tapi belum dibayarkan ke senior sebagai penjual, untuk memastikan keamanan transaksi terutama untuk produk digital yang bisa langsung diakses setelah pembayaran diterima.
+  SELLER_PAID
+}
+
+enum MetodePembayaran {
+  TRANSFER_BANK
+  CASH
+  E_WALLET
+}
+
+// PRODUK & PRODUK KATEGORI
+model ProdukKategori {
+  uuid         String      @id @default(uuid()) @db.Uuid
+  namaKategori String      @unique
+  tipeProduk   JenisProduk @default(PRODUK_FISIK)
+
+  produk Produk[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+}
+
+model Produk {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaProduk   String
+  deskripsi    String?      @db.Text
+  gambarProduk String? // URL gambar produk
+  harga        Decimal      @db.Decimal(12, 5)
+  hargaAsli    Decimal?     @db.Decimal(12, 5) // harga sebelum diskon
+  diskonPersen Int?         @default(0)
+  stok         Int
+  statusProduk StatusProduk @default(ACTIVE)
+
+  ratingRataRata Decimal @default(0) @db.Decimal(2, 1)
+  jumlahRating   Int     @default(0)
+
+  produkKategoriUuid String         @db.Uuid
+  produkKategori     ProdukKategori @relation(fields: [produkKategoriUuid], references: [uuid])
+
+  seniorUuid String @db.Uuid
+  senior     Senior @relation(fields: [seniorUuid], references: [uuid])
+
+  spesifikasi SpesifikasiProduk[]
+  keranjang   KeranjangBelanja[]
+  orderItems  ProdukPesanan[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+}
+
+model UlasanProduk {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  akunUuid String @db.Uuid
+  akun     Akun   @relation(fields: [akunUuid], references: [uuid])
+
+  produkPesananUuid String        @db.Uuid
+  produkPesanan     ProdukPesanan @relation(fields: [produkPesananUuid], references: [uuid])
+
+  rating   Int
+  komentar String? @db.Text
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // 1 user hanya bisa review 1 item pesanan
+  @@unique([produkPesananUuid])
+}
+
+// SPESIFIKASI PRODUK (misal: warna, ukuran, bahan, dll)
+model SpesifikasiProduk {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaSpesifikasi String
+
+  produkUuid String @db.Uuid
+  produk     Produk @relation(fields: [produkUuid], references: [uuid])
+
+  values SpesifikasiProdukValue[]
+
+  keranjangSpesifikasi KeranjangSpesifikasi[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model SpesifikasiProdukValue {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  namaValue String
+
+  spesifikasiUuid String            @db.Uuid
+  spesifikasi     SpesifikasiProduk @relation(fields: [spesifikasiUuid], references: [uuid])
+
+  keranjangSpesifikasi KeranjangSpesifikasi[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+// KERANJANG BELANJA & KERANGJANG SPESIFIKASI (join table untuk menyimpan pilihan spesifikasi di keranjang)
+model KeranjangBelanja {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  produkUuid String @db.Uuid
+  produk     Produk @relation(fields: [produkUuid], references: [uuid])
+
+  akunUuid String? @db.Uuid
+  akun     Akun?   @relation(fields: [akunUuid], references: [uuid])
+
+  jumlah     Int     @default(1)
+  totalHarga Decimal @db.Decimal(12, 5)
+
+  spesifikasi KeranjangSpesifikasi[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([produkUuid, akunUuid])
+}
+
+model KeranjangSpesifikasi {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  keranjangUuid String           @db.Uuid
+  keranjang     KeranjangBelanja @relation(fields: [keranjangUuid], references: [uuid])
+
+  spesifikasiUuid String            @db.Uuid
+  spesifikasi     SpesifikasiProduk @relation(fields: [spesifikasiUuid], references: [uuid])
+
+  valueUuid String                 @db.Uuid
+  value     SpesifikasiProdukValue @relation(fields: [valueUuid], references: [uuid])
+}
+
+// PESANAN
+model PengaturanPesanan {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  pajakPesanan       Json
+  pajakProdukPesanan Json
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Pesanan {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  seniorUuid String @db.Uuid
+  senior     Senior @relation(fields: [seniorUuid], references: [uuid])
+
+  akunUuid String? @db.Uuid
+  akun     Akun?   @relation(fields: [akunUuid], references: [uuid])
+
+  namaPenerima String
+  alamat       String
+  noHp         String
+  email        String
+  kodePos      String
+  kota         String
+
+  // tracking_number / no resi
+  nomorResi      String?
+  jasaPengiriman String?
+
+  statusPesanan    StatusOrder      @default(WAITING_ONGKIR)
+  statusPembayaran StatusPembayaran @default(PENDING)
+  nomorPembayaran  String?
+
+  ongkir       Decimal @default(0) @db.Decimal(12, 5)
+  biayaLayanan Decimal @default(0) @db.Decimal(12, 5)
+
+  subtotal    Decimal @db.Decimal(12, 5)
+  diskonTotal Decimal @db.Decimal(12, 5)
+  pajakTotal  Decimal @db.Decimal(12, 5)
+  total       Decimal @db.Decimal(12, 5)
+
+  produkPesanan      ProdukPesanan[]
+  pajakPesananRelasi PajakPesanan[]
+  pembayaran         Pembayaran?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model ProdukPesanan {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  pesananUuid String  @db.Uuid
+  pesanan     Pesanan @relation(fields: [pesananUuid], references: [uuid])
+
+  produkUuid String @db.Uuid
+  produk     Produk @relation(fields: [produkUuid], references: [uuid])
+
+  jumlah     Int
+  harga      Decimal @db.Decimal(12, 5)
+  diskon     Decimal @db.Decimal(12, 5)
+  subtotal   Decimal @db.Decimal(12, 5)
+  pajakTotal Decimal @db.Decimal(12, 5)
+  total      Decimal @db.Decimal(12, 5)
+
+  spesifikasi ProdukPesananSpesifikasi[]
+  pajak       PajakProdukPesanan[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt @default(now())
+  deleted_at DateTime?
+
+  ulasanProduk UlasanProduk?
+}
+
+// SNAPSHOT SPESIFIKASI PRODUK DI WAKTU PESANAN (untuk menyimpan nama spesifikasi dan value yang dipilih saat pemesanan, 
+// karena bisa saja spesifikasi produk berubah di masa depan)
+model ProdukPesananSpesifikasi {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  produkPesananUuid String        @db.Uuid
+  produkPesanan     ProdukPesanan @relation(fields: [produkPesananUuid], references: [uuid])
+
+  spesifikasiUuid String @db.Uuid
+  valueUuid       String @db.Uuid
+
+  namaSpesifikasi String
+  namaValue       String
+}
+
+model PajakPesanan {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  pesananUuid String  @db.Uuid
+  pesanan     Pesanan @relation(fields: [pesananUuid], references: [uuid])
+
+  nama  String
+  rasio Float
+}
+
+model PajakProdukPesanan {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  produkPesananUuid String        @db.Uuid
+  produkPesanan     ProdukPesanan @relation(fields: [produkPesananUuid], references: [uuid])
+
+  nama  String
+  rasio Float
+}
+
+model Pembayaran {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  pesananUuid String  @unique @db.Uuid
+  pesanan     Pesanan @relation(fields: [pesananUuid], references: [uuid])
+
+  metode MetodePembayaran
+
+  namaPengirim String?
+  bankPengirim String?
+  jumlahBayar  Decimal @db.Decimal(12, 5)
+
+  urlBuktiPembayaran String? // URL image
+
+  nomorReferensi String? // opsional (no transfer)
+
+  tanggalBayar DateTime?
+
+  status StatusPembayaran @default(PENDING)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+// ================================================
+// RBAC MODELS
+// ================================================
+model Role {
+  uuid       String  @id @default(uuid()) @db.Uuid
+  namaRole   String  @unique
+  deskripsi  String?
+  statusRole String  @default("ACTIVE")
+
+  akuns       AkunRole[]
+  permissions PermissionRole[]
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model Permission {
+  uuid             String  @id @default(uuid()) @db.Uuid
+  namaPermission   String  @unique
+  deskripsi        String?
+  statusPermission String  @default("ACTIVE")
+
+  roles PermissionRole[]
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+model AkunRole {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  akunUuid String @db.Uuid
+  roleUuid String @db.Uuid
+
+  akun Akun @relation(fields: [akunUuid], references: [uuid])
+  role Role @relation(fields: [roleUuid], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  @@unique([akunUuid, roleUuid])
+}
+
+model PermissionRole {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  permissionUuid String @db.Uuid
+  roleUuid       String @db.Uuid
+
+  permission Permission @relation(fields: [permissionUuid], references: [uuid])
+  role       Role       @relation(fields: [roleUuid], references: [uuid])
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+
+  @@unique([permissionUuid, roleUuid])
+}
+
+enum PageSettingType {
+  TEXT
+  NUMBER
+  ARRAY
+  IMAGE
+}
+
+// SETTING PAGE
+model pageSetting {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  key   String          @unique
+  nama  String          @db.Text
+  type  PageSettingType @default(TEXT)
+  value String          @db.Text
+
+  insert_at DateTime @default(now())
+  insert_by String?  @db.Uuid
+  update_at DateTime @updatedAt
+  update_by String?  @db.Uuid
+}
+
+enum JenisAktivitas {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+// LOG AKTIVITAS (untuk mencatat aktivitas penting seperti login, perubahan data, dll)
+model LogAktivitas {
+  uuid String @id @default(uuid()) @db.Uuid
+
+  akunUuid String? @db.Uuid
+  akun     Akun?   @relation(fields: [akunUuid], references: [uuid])
+
+  aktivitas JenisAktivitas
+
+  // nama model/table
+  table String
+
+  // deskripsi aktivitas, bisa berupa JSON string untuk menyimpan data lama dan baru
+  deskripsi Json?
+
+  // uuid data yang terkait dengan aktivitas ini (misal uuid news yang diedit)
+  uuidReferensi String @db.Text
+
+  insert_at DateTime @default(now())
+}
+
+// ========================
+// MASTER DATA FOR SENIOR
+// ========================
+model MasterPendidikan {
+  uuid      String   @id @default(uuid()) @db.Uuid
+  nama      String   @unique
+  seniors   Senior[]
+  insert_at DateTime @default(now())
+  update_at DateTime @updatedAt
+}
+
+model MasterPekerjaan {
+  uuid      String   @id @default(uuid()) @db.Uuid
+  nama      String   @unique
+  seniors   Senior[]
+  insert_at DateTime @default(now())
+  update_at DateTime @updatedAt
+}
+
+model MasterBidangStudi {
+  uuid      String   @id @default(uuid()) @db.Uuid
+  nama      String   @unique
+  seniors   Senior[]
+  insert_at DateTime @default(now())
+  update_at DateTime @updatedAt
+}
+
+model MasterBidangMinat {
+  uuid      String   @id @default(uuid()) @db.Uuid
+  nama      String   @unique
+  seniors   Senior[]
+  insert_at DateTime @default(now())
+  update_at DateTime @updatedAt
+}

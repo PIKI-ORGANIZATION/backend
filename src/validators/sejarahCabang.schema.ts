@@ -1,0 +1,45 @@
+import { z } from "zod";
+
+////////////////////////////////////////////////////
+// UUID PARAM
+////////////////////////////////////////////////////
+export const uuidParamSchema = z.object({
+  uuid: z.string().uuid(),
+});
+
+////////////////////////////////////////////////////
+// BASE SEJARAH CABANG SCHEMA
+////////////////////////////////////////////////////
+const baseSejarahCabangSchema = z.object({
+  timeline: z.string().trim().min(3),
+
+  deskripsiTimeline: z.string().trim().min(5),
+
+  gambar: z.string().optional(),
+
+  statusSejarahCabang: z.string().trim().optional(),
+
+  cabang_uuid: z.string().uuid(),
+});
+
+////////////////////////////////////////////////////
+// CREATE
+////////////////////////////////////////////////////
+export const createSejarahCabangSchema = baseSejarahCabangSchema;
+
+////////////////////////////////////////////////////
+// UPDATE
+////////////////////////////////////////////////////
+export const updateSejarahCabangSchema =
+  baseSejarahCabangSchema.partial();
+
+////////////////////////////////////////////////////
+// TYPES
+////////////////////////////////////////////////////
+export type CreateSejarahCabangInput = z.infer<
+  typeof createSejarahCabangSchema
+>;
+
+export type UpdateSejarahCabangInput = z.infer<
+  typeof updateSejarahCabangSchema
+>;

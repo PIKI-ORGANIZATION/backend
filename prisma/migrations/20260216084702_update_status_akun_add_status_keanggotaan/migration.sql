@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Akun" ADD COLUMN     "statusKeanggotaan" TEXT NOT NULL DEFAULT 'NON_MEMBER',
+ALTER COLUMN "statusAkun" SET DEFAULT 'ACTIVE';

@@ -1,0 +1,983 @@
+{
+  "info": {
+    "_postman_id": "75d40de8-e0e3-487a-b500-cfe355309239",
+    "name": "A-PNPS-WEBAPP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "36257498"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/login",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Registration",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"azarya.dami@example.com\",\r\n  \"username\": \"azaryadami\",\r\n  \"password\": \"Password123!\",\r\n  \"namaLengkap\": \"Azarya Kairossutan Sacri Pusaka Dami\",\r\n  \"namaPanggil\": \"Azarya\",\r\n  \"bio\": \"Fresh graduate Informatika yang fokus di Backend Development dan Cyber Security.\",\r\n  \"asalCabang\": \"GMKI Surabaya\",\r\n  \"angkatan\": \"2019\",\r\n  \"jabatan\": \"Anggota\",\r\n  \"bidangStudi\": \"Informatika\",\r\n  \"bidangMinat\": \"Backend Development, Cyber Security\",\r\n  \"profileImg\": \"https://example.com/images/profile/azarya.jpg\",\r\n  \"noWa\": \"6281234567890\",\r\n  \"instagram\": \"https://instagram.com/azarya_dami\",\r\n  \"facebook\": \"https://facebook.com/azarya.dami\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/auth/register",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"azarya.dami@example.com\",\r\n  \"username\": \"azaryadami\",\r\n  \"password\": \"Password123!\",\r\n  \"namaLengkap\": \"Azarya Kairossutan Sacri Pusaka Dami\",\r\n  \"namaPanggil\": \"Azarya\",\r\n  \"bio\": \"Fresh graduate Informatika yang fokus di Backend Development dan Cyber Security.\",\r\n  \"asalCabang\": \"GMKI Surabaya\",\r\n  \"angkatan\": \"2019\",\r\n  \"jabatan\": \"Anggota\",\r\n  \"bidangStudi\": \"Informatika\",\r\n  \"bidangMinat\": \"Backend Development, Cyber Security\",\r\n  \"profileImg\": \"https://example.com/images/profile/azarya.jpg\",\r\n  \"noWa\": \"6281234567890\",\r\n  \"instagram\": \"https://instagram.com/azarya_dami\",\r\n  \"facebook\": \"https://facebook.com/azarya.dami\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/auth/register",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Role",
+      "item": [
+        {
+          "name": "get all roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/roles",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get role by uuid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/roles/5b92c90e-c302-4f95-8f54-c9233bfd8b58",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles",
+                "5b92c90e-c302-4f95-8f54-c9233bfd8b58"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get role by name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/roles/nama/user",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles",
+                "nama",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nama\": \"USER_PCPS_2\",\r\n    \"deskripsi\": \"Ini user pcps deskripsi\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/roles",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post update role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nama\": \"USER_PCPS_3\",\r\n    \"deskripsi\": \"Ini user pcps 3 yaa deskripsi\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/roles/e7fe39dd-cb86-4346-8c9f-381070e6a1c0/update",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles",
+                "e7fe39dd-cb86-4346-8c9f-381070e6a1c0",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post delete role / statusRole -> INACTIVE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nama\": \"USER_PCPS_2\",\r\n    \"deskripsi\": \"Ini user pcps deskripsi\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/roles/e7fe39dd-cb86-4346-8c9f-381070e6a1c0/delete",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles",
+                "e7fe39dd-cb86-4346-8c9f-381070e6a1c0",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Akun",
+      "item": [
+        {
+          "name": "get all akuns",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIlNFTklPUl9SRUFEIiwiU0VOSU9SX0NSRUFURSIsIlNFTklPUl9VUERBVEUiLCJTRU5JT1JfREVMRVRFIiwiU0VOSU9SX0FQUFJPVkVfUENQUyIsIlNFTklPUl9BUFBST1ZFX1BOUFMiLCJST0xFX0NSRUFURSIsIlJPTEVfVVBEQVRFIiwiUk9MRV9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNDYWJhbmciOmZhbHNlLCJpc0FwcHJvdmVkQnlQQ1BTIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UE5QUyI6ZmFsc2UsImlzc3VlZF9kYXRlIjoiMjMwMjIwMjYiLCJpYXQiOjE3NzE4NDg0MTMsImV4cCI6MTc3MTkzNDgxM30.wTwRQLSMngyWKqNnjRQWAn_Mklf2qvWMeAHOvv9_7zM",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/akuns?search=admin",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "admin"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get akun by uuid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/akuns/88cb3478-36e7-4707-8b68-1e0777b0edba",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns",
+                "88cb3478-36e7-4707-8b68-1e0777b0edba"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get akun by identifier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/akuns/identifier/user8",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns",
+                "identifier",
+                "user8"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create akun / register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YWE3OWEzYy0wZjRkLTQzNjUtOTkyNC1jMmM5ZGRmMTM1NjQiLCJlbWFpbCI6ImF6YXJ5YS5kYW1pQGV4YW1wbGUuY29tIiwidXNlcm5hbWUiOiJhemFyeWFkYW1pIiwicm9sZXMiOlsiVVNFUiJdLCJwZXJtaXNzaW9ucyI6W10sImlzc3VlZF9kYXRlIjoiMTYwMjIwMjYiLCJpYXQiOjE3NzEyMjk5NjEsImV4cCI6MTc3MTMxNjM2MX0.XCbCx4SurIDSZlppRFagXHoiivDfX1uIQrCBilll1Mw",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "// [\r\n//   {\r\n//     \"email\": \"john.doe@gmki.or.id\",\r\n//     \"username\": \"johndoe\",\r\n//     \"password\": \"Password123!\",\r\n//     \"namaLengkap\": \"John Doe\",\r\n//     \"namaPanggil\": \"John\",\r\n//     \"bio\": \"Aktif sebagai anggota GMKI dan tertarik pada pengembangan sistem informasi.\",\r\n//     \"asalCabang\": \"GMKI Surabaya\",\r\n//     \"angkatan\": \"2019\",\r\n//     \"jabatan\": \"Anggota\",\r\n//     \"bidangStudi\": \"Teknik Informatika\",\r\n//     \"bidangMinat\": \"Backend Development\",\r\n//     \"noWa\": \"628111111111\",\r\n//     \"instagram\": \"https://instagram.com/john_doe\",\r\n//     \"facebook\": \"https://facebook.com/john.doe\"\r\n//   },\r\n//   {\r\n//     \"email\": \"maria.louise@gmki.or.id\",\r\n//     \"username\": \"marialouise\",\r\n//     \"password\": \"Password123!\",\r\n//     \"namaLengkap\": \"Maria Louise\",\r\n//     \"namaPanggil\": \"Maria\",\r\n//     \"bio\": \"Fokus pada pelayanan dan pengembangan sumber daya manusia GMKI.\",\r\n//     \"asalCabang\": \"GMKI Malang\",\r\n//     \"angkatan\": \"2020\",\r\n//     \"jabatan\": \"Pengurus Cabang\",\r\n//     \"bidangStudi\": \"Manajemen\",\r\n//     \"bidangMinat\": \"Product Management\",\r\n//     \"noWa\": \"628222222222\",\r\n//     \"instagram\": \"https://instagram.com/maria_louise\"\r\n//   },\r\n//   {\r\n//     \"email\": \"andreas.putra@gmki.or.id\",\r\n//     \"username\": \"andreasputra\",\r\n//     \"password\": \"Password123!\",\r\n//     \"namaLengkap\": \"Andreas Putra\",\r\n//     \"namaPanggil\": \"Andre\",\r\n//     \"bio\": \"Mahasiswa teknik yang aktif dalam kegiatan digitalisasi organisasi.\",\r\n//     \"asalCabang\": \"GMKI Kupang\",\r\n//     \"angkatan\": \"2021\",\r\n//     \"jabatan\": \"Anggota\",\r\n//     \"bidangStudi\": \"Sistem Informasi\",\r\n//     \"bidangMinat\": \"Cyber Security\",\r\n//     \"noWa\": \"628333333333\"\r\n//   }\r\n// ]\r\n\r\n{\r\n    \"email\": \"andreas.putra.02@gmki.or.id\",\r\n    \"username\": \"andreasputra02\",\r\n    \"password\": \"Password123!\",\r\n    \"namaLengkap\": \"Andreas Putra\",\r\n    \"namaPanggil\": \"Andre\",\r\n    \"bio\": \"Mahasiswa teknik yang aktif dalam kegiatan digitalisasi organisasi.\",\r\n    \"asalCabang\": \"GMKI Kupang\",\r\n    \"angkatan\": \"2021\",\r\n    \"jabatan\": \"Anggota\",\r\n    \"bidangStudi\": \"Sistem Informasi\",\r\n    \"bidangMinat\": \"Cyber Security\",\r\n    \"noWa\": \"628333333333\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/akuns",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post update akun",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YWE3OWEzYy0wZjRkLTQzNjUtOTkyNC1jMmM5ZGRmMTM1NjQiLCJlbWFpbCI6ImF6YXJ5YS5kYW1pQGV4YW1wbGUuY29tIiwidXNlcm5hbWUiOiJhemFyeWFkYW1pIiwicm9sZXMiOlsiVVNFUiJdLCJwZXJtaXNzaW9ucyI6W10sImlzc3VlZF9kYXRlIjoiMTYwMjIwMjYiLCJpYXQiOjE3NzEyMjk5NjEsImV4cCI6MTc3MTMxNjM2MX0.XCbCx4SurIDSZlppRFagXHoiivDfX1uIQrCBilll1Mw",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"andreas.putra.02@gmki.or.id\",\r\n    \"username\": \"andreasputra02\",\r\n    \"password\": \"Password123!\",\r\n    \"statusAkun\": \"ACTIVE\",\r\n    \"lastLogin\": null,\r\n    \"ipLogin\": null,\r\n    \"namaLengkap\": \"Andreas Putra Sinaga Budiman\"\r\n    // \"namaPanggil\": \"Andre\",\r\n    // \"bio\": \"Mahasiswa teknik yang aktif dalam kegiatan digitalisasi organisasi.\",\r\n    // \"asalCabang\": \"GMKI Kupang\",\r\n    // \"angkatan\": \"2021\",\r\n    // \"jabatan\": \"Anggota\",\r\n    // \"bidangStudi\": \"Sistem Informasi\",\r\n    // \"bidangMinat\": \"Cyber Security\",\r\n    // // \"profileImg\": null,\r\n    // \"noWa\": \"628333333333\",\r\n    // // \"instagram\": null,\r\n    // // \"facebook\": null,\r\n    // \"insert_at\": \"2026-02-16T08:24:15.488Z\",\r\n    // \"insert_by\": null,\r\n    // \"update_at\": \"2026-02-16T08:27:07.957Z\",\r\n    // \"update_by\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/akuns/97bc0418-edee-428b-92d2-51d8c5513085/update",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns",
+                "97bc0418-edee-428b-92d2-51d8c5513085",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post delete akun / statusAkun -> INACTIVE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4YWE3OWEzYy0wZjRkLTQzNjUtOTkyNC1jMmM5ZGRmMTM1NjQiLCJlbWFpbCI6ImF6YXJ5YS5kYW1pQGV4YW1wbGUuY29tIiwidXNlcm5hbWUiOiJhemFyeWFkYW1pIiwicm9sZXMiOlsiVVNFUiJdLCJwZXJtaXNzaW9ucyI6W10sImlzc3VlZF9kYXRlIjoiMTYwMjIwMjYiLCJpYXQiOjE3NzEyMjk5NjEsImV4cCI6MTc3MTMxNjM2MX0.XCbCx4SurIDSZlppRFagXHoiivDfX1uIQrCBilll1Mw",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "// [\r\n//   {\r\n//     \"email\": \"john.doe@gmki.or.id\",\r\n//     \"username\": \"johndoe\",\r\n//     \"password\": \"Password123!\",\r\n//     \"namaLengkap\": \"John Doe\",\r\n//     \"namaPanggil\": \"John\",\r\n//     \"bio\": \"Aktif sebagai anggota GMKI dan tertarik pada pengembangan sistem informasi.\",\r\n//     \"asalCabang\": \"GMKI Surabaya\",\r\n//     \"angkatan\": \"2019\",\r\n//     \"jabatan\": \"Anggota\",\r\n//     \"bidangStudi\": \"Teknik Informatika\",\r\n//     \"bidangMinat\": \"Backend Development\",\r\n//     \"noWa\": \"628111111111\",\r\n//     \"instagram\": \"https://instagram.com/john_doe\",\r\n//     \"facebook\": \"https://facebook.com/john.doe\"\r\n//   },\r\n//   {\r\n//     \"email\": \"maria.louise@gmki.or.id\",\r\n//     \"username\": \"marialouise\",\r\n//     \"password\": \"Password123!\",\r\n//     \"namaLengkap\": \"Maria Louise\",\r\n//     \"namaPanggil\": \"Maria\",\r\n//     \"bio\": \"Fokus pada pelayanan dan pengembangan sumber daya manusia GMKI.\",\r\n//     \"asalCabang\": \"GMKI Malang\",\r\n//     \"angkatan\": \"2020\",\r\n//     \"jabatan\": \"Pengurus Cabang\",\r\n//     \"bidangStudi\": \"Manajemen\",\r\n//     \"bidangMinat\": \"Product Management\",\r\n//     \"noWa\": \"628222222222\",\r\n//     \"instagram\": \"https://instagram.com/maria_louise\"\r\n//   },\r\n//   {\r\n//     \"email\": \"andreas.putra@gmki.or.id\",\r\n//     \"username\": \"andreasputra\",\r\n//     \"password\": \"Password123!\",\r\n//     \"namaLengkap\": \"Andreas Putra\",\r\n//     \"namaPanggil\": \"Andre\",\r\n//     \"bio\": \"Mahasiswa teknik yang aktif dalam kegiatan digitalisasi organisasi.\",\r\n//     \"asalCabang\": \"GMKI Kupang\",\r\n//     \"angkatan\": \"2021\",\r\n//     \"jabatan\": \"Anggota\",\r\n//     \"bidangStudi\": \"Sistem Informasi\",\r\n//     \"bidangMinat\": \"Cyber Security\",\r\n//     \"noWa\": \"628333333333\"\r\n//   }\r\n// ]\r\n\r\n{\r\n    \"email\": \"andreas.putra.02@gmki.or.id\",\r\n    \"username\": \"andreasputra02\",\r\n    \"password\": \"Password123!\",\r\n    \"namaLengkap\": \"Andreas Putra\",\r\n    \"namaPanggil\": \"Andre\",\r\n    \"bio\": \"Mahasiswa teknik yang aktif dalam kegiatan digitalisasi organisasi.\",\r\n    \"asalCabang\": \"GMKI Kupang\",\r\n    \"angkatan\": \"2021\",\r\n    \"jabatan\": \"Anggota\",\r\n    \"bidangStudi\": \"Sistem Informasi\",\r\n    \"bidangMinat\": \"Cyber Security\",\r\n    \"noWa\": \"628333333333\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/akuns/e27b6575-5fdb-4787-9faa-e99935b7c525/delete",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns",
+                "e27b6575-5fdb-4787-9faa-e99935b7c525",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Permission",
+      "item": [
+        {
+          "name": "get all permissions",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "get permission by uuid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "get permission by name",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "News Utama",
+      "item": [
+        {
+          "name": "get all news",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIlNFTklPUl9SRUFEIiwiU0VOSU9SX0NSRUFURSIsIlNFTklPUl9VUERBVEUiLCJTRU5JT1JfREVMRVRFIiwiU0VOSU9SX0FQUFJPVkVfUENQUyIsIlNFTklPUl9BUFBST1ZFX1BOUFMiLCJST0xFX0NSRUFURSIsIlJPTEVfVVBEQVRFIiwiUk9MRV9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNDYWJhbmciOmZhbHNlLCJpc0FwcHJvdmVkQnlQQ1BTIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UE5QUyI6ZmFsc2UsImlzc3VlZF9kYXRlIjoiMjYwMjIwMjYiLCJpYXQiOjE3NzIwMzk3NzksImV4cCI6MTc3MjEyNjE3OX0.6VzsgL0p2hp91f1uad9kDU4w_78CYtJM2DsOap1rPRg",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/news-utama?search=seminar&fixed=all",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-utama"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "seminar"
+                },
+                {
+                  "key": "fixed",
+                  "value": "all"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get news by uuid",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "get news by slug",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNBcHByb3ZlZEJ5UENQUyI6ZmFsc2UsImlzQXBwcm92ZWRCeVBOUFMiOmZhbHNlLCJpc3N1ZWRfZGF0ZSI6IjIyMDIyMDI2IiwiaWF0IjoxNzcxNzQ1MjQyLCJleHAiOjE3NzE4MzE2NDJ9.wcUeY0pIS5Q5UuACGxzg0VCrmIFs00hozbpWUP-JXaI",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/news-utama/slug/pelantikan-pnps-2025-2028",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-utama",
+                "slug",
+                "pelantikan-pnps-2025-2028"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get news by tag",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNBcHByb3ZlZEJ5UENQUyI6ZmFsc2UsImlzQXBwcm92ZWRCeVBOUFMiOmZhbHNlLCJpc3N1ZWRfZGF0ZSI6IjIyMDIyMDI2IiwiaWF0IjoxNzcxNzQ1MjQyLCJleHAiOjE3NzE4MzE2NDJ9.wcUeY0pIS5Q5UuACGxzg0VCrmIFs00hozbpWUP-JXaI",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/news-utama/tags/pelantikan-pnps-2025-2028",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-utama",
+                "tags",
+                "pelantikan-pnps-2025-2028"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get news by kategori",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNBcHByb3ZlZEJ5UENQUyI6ZmFsc2UsImlzQXBwcm92ZWRCeVBOUFMiOmZhbHNlLCJpc3N1ZWRfZGF0ZSI6IjIyMDIyMDI2IiwiaWF0IjoxNzcxNzQ1MjQyLCJleHAiOjE3NzE4MzE2NDJ9.wcUeY0pIS5Q5UuACGxzg0VCrmIFs00hozbpWUP-JXaI",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/news-utama/tags/pelantikan-pnps-2025-2028",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-utama",
+                "tags",
+                "pelantikan-pnps-2025-2028"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get news search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNBcHByb3ZlZEJ5UENQUyI6ZmFsc2UsImlzQXBwcm92ZWRCeVBOUFMiOmZhbHNlLCJpc3N1ZWRfZGF0ZSI6IjIyMDIyMDI2IiwiaWF0IjoxNzcxNzQ1MjQyLCJleHAiOjE3NzE4MzE2NDJ9.wcUeY0pIS5Q5UuACGxzg0VCrmIFs00hozbpWUP-JXaI",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/news-utama/tags/pelantikan-pnps-2025-2028",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-utama",
+                "tags",
+                "pelantikan-pnps-2025-2028"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create news utama",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIlNFTklPUl9SRUFEIiwiU0VOSU9SX0NSRUFURSIsIlNFTklPUl9VUERBVEUiLCJTRU5JT1JfREVMRVRFIiwiU0VOSU9SX0FQUFJPVkVfUENQUyIsIlNFTklPUl9BUFBST1ZFX1BOUFMiLCJST0xFX0NSRUFURSIsIlJPTEVfVVBEQVRFIiwiUk9MRV9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNDYWJhbmciOmZhbHNlLCJpc0FwcHJvdmVkQnlQQ1BTIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UE5QUyI6ZmFsc2UsImlzc3VlZF9kYXRlIjoiMjYwMjIwMjYiLCJpYXQiOjE3NzIwMzk3NzksImV4cCI6MTc3MjEyNjE3OX0.6VzsgL0p2hp91f1uad9kDU4w_78CYtJM2DsOap1rPRg",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"judul\": \"Digitalisasi GMKI 5.0 Menuju Transformasi Nasional\",\r\n  \"ringkasan\": \"Langkah strategis digitalisasi organisasi mahasiswa di era society 5.0.\",\r\n  \"konten\": \"Isi lengkap artikel di sini dalam bentuk HTML atau text panjang...\",\r\n  \"slug\": \"digitalisasi-gmki-5-0-menuju-transformasi-nasional\",\r\n  \"url_thumbnail_img\": \"/news/rakernas.webp\",\r\n  \"tags\": [\r\n    \"2f6442ef-866c-4cc6-8e30-e765d07a281c\"\r\n  ],\r\n  \"kategori\": [\r\n    \"2ac3c0d2-3a26-44fc-a8ae-b2afdad3738f\"\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/news-utama/",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-utama",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post update news utama",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIlNFTklPUl9SRUFEIiwiU0VOSU9SX0NSRUFURSIsIlNFTklPUl9VUERBVEUiLCJTRU5JT1JfREVMRVRFIiwiU0VOSU9SX0FQUFJPVkVfUENQUyIsIlNFTklPUl9BUFBST1ZFX1BOUFMiLCJST0xFX0NSRUFURSIsIlJPTEVfVVBEQVRFIiwiUk9MRV9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNDYWJhbmciOmZhbHNlLCJpc0FwcHJvdmVkQnlQQ1BTIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UE5QUyI6ZmFsc2UsImlzc3VlZF9kYXRlIjoiMjYwMjIwMjYiLCJpYXQiOjE3NzIwMzk3NzksImV4cCI6MTc3MjEyNjE3OX0.6VzsgL0p2hp91f1uad9kDU4w_78CYtJM2DsOap1rPRg",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"judul\": \"Digitalisasi GMKI 5.0 Menuju Transformasi Nasional\",\r\n  \"ringkasan\": \"Langkah strategis digitalisasi organisasi mahasiswa di era society 5.0.\",\r\n  \"konten\": \"Isi lengkap artikel di sini dalam bentuk HTML atau text panjang...\",\r\n  \"slug\": \"digitalisasi-gmki-5-0-menuju-transformasi-nasional\",\r\n  \"url_thumbnail_img\": \"/news/rakernas.webp\",\r\n  \"tags\": [\r\n    \"2f6442ef-866c-4cc6-8e30-e765d07a281c\"\r\n  ],\r\n  \"kategori\": [\r\n    \"2ac3c0d2-3a26-44fc-a8ae-b2afdad3738f\"\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/news-utama/",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-utama",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post archive news utama",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIlNFTklPUl9SRUFEIiwiU0VOSU9SX0NSRUFURSIsIlNFTklPUl9VUERBVEUiLCJTRU5JT1JfREVMRVRFIiwiU0VOSU9SX0FQUFJPVkVfUENQUyIsIlNFTklPUl9BUFBST1ZFX1BOUFMiLCJST0xFX0NSRUFURSIsIlJPTEVfVVBEQVRFIiwiUk9MRV9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNDYWJhbmciOmZhbHNlLCJpc0FwcHJvdmVkQnlQQ1BTIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UE5QUyI6ZmFsc2UsImlzc3VlZF9kYXRlIjoiMjYwMjIwMjYiLCJpYXQiOjE3NzIwMzk3NzksImV4cCI6MTc3MjEyNjE3OX0.6VzsgL0p2hp91f1uad9kDU4w_78CYtJM2DsOap1rPRg",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/news-utama/d2dd4c37-ae43-4cfe-b7cd-a72b90a3f78d/archive",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-utama",
+                "d2dd4c37-ae43-4cfe-b7cd-a72b90a3f78d",
+                "archive"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "News Tag",
+      "item": [
+        {
+          "name": "get all tags",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNBcHByb3ZlZEJ5UENQUyI6ZmFsc2UsImlzQXBwcm92ZWRCeVBOUFMiOmZhbHNlLCJpc3N1ZWRfZGF0ZSI6IjIyMDIyMDI2IiwiaWF0IjoxNzcxNzQyMDk2LCJleHAiOjE3NzE4Mjg0OTZ9.RO1YRiow4tJD2dOBWOz_pL1rozu9Ail0fy6J7chfggE",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/news-tags",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-tags"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "News Kategori",
+      "item": [
+        {
+          "name": "get all kategori",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSJdLCJjYWJhbmciOiJQTlBTIFB1c2F0IiwiaXNBcHByb3ZlZEJ5UENQUyI6ZmFsc2UsImlzQXBwcm92ZWRCeVBOUFMiOmZhbHNlLCJpc3N1ZWRfZGF0ZSI6IjIyMDIyMDI2IiwiaWF0IjoxNzcxNzQyMDk2LCJleHAiOjE3NzE4Mjg0OTZ9.RO1YRiow4tJD2dOBWOz_pL1rozu9Ail0fy6J7chfggE",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/news-tags",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "news-tags"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Senior",
+      "item": [
+        {
+          "name": "get senior search",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3NjNkZGRiZS01MWY4LTQ1OGEtODdhYS00OTkzZTViY2NlNjUiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9NQU5BR0UiLCJORVdTX1VUQU1BX0NSRUFURSIsIk5FV1NfVVRBTUFfVVBEQVRFIiwiTkVXU19VVEFNQV9BUkNISVZFIiwiQVBQX1NFVFRJTkdfTUFOQUdFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIlNFTklPUl9SRUFEIiwiU0VOSU9SX0NSRUFURSIsIlNFTklPUl9VUERBVEUiLCJTRU5JT1JfREVMRVRFIiwiU0VOSU9SX0FQUFJPVkVfUENQUyIsIlNFTklPUl9BUFBST1ZFX1BOUFMiXSwiY2FiYW5nIjoiUE5QUyBQdXNhdCIsImlzQXBwcm92ZWRCeVBDUFMiOmZhbHNlLCJpc0FwcHJvdmVkQnlQTlBTIjpmYWxzZSwiaXNzdWVkX2RhdGUiOiIyMjAyMjAyNiIsImlhdCI6MTc3MTc0NzMxNiwiZXhwIjoxNzcxODMzNzE2fQ.xfHYP1N5aU2mEa5Cjx9duf8ODxWvkiKo-VsxwpMjvu4",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/seniors/search?search=user",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "seniors",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "user"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create senior",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMjg0ZTU1Ni1mY2EwLTRkM2YtYjg0Yy01NGNiNDMyMTJmN2EiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9DUkVBVEUiLCJST0xFX1VQREFURSIsIlJPTEVfREVMRVRFIiwiU0VOSU9SX1JFQUQiLCJTRU5JT1JfQ1JFQVRFIiwiU0VOSU9SX1VQREFURSIsIlNFTklPUl9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSIsIkNBQkFOR19SRUFEIiwiQ0FCQU5HX0NSRUFURSIsIkNBQkFOR19VUERBVEUiLCJDQUJBTkdfREVMRVRFIiwiTkVXU19VVEFNQV9SRUFEIiwiTkVXU19VVEFNQV9DUkVBVEUiLCJORVdTX1VUQU1BX1VQREFURSIsIk5FV1NfVVRBTUFfUFVCTElTSCIsIk5FV1NfVVRBTUFfQVJDSElWRSIsIk5FV1NfVVRBTUFfREVMRVRFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIkFQUF9TRVRUSU5HX01BTkFHRSIsIlNUUlVLVFVSX1JFQUQiLCJTVFJVS1RVUl9DUkVBVEUiLCJTVFJVS1RVUl9VUERBVEUiLCJTVFJVS1RVUl9ERUxFVEUiLCJQUk9HUkFNX1JFQUQiLCJQUk9HUkFNX0NSRUFURSIsIlBST0dSQU1fVVBEQVRFIiwiUFJPR1JBTV9ERUxFVEUiLCJBR0VOREFfUkVBRCIsIkFHRU5EQV9DUkVBVEUiLCJBR0VOREFfVVBEQVRFIiwiQUdFTkRBX0RFTEVURSIsIkFSU0lQX1JFQUQiLCJBUlNJUF9DUkVBVEUiLCJBUlNJUF9VUERBVEUiLCJBUlNJUF9ERUxFVEUiLCJHQUxFUklfUkVBRCIsIkdBTEVSSV9DUkVBVEUiLCJHQUxFUklfVVBEQVRFIiwiR0FMRVJJX0RFTEVURSIsIkZBUV9SRUFEIiwiRkFRX01BTkFHRSIsIlBFTkdBRFVBTl9SRUFEIiwiUEVOR0FEVUFOX1JFU1BPTkQiLCJHUklUX0xBWUFOQU5fTUFOQUdFIiwiR1JJVF9NRU5UT1JfTUFOQUdFIiwiR1JJVF9LRUxBU19NQU5BR0UiLCJHUklUX1BFTkRBRlRBUkFOX1JFQUQiXSwiY2FiYW5nIjoiUE5QUyBQdXNhdCIsImlzQ2FiYW5nIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UENQUyI6dHJ1ZSwiaXNBcHByb3ZlZEJ5UE5QUyI6dHJ1ZSwiaXNzdWVkX2RhdGUiOiIwNjAzMjAyNiIsImlhdCI6MTc3Mjc0Njc1MSwiZXhwIjoxNzcyODMzMTUxfQ.azjSlpjKoicYcR5FvfB62P9HwyPRCAzS52Px9bzpmRw",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"namaLengkap\": \"Azarya Kairossutan Sacri Pusaka Dami\",\r\n  \"namaPanggil\": \"Azarya\",\r\n  \"bio\": \"Senior GMKI yang aktif dalam pengembangan teknologi dan organisasi.\",\r\n  \"angkatan\": \"2019\",\r\n  \"jabatan\": \"Anggota PNPS\",\r\n  \"bidangStudi\": \"Informatika\",\r\n  \"bidangMinat\": \"Cyber Security, Backend Development\",\r\n  \"profileImg\": \"https://example.com/profile.jpg\",\r\n  \"noWa\": \"+6281233797977\",\r\n  \"instagram\": \"azarya_dami\",\r\n  \"facebook\": \"azarya.dami\",\r\n  \"cabangUuid\": \"7f2a6b8d-3d7a-4f1a-8a90-1f8f64c0c4e2\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/seniors/",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "seniors",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cabang",
+      "item": [
+        {
+          "name": "get cabang",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "get cabang by Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMjg0ZTU1Ni1mY2EwLTRkM2YtYjg0Yy01NGNiNDMyMTJmN2EiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9DUkVBVEUiLCJST0xFX1VQREFURSIsIlJPTEVfREVMRVRFIiwiU0VOSU9SX1JFQUQiLCJTRU5JT1JfQ1JFQVRFIiwiU0VOSU9SX1VQREFURSIsIlNFTklPUl9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSIsIkNBQkFOR19SRUFEIiwiQ0FCQU5HX0NSRUFURSIsIkNBQkFOR19VUERBVEUiLCJDQUJBTkdfREVMRVRFIiwiTkVXU19VVEFNQV9SRUFEIiwiTkVXU19VVEFNQV9DUkVBVEUiLCJORVdTX1VUQU1BX1VQREFURSIsIk5FV1NfVVRBTUFfUFVCTElTSCIsIk5FV1NfVVRBTUFfQVJDSElWRSIsIk5FV1NfVVRBTUFfREVMRVRFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIkFQUF9TRVRUSU5HX01BTkFHRSIsIlNUUlVLVFVSX1JFQUQiLCJTVFJVS1RVUl9DUkVBVEUiLCJTVFJVS1RVUl9VUERBVEUiLCJTVFJVS1RVUl9ERUxFVEUiLCJQUk9HUkFNX1JFQUQiLCJQUk9HUkFNX0NSRUFURSIsIlBST0dSQU1fVVBEQVRFIiwiUFJPR1JBTV9ERUxFVEUiLCJBR0VOREFfUkVBRCIsIkFHRU5EQV9DUkVBVEUiLCJBR0VOREFfVVBEQVRFIiwiQUdFTkRBX0RFTEVURSIsIkFSU0lQX1JFQUQiLCJBUlNJUF9DUkVBVEUiLCJBUlNJUF9VUERBVEUiLCJBUlNJUF9ERUxFVEUiLCJHQUxFUklfUkVBRCIsIkdBTEVSSV9DUkVBVEUiLCJHQUxFUklfVVBEQVRFIiwiR0FMRVJJX0RFTEVURSIsIkZBUV9SRUFEIiwiRkFRX01BTkFHRSIsIlBFTkdBRFVBTl9SRUFEIiwiUEVOR0FEVUFOX1JFU1BPTkQiLCJHUklUX0xBWUFOQU5fTUFOQUdFIiwiR1JJVF9NRU5UT1JfTUFOQUdFIiwiR1JJVF9LRUxBU19NQU5BR0UiLCJHUklUX1BFTkRBRlRBUkFOX1JFQUQiXSwiY2FiYW5nIjoiUE5QUyBQdXNhdCIsImlzQ2FiYW5nIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UENQUyI6dHJ1ZSwiaXNBcHByb3ZlZEJ5UE5QUyI6dHJ1ZSwiaXNzdWVkX2RhdGUiOiIwNjAzMjAyNiIsImlhdCI6MTc3MjczOTIzNSwiZXhwIjoxNzcyODI1NjM1fQ.UaJZHH_Eigty-Q3nAgZTdqKJjbsWzLvIhl1wT7w-wUo",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/cabang/46028425-4010-4731-a1c5-b93eb165b789",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "cabang",
+                "46028425-4010-4731-a1c5-b93eb165b789"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create cabang",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMjg0ZTU1Ni1mY2EwLTRkM2YtYjg0Yy01NGNiNDMyMTJmN2EiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9DUkVBVEUiLCJST0xFX1VQREFURSIsIlJPTEVfREVMRVRFIiwiU0VOSU9SX1JFQUQiLCJTRU5JT1JfQ1JFQVRFIiwiU0VOSU9SX1VQREFURSIsIlNFTklPUl9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSIsIkNBQkFOR19SRUFEIiwiQ0FCQU5HX0NSRUFURSIsIkNBQkFOR19VUERBVEUiLCJDQUJBTkdfREVMRVRFIiwiTkVXU19VVEFNQV9SRUFEIiwiTkVXU19VVEFNQV9DUkVBVEUiLCJORVdTX1VUQU1BX1VQREFURSIsIk5FV1NfVVRBTUFfUFVCTElTSCIsIk5FV1NfVVRBTUFfQVJDSElWRSIsIk5FV1NfVVRBTUFfREVMRVRFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIkFQUF9TRVRUSU5HX01BTkFHRSIsIlNUUlVLVFVSX1JFQUQiLCJTVFJVS1RVUl9DUkVBVEUiLCJTVFJVS1RVUl9VUERBVEUiLCJTVFJVS1RVUl9ERUxFVEUiLCJQUk9HUkFNX1JFQUQiLCJQUk9HUkFNX0NSRUFURSIsIlBST0dSQU1fVVBEQVRFIiwiUFJPR1JBTV9ERUxFVEUiLCJBR0VOREFfUkVBRCIsIkFHRU5EQV9DUkVBVEUiLCJBR0VOREFfVVBEQVRFIiwiQUdFTkRBX0RFTEVURSIsIkFSU0lQX1JFQUQiLCJBUlNJUF9DUkVBVEUiLCJBUlNJUF9VUERBVEUiLCJBUlNJUF9ERUxFVEUiLCJHQUxFUklfUkVBRCIsIkdBTEVSSV9DUkVBVEUiLCJHQUxFUklfVVBEQVRFIiwiR0FMRVJJX0RFTEVURSIsIkZBUV9SRUFEIiwiRkFRX01BTkFHRSIsIlBFTkdBRFVBTl9SRUFEIiwiUEVOR0FEVUFOX1JFU1BPTkQiLCJHUklUX0xBWUFOQU5fTUFOQUdFIiwiR1JJVF9NRU5UT1JfTUFOQUdFIiwiR1JJVF9LRUxBU19NQU5BR0UiLCJHUklUX1BFTkRBRlRBUkFOX1JFQUQiXSwiY2FiYW5nIjoiUE5QUyBQdXNhdCIsImlzQ2FiYW5nIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UENQUyI6dHJ1ZSwiaXNBcHByb3ZlZEJ5UE5QUyI6dHJ1ZSwiaXNzdWVkX2RhdGUiOiIwNjAzMjAyNiIsImlhdCI6MTc3MjczOTIzNSwiZXhwIjoxNzcyODI1NjM1fQ.UaJZHH_Eigty-Q3nAgZTdqKJjbsWzLvIhl1wT7w-wUo",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "// {\r\n//   \"namaCabang\": \"GMKI Cabang Ambon\",\r\n//   \"alamat\": \"Jl. Pattimura No. 10\",\r\n//   \"kabupatenKota\": \"Kota Ambon\",\r\n//   \"provinsi\": \"Maluku\",\r\n//   \"wilayah\": \"Maluku\",\r\n//   \"statusCabang\": \"ACTIVE\",\r\n//   \"isCabang\": true,\r\n//   \"deskripsiCabang\": \"Cabang GMKI yang berada di Kota Ambon dan melayani mahasiswa Kristen di wilayah Maluku.\",\r\n//   \"visi\": \"Menjadi cabang GMKI yang aktif dalam pelayanan, intelektualitas, dan pengabdian masyarakat.\",\r\n//   \"misi\": \"Mengembangkan kader GMKI yang beriman, berilmu, dan berkontribusi bagi gereja dan bangsa.\",\r\n//   \"noWa\": \"6281234567890\",\r\n//   \"instagram\": \"https://instagram.com/gmkiambon\",\r\n//   \"facebook\": \"https://facebook.com/gmkiambon\",\r\n//   \"youtube\": \"https://youtube.com/@gmkiambon\",\r\n//   \"email\": \"ambon@gmki.id\",\r\n//   \"ketuaUuid\": null\r\n// }\r\n\r\n[\r\n  {\r\n    \"namaCabang\": \"GMKI Cabang Jayapura\",\r\n    \"alamat\": \"Jl. Abepura Raya\",\r\n    \"kabupatenKota\": \"Kota Jayapura\",\r\n    \"provinsi\": \"Papua\",\r\n    \"wilayah\": \"Papua\",\r\n    \"statusCabang\": \"ACTIVE\",\r\n    \"isCabang\": true,\r\n    \"deskripsiCabang\": \"Cabang GMKI yang melayani mahasiswa Kristen di wilayah Jayapura.\",\r\n    \"visi\": \"Menjadi wadah pembinaan kader Kristen yang unggul di Papua.\",\r\n    \"misi\": \"Mendorong kader GMKI untuk aktif dalam gereja, kampus, dan masyarakat.\",\r\n    \"noWa\": \"6281234567891\",\r\n    \"instagram\": \"https://instagram.com/gmkijayapura\",\r\n    \"facebook\": \"https://facebook.com/gmkijayapura\",\r\n    \"youtube\": \"https://youtube.com/@gmkijayapura\",\r\n    \"email\": \"jayapura@gmki.id\",\r\n    \"ketuaUuid\": null\r\n  },\r\n  {\r\n    \"namaCabang\": \"GMKI Cabang Tual\",\r\n    \"alamat\": \"Jl. Pattimura Tual\",\r\n    \"kabupatenKota\": \"Kota Tual\",\r\n    \"provinsi\": \"Maluku\",\r\n    \"wilayah\": \"Maluku Tenggara\",\r\n    \"statusCabang\": \"ACTIVE\",\r\n    \"isCabang\": true,\r\n    \"deskripsiCabang\": \"Cabang GMKI yang berada di Kota Tual dan sekitarnya.\",\r\n    \"visi\": \"Menjadi pusat pengembangan kader Kristen di wilayah Maluku Tenggara.\",\r\n    \"misi\": \"Mengembangkan kader GMKI yang aktif dalam pelayanan dan kepemimpinan.\",\r\n    \"noWa\": \"6281234567892\",\r\n    \"instagram\": \"https://instagram.com/gmkitual\",\r\n    \"facebook\": \"https://facebook.com/gmkitual\",\r\n    \"youtube\": \"https://youtube.com/@gmkitual\",\r\n    \"email\": \"tual@gmki.id\",\r\n    \"ketuaUuid\": null\r\n  },\r\n  {\r\n    \"namaCabang\": \"GMKI Cabang Makassar\",\r\n    \"alamat\": \"Jl. Perintis Kemerdekaan\",\r\n    \"kabupatenKota\": \"Kota Makassar\",\r\n    \"provinsi\": \"Sulawesi Selatan\",\r\n    \"wilayah\": \"Sulawesi\",\r\n    \"statusCabang\": \"ACTIVE\",\r\n    \"isCabang\": true,\r\n    \"deskripsiCabang\": \"Cabang GMKI yang melayani mahasiswa Kristen di Makassar.\",\r\n    \"visi\": \"Menjadi cabang GMKI yang aktif dalam pengembangan intelektual dan spiritual kader.\",\r\n    \"misi\": \"Mempersiapkan kader GMKI yang mampu bersaing secara nasional dan global.\",\r\n    \"noWa\": \"6281234567893\",\r\n    \"instagram\": \"https://instagram.com/gmkimakassar\",\r\n    \"facebook\": \"https://facebook.com/gmkimakassar\",\r\n    \"youtube\": \"https://youtube.com/@gmkimakassar\",\r\n    \"email\": \"makassar@gmki.id\",\r\n    \"ketuaUuid\": null\r\n  }\r\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/cabang/",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "cabang",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post update cabang",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMjg0ZTU1Ni1mY2EwLTRkM2YtYjg0Yy01NGNiNDMyMTJmN2EiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9DUkVBVEUiLCJST0xFX1VQREFURSIsIlJPTEVfREVMRVRFIiwiU0VOSU9SX1JFQUQiLCJTRU5JT1JfQ1JFQVRFIiwiU0VOSU9SX1VQREFURSIsIlNFTklPUl9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSIsIkNBQkFOR19SRUFEIiwiQ0FCQU5HX0NSRUFURSIsIkNBQkFOR19VUERBVEUiLCJDQUJBTkdfREVMRVRFIiwiTkVXU19VVEFNQV9SRUFEIiwiTkVXU19VVEFNQV9DUkVBVEUiLCJORVdTX1VUQU1BX1VQREFURSIsIk5FV1NfVVRBTUFfUFVCTElTSCIsIk5FV1NfVVRBTUFfQVJDSElWRSIsIk5FV1NfVVRBTUFfREVMRVRFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIkFQUF9TRVRUSU5HX01BTkFHRSIsIlNUUlVLVFVSX1JFQUQiLCJTVFJVS1RVUl9DUkVBVEUiLCJTVFJVS1RVUl9VUERBVEUiLCJTVFJVS1RVUl9ERUxFVEUiLCJQUk9HUkFNX1JFQUQiLCJQUk9HUkFNX0NSRUFURSIsIlBST0dSQU1fVVBEQVRFIiwiUFJPR1JBTV9ERUxFVEUiLCJBR0VOREFfUkVBRCIsIkFHRU5EQV9DUkVBVEUiLCJBR0VOREFfVVBEQVRFIiwiQUdFTkRBX0RFTEVURSIsIkFSU0lQX1JFQUQiLCJBUlNJUF9DUkVBVEUiLCJBUlNJUF9VUERBVEUiLCJBUlNJUF9ERUxFVEUiLCJHQUxFUklfUkVBRCIsIkdBTEVSSV9DUkVBVEUiLCJHQUxFUklfVVBEQVRFIiwiR0FMRVJJX0RFTEVURSIsIkZBUV9SRUFEIiwiRkFRX01BTkFHRSIsIlBFTkdBRFVBTl9SRUFEIiwiUEVOR0FEVUFOX1JFU1BPTkQiLCJHUklUX0xBWUFOQU5fTUFOQUdFIiwiR1JJVF9NRU5UT1JfTUFOQUdFIiwiR1JJVF9LRUxBU19NQU5BR0UiLCJHUklUX1BFTkRBRlRBUkFOX1JFQUQiXSwiY2FiYW5nIjoiUE5QUyBQdXNhdCIsImlzQ2FiYW5nIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UENQUyI6dHJ1ZSwiaXNBcHByb3ZlZEJ5UE5QUyI6dHJ1ZSwiaXNzdWVkX2RhdGUiOiIwNjAzMjAyNiIsImlhdCI6MTc3MjczOTIzNSwiZXhwIjoxNzcyODI1NjM1fQ.UaJZHH_Eigty-Q3nAgZTdqKJjbsWzLvIhl1wT7w-wUo",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"alamat\": \"Jl. Perintis Kemerdekaan II, Makassar\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/cabang/2aebc3e5-c741-4095-8845-4393819ee848/update",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "cabang",
+                "2aebc3e5-c741-4095-8845-4393819ee848",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post delete cabang / soft delete",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMjg0ZTU1Ni1mY2EwLTRkM2YtYjg0Yy01NGNiNDMyMTJmN2EiLCJlbWFpbCI6ImFkbWluQHBucHMuaWQiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiU1VQRVJfQURNSU4iXSwicGVybWlzc2lvbnMiOlsiQUtVTl9SRUFEIiwiQUtVTl9DUkVBVEUiLCJBS1VOX1VQREFURSIsIkFLVU5fREVMRVRFIiwiUk9MRV9SRUFEIiwiUk9MRV9DUkVBVEUiLCJST0xFX1VQREFURSIsIlJPTEVfREVMRVRFIiwiU0VOSU9SX1JFQUQiLCJTRU5JT1JfQ1JFQVRFIiwiU0VOSU9SX1VQREFURSIsIlNFTklPUl9ERUxFVEUiLCJTRU5JT1JfQVBQUk9WRSIsIkNBQkFOR19SRUFEIiwiQ0FCQU5HX0NSRUFURSIsIkNBQkFOR19VUERBVEUiLCJDQUJBTkdfREVMRVRFIiwiTkVXU19VVEFNQV9SRUFEIiwiTkVXU19VVEFNQV9DUkVBVEUiLCJORVdTX1VUQU1BX1VQREFURSIsIk5FV1NfVVRBTUFfUFVCTElTSCIsIk5FV1NfVVRBTUFfQVJDSElWRSIsIk5FV1NfVVRBTUFfREVMRVRFIiwiTkVXU19UQUdfUkVBRCIsIk5FV1NfVEFHX0NSRUFURSIsIk5FV1NfVEFHX1VQREFURSIsIk5FV1NfVEFHX0RFTEVURSIsIk5FV1NfS0FURUdPUklfUkVBRCIsIk5FV1NfS0FURUdPUklfQ1JFQVRFIiwiTkVXU19LQVRFR09SSV9VUERBVEUiLCJORVdTX0tBVEVHT1JJX0RFTEVURSIsIkFQUF9TRVRUSU5HX01BTkFHRSIsIlNUUlVLVFVSX1JFQUQiLCJTVFJVS1RVUl9DUkVBVEUiLCJTVFJVS1RVUl9VUERBVEUiLCJTVFJVS1RVUl9ERUxFVEUiLCJQUk9HUkFNX1JFQUQiLCJQUk9HUkFNX0NSRUFURSIsIlBST0dSQU1fVVBEQVRFIiwiUFJPR1JBTV9ERUxFVEUiLCJBR0VOREFfUkVBRCIsIkFHRU5EQV9DUkVBVEUiLCJBR0VOREFfVVBEQVRFIiwiQUdFTkRBX0RFTEVURSIsIkFSU0lQX1JFQUQiLCJBUlNJUF9DUkVBVEUiLCJBUlNJUF9VUERBVEUiLCJBUlNJUF9ERUxFVEUiLCJHQUxFUklfUkVBRCIsIkdBTEVSSV9DUkVBVEUiLCJHQUxFUklfVVBEQVRFIiwiR0FMRVJJX0RFTEVURSIsIkZBUV9SRUFEIiwiRkFRX01BTkFHRSIsIlBFTkdBRFVBTl9SRUFEIiwiUEVOR0FEVUFOX1JFU1BPTkQiLCJHUklUX0xBWUFOQU5fTUFOQUdFIiwiR1JJVF9NRU5UT1JfTUFOQUdFIiwiR1JJVF9LRUxBU19NQU5BR0UiLCJHUklUX1BFTkRBRlRBUkFOX1JFQUQiXSwiY2FiYW5nIjoiUE5QUyBQdXNhdCIsImlzQ2FiYW5nIjpmYWxzZSwiaXNBcHByb3ZlZEJ5UENQUyI6dHJ1ZSwiaXNBcHByb3ZlZEJ5UE5QUyI6dHJ1ZSwiaXNzdWVkX2RhdGUiOiIwNjAzMjAyNiIsImlhdCI6MTc3MjczOTIzNSwiZXhwIjoxNzcyODI1NjM1fQ.UaJZHH_Eigty-Q3nAgZTdqKJjbsWzLvIhl1wT7w-wUo",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/cabang/2aebc3e5-c741-4095-8845-4393819ee848/delete",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "cabang",
+                "2aebc3e5-c741-4095-8845-4393819ee848",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

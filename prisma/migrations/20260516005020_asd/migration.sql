@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Pesanan" ALTER COLUMN "statusPesanan" SET DEFAULT 'WAITING_PAYMENT',
+ALTER COLUMN "statusBayar" SET DEFAULT 'PENDING';

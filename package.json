@@ -1,0 +1,62 @@
+{
+  "name": "pnps-backend",
+  "module": "index.ts",
+  "type": "commonjs",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch src/server.ts",
+    "build": "bun build ./src/server.ts --outdir ./dist --target node",
+    "start": "bun dist/server.js",
+    "seed": "bun prisma/seed.ts",
+    "seed:seedPageSetting": "bun prisma/seedPageSetting.ts",
+    "db:generate": "./scripts/with-db-url.sh bunx prisma generate",
+    "db:migrate": "./scripts/with-db-url.sh bunx prisma migrate dev",
+    "db:migrate:status": "./scripts/with-db-url.sh bunx prisma migrate status",
+    "db:studio": "./scripts/with-db-url.sh bunx prisma studio",
+    "db:push": "./scripts/with-db-url.sh bunx prisma db push",
+    "db:seed": "./scripts/seed.sh",
+    "db:migrate-senior": "./scripts/with-db-url.sh bunx tsx scripts/migrate-senior-data.ts"
+  },
+  "prisma": {
+    "seed": "bun prisma/seed.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.2.2",
+    "@types/nodemailer": "^7.0.11",
+    "@types/sharp": "^0.32.0",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@prisma/client": "^6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "bcrypt": "^6.0.0",
+    "bullmq": "^5.76.9",
+    "cors": "^2.8.6",
+    "dev": "^0.1.3",
+    "dotenv": "^17.2.4",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.4.1",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.10.1",
+    "jsonwebtoken": "^9.0.3",
+    "migrate": "^2.1.0",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "nodemailer": "^8.0.4",
+    "prisma": "^6",
+    "redis": "^5.10.0",
+    "sharp": "^0.34.5",
+    "zod": "^4.3.6"
+  }
+}

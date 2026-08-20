@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Senior" ADD COLUMN     "isApprovedByPCPS" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "isApprovedByPNPS" BOOLEAN NOT NULL DEFAULT false;

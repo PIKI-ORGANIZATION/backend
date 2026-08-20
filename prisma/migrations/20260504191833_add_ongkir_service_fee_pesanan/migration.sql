@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Pesanan" ADD COLUMN     "biayaLayanan" DECIMAL(12,5) NOT NULL DEFAULT 0,
+ADD COLUMN     "ongkir" DECIMAL(12,5) NOT NULL DEFAULT 0;

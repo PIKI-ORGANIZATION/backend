@@ -1,0 +1,285 @@
+{
+  "info": {
+    "_postman_id": "75d40de8-e0e3-487a-b500-cfe355309239",
+    "name": "A-PNPS-WEBAPP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "36257498"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "Registration",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Role",
+      "item": [
+        {
+          "name": "get all roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/roles",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get role by uuid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/roles/5b92c90e-c302-4f95-8f54-c9233bfd8b58",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles",
+                "5b92c90e-c302-4f95-8f54-c9233bfd8b58"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get role by name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/roles/nama/user",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles",
+                "nama",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nama\": \"USER_PCPS_2\",\r\n    \"deskripsi\": \"Ini user pcps deskripsi\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/roles",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post update role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nama\": \"USER_PCPS_3\",\r\n    \"deskripsi\": \"Ini user pcps 3 yaa deskripsi\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/roles/e7fe39dd-cb86-4346-8c9f-381070e6a1c0/update",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles",
+                "e7fe39dd-cb86-4346-8c9f-381070e6a1c0",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post delete role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nama\": \"USER_PCPS_2\",\r\n    \"deskripsi\": \"Ini user pcps deskripsi\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{path}}/roles/e7fe39dd-cb86-4346-8c9f-381070e6a1c0/delete",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "roles",
+                "e7fe39dd-cb86-4346-8c9f-381070e6a1c0",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Akun",
+      "item": [
+        {
+          "name": "get all akuns",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/akuns",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get akun by uuid",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/akuns/88cb3478-36e7-4707-8b68-1e0777b0edba",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns",
+                "88cb3478-36e7-4707-8b68-1e0777b0edba"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get akun by identifier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjA0YmRjYy1kNWI4LTQ4YjYtYjM4MS0xZDY5MzBmNWJiNjgiLCJlbWFpbCI6InVzZXI4QHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VyOCIsInJvbGVzIjpbIlVTRVIiXSwicGVybWlzc2lvbnMiOltdLCJpc3N1ZWRfZGF0ZSI6IjE0MDIyMDI2IiwiaWF0IjoxNzcxMDY3MDk3LCJleHAiOjE3NzExNTM0OTd9.D5ouYkvC2GwAMvTIjCwuLrBg4Acy8E7MjH-TJrWdz2U",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{path}}/akuns/identifier/user8",
+              "host": [
+                "{{path}}"
+              ],
+              "path": [
+                "akuns",
+                "identifier",
+                "user8"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
