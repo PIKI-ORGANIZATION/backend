@@ -1,5 +1,5 @@
 {
-  "name": "pnps-backend",
+  "name": "piki-backend",
   "module": "index.ts",
   "type": "commonjs",
   "private": true,
@@ -9,13 +9,13 @@
     "start": "bun dist/server.js",
     "seed": "bun prisma/seed.ts",
     "seed:seedPageSetting": "bun prisma/seedPageSetting.ts",
-    "db:generate": "./scripts/with-db-url.sh bunx prisma generate",
-    "db:migrate": "./scripts/with-db-url.sh bunx prisma migrate dev",
-    "db:migrate:status": "./scripts/with-db-url.sh bunx prisma migrate status",
-    "db:studio": "./scripts/with-db-url.sh bunx prisma studio",
-    "db:push": "./scripts/with-db-url.sh bunx prisma db push",
-    "db:seed": "./scripts/seed.sh",
-    "db:migrate-senior": "./scripts/with-db-url.sh bunx tsx scripts/migrate-senior-data.ts"
+    "db:generate": "bun scripts/with-db-url.ts bunx prisma generate",
+    "db:migrate": "bun scripts/with-db-url.ts bunx prisma migrate dev",
+    "db:migrate:status": "bun scripts/with-db-url.ts bunx prisma migrate status",
+    "db:studio": "bun scripts/with-db-url.ts bunx prisma studio",
+    "db:push": "bun scripts/with-db-url.ts bunx prisma db push",
+    "db:seed": "bun scripts/with-db-url.ts bun prisma/seed.ts",
+    "db:migrate-senior": "bun scripts/with-db-url.ts bunx tsx scripts/migrate-senior-data.ts"
   },
   "prisma": {
     "seed": "bun prisma/seed.ts"
@@ -56,6 +56,7 @@
     "nodemailer": "^8.0.4",
     "prisma": "^6",
     "redis": "^5.10.0",
+    "resend": "^6.22.0",
     "sharp": "^0.34.5",
     "zod": "^4.3.6"
   }

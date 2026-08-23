@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { env } from "./env";
 
 const transporter = nodemailer.createTransport({
@@ -10,6 +11,14 @@ const transporter = nodemailer.createTransport({
       ? { user: env.SMTP_USER, pass: env.SMTP_PASS }
       : undefined,
 });
+
+const getResendClient = () => {
+  const key = env.RESEND_API_KEY || (env.SMTP_PASS?.startsWith("re_") ? env.SMTP_PASS : undefined);
+  if (key) {
+    return new Resend(key);
+  }
+  return null;
+};
 
 ////////////////////////////////////////////////////
 // HELPER: BASE EMAIL TEMPLATE
@@ -27,7 +36,7 @@ const createEmailTemplate = (title: string, preheader: string, content: string) 
   <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
     <div style="background-color: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);">
       <div style="background-color: #015da8; padding: 32px 24px; text-align: center; border-bottom: 4px solid #01437a;">
-        <h1 style="color: #ffffff; font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">PNPS GMKI</h1>
+        <h1 style="color: #ffffff; font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.5px;">PIKI</h1>
       </div>
       <div style="padding: 40px 32px; font-size: 15px; line-height: 1.6; color: #374151;">
         <h2 style="color: #111827; font-size: 20px; font-weight: 700; margin-top: 0; margin-bottom: 24px;">${title}</h2>
@@ -36,7 +45,7 @@ const createEmailTemplate = (title: string, preheader: string, content: string) 
     </div>
     <div style="padding: 32px 24px; text-align: center; font-size: 13px; color: #6b7280; line-height: 1.5;">
       <p style="margin: 0;">Email ini dikirim secara otomatis oleh sistem, mohon tidak dibalas.</p>
-      <p style="margin: 8px 0 0 0;">&copy; ${new Date().getFullYear()} PNPS GMKI & GRIT Institut. Hak Cipta Dilindungi.</p>
+      <p style="margin: 8px 0 0 0;">&copy; ${new Date().getFullYear()} PIKI. Hak Cipta Dilindungi.</p>
     </div>
   </div>
 </body>
@@ -47,26 +56,34 @@ const createEmailTemplate = (title: string, preheader: string, content: string) 
 // HELPER: SEND MAIL
 ////////////////////////////////////////////////////
 const sendMail = async (to: string, subject: string, html: string) => {
-  if (env.SMTP_TYPE === "log") {
-    console.log("====================================================");
-    console.log(`📧 [EMAIL LOG DRIVER] ${subject}`);
-    console.log(`To: ${to}`);
-    console.log("====================================================");
-    return { messageId: "logged" };
+  const apiKey = env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+
+  if (apiKey) {
+    try {
+      const resend = new Resend(apiKey);
+      const res = await resend.emails.send({
+        from: "PIKI System <onboarding@resend.dev>",
+        to,
+        subject,
+        html,
+      });
+
+      if (res.error) {
+        console.error("❌ Resend API Error:", res.error);
+      } else {
+        console.log(`📧 [RESEND EMAIL SENT SUCCESS] To: ${to} (ID: ${res.data?.id})`);
+      }
+      return res;
+    } catch (err) {
+      console.error("❌ Resend API Exception:", err);
+    }
   }
 
-  const info = await transporter.sendMail({
-    from: `"PNPS GMKI" <${env.SMTP_FROM}>`,
-    to,
-    subject,
-    html,
-  });
-
-  if (env.NODE_ENV === "development") {
-    console.log("📧 Preview URL:", nodemailer.getTestMessageUrl(info));
-  }
-
-  return info;
+  console.log("====================================================");
+  console.log(`📧 [EMAIL LOG DRIVER] ${subject}`);
+  console.log(`To (User Pendaftar): ${to}`);
+  console.log("====================================================");
+  return { messageId: "logged" };
 };
 
 ////////////////////////////////////////////////////
@@ -77,7 +94,7 @@ export const sendVerificationEmail = async (to: string, token: string) => {
 
   const content = `
     <p style="margin-bottom: 20px;">Halo,</p>
-    <p style="margin-bottom: 24px;">Terima kasih telah mendaftar di <strong>PNPS GMKI</strong>. Untuk menyelesaikan pendaftaran dan mengamankan akun Anda, silakan verifikasi alamat email Anda dengan mengklik tombol di bawah ini.</p>
+    <p style="margin-bottom: 24px;">Terima kasih telah mendaftar di <strong>PIKI</strong>. Untuk menyelesaikan pendaftaran dan mengamankan akun Anda, silakan verifikasi alamat email Anda dengan mengklik tombol di bawah ini.</p>
     
     <div style="text-align: center; margin: 32px 0;">
       <a href="${verifyUrl}" style="background-color: #015da8; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 15px; box-shadow: 0 2px 4px rgba(1, 93, 168, 0.25);">Verifikasi Email Anda</a>
@@ -88,13 +105,13 @@ export const sendVerificationEmail = async (to: string, token: string) => {
       <a href="${verifyUrl}" style="color: #015da8; font-size: 13px; word-break: break-all; margin-top: 8px; display: inline-block;">${verifyUrl}</a>
     </div>
     
-    <p style="margin-top: 0; margin-bottom: 0; font-size: 13px; color: #9ca3af;">Tautan ini berlaku selama 24 jam. Jika Anda tidak mendaftar di PNPS GMKI, Anda dapat mengabaikan email ini dengan aman.</p>
+    <p style="margin-top: 0; margin-bottom: 0; font-size: 13px; color: #9ca3af;">Tautan ini berlaku selama 24 jam. Jika Anda tidak mendaftar di PIKI, Anda dapat mengabaikan email ini dengan aman.</p>
   `;
 
   return sendMail(
     to,
-    "Verifikasi Email - PNPS GMKI",
-    createEmailTemplate("Verifikasi Alamat Email", "Selesaikan pendaftaran Anda di PNPS GMKI dengan memverifikasi email Anda.", content)
+    "Verifikasi Email - PIKI",
+    createEmailTemplate("Verifikasi Alamat Email", "Selesaikan pendaftaran Anda di PIKI dengan memverifikasi email Anda.", content)
   );
 };
 
@@ -103,7 +120,7 @@ export const sendResetPasswordEmail = async (to: string, token: string) => {
 
   const content = `
     <p style="margin-bottom: 20px;">Halo,</p>
-    <p style="margin-bottom: 24px;">Kami menerima permintaan untuk mengatur ulang kata sandi (reset password) untuk akun PNPS GMKI Anda. Jika ini memang Anda, silakan klik tombol di bawah ini untuk membuat kata sandi baru.</p>
+    <p style="margin-bottom: 24px;">Kami menerima permintaan untuk mengatur ulang kata sandi (reset password) untuk akun PIKI Anda. Jika ini memang Anda, silakan klik tombol di bawah ini untuk membuat kata sandi baru.</p>
     
     <div style="text-align: center; margin: 32px 0;">
       <a href="${resetUrl}" style="background-color: #015da8; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 15px; box-shadow: 0 2px 4px rgba(1, 93, 168, 0.25);">Atur Ulang Kata Sandi</a>
@@ -119,8 +136,8 @@ export const sendResetPasswordEmail = async (to: string, token: string) => {
 
   return sendMail(
     to,
-    "Reset Password - PNPS GMKI",
-    createEmailTemplate("Atur Ulang Kata Sandi", "Permintaan pengaturan ulang kata sandi untuk akun PNPS GMKI Anda.", content)
+    "Reset Password - PIKI",
+    createEmailTemplate("Atur Ulang Kata Sandi", "Permintaan pengaturan ulang kata sandi untuk akun PIKI Anda.", content)
   );
 };
 
@@ -677,3 +694,113 @@ export const sendAutoCancelNoResiEmail = async (
     createEmailTemplate("Pembatalan Otomatis ⚠️", `Pesanan ${nomorPesanan} dibatalkan karena batas waktu resi habis.`, content)
   );
 };
+
+////////////////////////////////////////////////////
+// REGISTRASI & KTANISASI EMAILS
+////////////////////////////////////////////////////
+
+export const sendRegistrasiSubmitEmail = async (
+  to: string,
+  nama: string,
+  noTagihan?: string
+) => {
+  const content = `
+    <p style="margin-bottom: 20px;">Halo <strong>${nama}</strong>,</p>
+    <p style="margin-bottom: 24px;">Terima kasih telah mendaftar di <strong>PIKI (Perkumpulan Intelegensia Kristen Indonesia)</strong>.</p>
+    
+    <div style="background-color: #f0f9ff; border-left: 4px solid #0284c7; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; color: #0369a1; font-weight: 700;">STATUS REGISTRASI: TAHAP 1 SELESAI</p>
+      <p style="margin: 0; font-size: 14px; color: #0c4a6e;">Berkas pendaftaran Anda telah berhasil diterima oleh sistem dan otomatis masuk ke antrean verifikasi Pengurus DPC daerah domisili Anda.</p>
+      ${noTagihan ? `<p style="margin: 12px 0 0 0; font-size: 13px; color: #0369a1;">Nomor Tagihan Iuran: <strong>${noTagihan}</strong></p>` : ""}
+    </div>
+    
+    <p style="margin: 0; font-size: 14px; color: #475569;">Verifikasi berkas membutuhkan waktu maksimal 3 hari kerja. Anda akan menerima notifikasi email selanjutnya setelah berkas diverifikasi.</p>
+  `;
+
+  return sendMail(
+    to,
+    "Pendaftaran Diterima - Registrasi & KTAnisasi PIKI",
+    createEmailTemplate("Pendaftaran Berhasil Diterima 📝", "Berkas pendaftaran Anda telah masuk ke sistem PIKI.", content)
+  );
+};
+
+export const sendRegistrasiVerifikasiEmail = async (
+  to: string,
+  nama: string,
+  status: string,
+  catatan?: string
+) => {
+  const isApproved = status === "APPROVED_DPC" || status === "APPROVED_DPP" || status === "BYPASSED_TO_DPP";
+  const statusTitle = isApproved ? "BERKAS DISETUJUI" : "BERKAS PERLU REVISI / DITOLAK";
+  const statusColor = isApproved ? "#059669" : "#dc2626";
+  const statusBg = isApproved ? "#ecfdf5" : "#fef2f2";
+
+  const content = `
+    <p style="margin-bottom: 20px;">Halo <strong>${nama}</strong>,</p>
+    <p style="margin-bottom: 24px;">Berikut adalah pembaruan status verifikasi berkas pendaftaran keanggotaan PIKI Anda.</p>
+    
+    <div style="background-color: ${statusBg}; border-left: 4px solid ${statusColor}; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; color: ${statusColor}; font-weight: 700;">HASIL VERIFIKASI: ${statusTitle}</p>
+      <p style="margin: 0; font-size: 14px; color: #1e293b;">Status: <strong>${status}</strong></p>
+      ${catatan ? `<p style="margin: 12px 0 0 0; font-size: 13px; color: #334155;">Catatan Verifikator: <em>${catatan}</em></p>` : ""}
+    </div>
+    
+    ${isApproved ? `<p style="margin: 0; font-size: 14px; color: #475569;">Silakan lanjutkan ke tahap berikutnya yaitu pembayaran iuran keanggotaan bulan pertama.</p>` : `<p style="margin: 0; font-size: 14px; color: #475569;">Silakan periksa kembali data berkas Anda atau hubungi pengurus DPC/DPP untuk info selengkapnya.</p>`}
+  `;
+
+  return sendMail(
+    to,
+    `Hasil Verifikasi Berkas (${status}) - Registrasi PIKI`,
+    createEmailTemplate(`Verifikasi Berkas ${statusTitle}`, `Pembaruan status verifikasi pendaftaran PIKI.`, content)
+  );
+};
+
+export const sendRegistrasiPembayaranEmail = async (
+  to: string,
+  nama: string,
+  noTagihan?: string
+) => {
+  const content = `
+    <p style="margin-bottom: 20px;">Halo <strong>${nama}</strong>,</p>
+    <p style="margin-bottom: 24px;">Pembayaran iuran keanggotaan bulan pertama Anda telah berhasil dikonfirmasi oleh sistem.</p>
+    
+    <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; color: #15803d; font-weight: 700;">PEMBAYARAN IURAN: LUNAS (PAID)</p>
+      ${noTagihan ? `<p style="margin: 0; font-size: 14px; color: #166534;">Nomor Tagihan: <strong>${noTagihan}</strong></p>` : ""}
+    </div>
+    
+    <p style="margin: 0; font-size: 14px; color: #475569;">Proses aktivasi KTA Digital Anda sedang diproses. KTA Digital akan segera terbit.</p>
+  `;
+
+  return sendMail(
+    to,
+    "Konfirmasi Pembayaran Iuran Berhasil - PIKI",
+    createEmailTemplate("Pembayaran Iuran Diterima 💳", "Iuran keanggotaan bulan pertama berhasil dikonfirmasi.", content)
+  );
+};
+
+export const sendRegistrasiAktivasiKtaEmail = async (
+  to: string,
+  nama: string,
+  noKta: string
+) => {
+  const content = `
+    <p style="margin-bottom: 20px;">Halo <strong>${nama}</strong>,</p>
+    <p style="margin-bottom: 24px;">Selamat! Kartu Tanda Anggota (KTA) Digital PIKI Anda telah resmi terbit dan status keanggotaan Anda telah <strong>AKTIF RESMI</strong>.</p>
+    
+    <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px;">
+      <p style="margin: 0 0 6px 0; font-size: 12px; color: #1d4ed8; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">KTA DIGITAL RESMI PIKI</p>
+      <p style="margin: 0 0 8px 0; font-size: 24px; font-weight: 800; color: #1e40af; font-family: monospace;">${noKta}</p>
+      <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">Atas Nama: ${nama}</p>
+    </div>
+    
+    <p style="margin: 0; font-size: 14px; color: #475569;">Terima kasih telah bergabung menjadi bagian dari Perkumpulan Intelegensia Kristen Indonesia (PIKI).</p>
+  `;
+
+  return sendMail(
+    to,
+    "KTA Digital Resmi Aktif! - PIKI",
+    createEmailTemplate("Selamat! KTA Digital Anda Aktif 🎉", `Nomor KTA Digital PIKI Anda: ${noKta}`, content)
+  );
+};
+

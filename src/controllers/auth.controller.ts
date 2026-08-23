@@ -67,16 +67,16 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 
-  // ── Gate 2: Belum di-approve PCPS & PNPS ──
-  if (!akun.senior?.isApprovedByPCPS || !akun.senior?.isApprovedByPNPS) {
-    const pcps = akun.senior?.isApprovedByPCPS ? "✓" : "Pending";
-    const pnps = akun.senior?.isApprovedByPNPS ? "✓" : "Pending";
+  // ── Gate 2: Belum di-approve PCPS & PNPS (jika memiliki data Senior) ──
+  if (akun.senior && (!akun.senior.isApprovedByPCPS || !akun.senior.isApprovedByPNPS)) {
+    const pcps = akun.senior.isApprovedByPCPS ? "✓" : "Pending";
+    const pnps = akun.senior.isApprovedByPNPS ? "✓" : "Pending";
     return res.status(403).json({
       message: `Akun Anda menunggu approval. Status: PCPS ${pcps}, PNPS ${pnps}.`,
       code: "APPROVAL_PENDING",
       approval: {
-        pcps: akun.senior?.isApprovedByPCPS ?? false,
-        pnps: akun.senior?.isApprovedByPNPS ?? false,
+        pcps: akun.senior.isApprovedByPCPS,
+        pnps: akun.senior.isApprovedByPNPS,
       },
     });
   }
