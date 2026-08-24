@@ -1,4 +1,5 @@
 import { Router } from "express";
+import multer from "multer";
 import {
   createRegistrasiHandler,
   getRegistrasiListHandler,
@@ -9,12 +10,17 @@ import {
   prosesPembayaranHandler,
   aktivasiKtaHandler,
   deleteRegistrasiHandler,
+  scanKtpHandler,
 } from "../controllers/registrasi.controller";
 
 import { validate } from "../middlewares/validate.middleware";
 import { createRegistrasiSchema } from "../validators/registrasi.schema";
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
+
+// 0. Scan KTP OCR (Tahap paling awal sebelum mengisi form)
+router.post("/scan-ktp", upload.single("ktp"), scanKtpHandler);
 
 // 1. Submit Pendaftaran Tahap 1 (Identitas, Kualifikasi, PDP, Pembuatan Akun)
 router.post("/", validate(createRegistrasiSchema), createRegistrasiHandler);

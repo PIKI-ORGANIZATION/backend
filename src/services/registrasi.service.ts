@@ -5,6 +5,7 @@ import {
   sendRegistrasiVerifikasiEmail,
   sendRegistrasiPembayaranEmail,
   sendRegistrasiAktivasiKtaEmail,
+  sendNotifikasiPendaftarBaru,
 } from "../config/email";
 
 export interface CreateRegistrasiDTO {
@@ -178,6 +179,28 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
   // Kirim Notifikasi Email
   try {
     await sendRegistrasiSubmitEmail(data.email, data.namaLengkap, noTagihan);
+
+    // Kirim notifikasi ke Pengurus DPC/DPP (Jika cabang dipilih)
+    if (registrasi.cabangUuid) {
+      const pengurusList = await prisma.registrasiPengurus.findMany({
+        where: { cabangUuid: registrasi.cabangUuid, statusVerifikasi: "APPROVED" }
+      });
+      for (const p of pengurusList) {
+        await sendNotifikasiPendaftarBaru(
+          p.email,
+          p.namaLengkap,
+          data.namaLengkap,
+          `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`
+        );
+      }
+      // Kirim ke Superadmin juga
+      await sendNotifikasiPendaftarBaru(
+        "adiyahardi335@gmail.com",
+        "Superadmin",
+        data.namaLengkap,
+        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`
+      );
+    }
   } catch (err) {
     console.error("Gagal mengirim email submit registrasi:", err);
   }

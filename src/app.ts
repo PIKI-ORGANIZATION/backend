@@ -75,6 +75,7 @@ import dashboardRoutes from './routes/dashboard.routes';
 import masterRoutes from './routes/master.routes';
 import youtubeRoutes from './routes/youtube.routes';
 import registrasiRoutes from './routes/registrasi.routes';
+import registrasiPengurusRoutes from './routes/registrasiPengurus.routes';
 import masterWilayahRoutes from './routes/masterWilayah.routes';
 
 // Routes
@@ -87,6 +88,7 @@ app.use('/api/v1/akuns', akunRoutes);
 app.use('/api/v1/seniors', seniorRoutes);
 app.use('/api/v1/permissions', permissionRoutes);
 app.use('/api/v1/registrasi', registrasiRoutes);
+app.use('/api/v1/registrasi-pengurus', registrasiPengurusRoutes);
 app.use('/api/v1/master-wilayah', masterWilayahRoutes);
 
 app.use('/api/v1/news-utama', newsRoutes);

@@ -33,6 +33,7 @@ model Akun {
   seniorUuid     String?      @unique @db.Uuid
   senior         Senior?      @relation(fields: [seniorUuid], references: [uuid])
   registrasiList Registrasi[]
+  registrasiPengurus RegistrasiPengurus?
 
   ulasanProduk UlasanProduk[]
 
@@ -242,6 +243,7 @@ model Cabang {
 
   // RELASI KE REGISTRASI
   registrasiList Registrasi[]
+  registrasiPengurusList RegistrasiPengurus[]
 
   // RELASI KE GALERI
   AlbumGaleriList AlbumGaleri[]
@@ -1317,6 +1319,7 @@ model Registrasi {
   email          String
   alamatDomisili String   @db.Text
   fileKtpUrl     String
+  nik            String?  @unique
 
   // TAHAP 1.2: KUALIFIKASI ORGANISASI
   dpp               String?  // Pilihan DPP (misal: "Sumatera Utara")
@@ -1431,5 +1434,39 @@ model DppDpc {
   @@map("dpp_dpc")
 }
 
+//////////////////////////////////////////////////
+// REGISTRASI PENGURUS (DPP/DPC)
+//////////////////////////////////////////////////
+model RegistrasiPengurus {
+  id String @id @default(uuid()) @db.Uuid
+  
+  namaLengkap String
+  noWa        String
+  email       String
+  tingkat     String   // DPP atau DPC
+  jabatan     String
+  
+  // Relasi opsional ke master wilayah/cabang
+  kode_provinsi  String?
+  kode_kabupaten String?
+  cabangUuid     String? @db.Uuid
+  cabang         Cabang? @relation(fields: [cabangUuid], references: [uuid])
+  
+  skKepengurusanUrl String
+  
+  statusVerifikasi  String    @default("PENDING_VERIFIKASI")
+  verifikatorUuid   String?   @db.Uuid
+  catatanVerifikasi String?   @db.Text
+  tglVerifikasi     DateTime?
+  
+  // Ketika di-ACC, kita buatkan akun
+  akunUuid String? @unique @db.Uuid
+  akun     Akun?   @relation(fields: [akunUuid], references: [uuid])
 
+  created_at DateTime @default(now())
+  created_by String?  @db.Uuid
+  updated_at DateTime @updatedAt
+  updated_by String?  @db.Uuid
 
+  @@map("registrasi_pengurus")
+}

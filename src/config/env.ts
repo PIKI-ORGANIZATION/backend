@@ -29,9 +29,13 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default('*'),
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
 
-  // Email Configuration (Resend)
+  // Email Configuration (Resend & SMTP)
   RESEND_API_KEY: z.string().optional(),
   SMTP_FROM: z.string().default('onboarding@resend.dev'),
+  SMTP_HOST: z.string().default('smtp.gmail.com'),
+  SMTP_PORT: z.string().default('465'),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
 
   // Frontend
   FRONTEND_URL: z.string().default('http://localhost:5173'),

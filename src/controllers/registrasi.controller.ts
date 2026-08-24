@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as registrasiService from "../services/registrasi.service";
+import * as ocrService from "../services/ocr.service";
 
 export const createRegistrasiHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -9,6 +10,25 @@ export const createRegistrasiHandler = async (req: Request, res: Response, next:
       success: true,
       message: "Pendaftaran Tahap 1 berhasil di-submit. Berkas masuk antrean verifikasi DPC.",
       data: registrasi,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const scanKtpHandler = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "Foto KTP wajib diunggah" });
+    }
+    
+    // Proses OCR dengan buffer dari multer memoryStorage
+    const result = await ocrService.scanKtp(req.file.buffer);
+    
+    res.status(200).json({
+      success: true,
+      message: "Berhasil membaca KTP",
+      data: result,
     });
   } catch (error) {
     next(error);

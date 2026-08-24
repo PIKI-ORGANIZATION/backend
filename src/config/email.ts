@@ -3,9 +3,7 @@ import { Resend } from "resend";
 import { env } from "./env";
 
 const transporter = nodemailer.createTransport({
-  host: env.SMTP_HOST,
-  port: Number(env.SMTP_PORT),
-  secure: Number(env.SMTP_PORT) === 465,
+  service: "gmail",
   auth:
     env.SMTP_USER && env.SMTP_PASS
       ? { user: env.SMTP_USER, pass: env.SMTP_PASS }
@@ -56,32 +54,26 @@ const createEmailTemplate = (title: string, preheader: string, content: string) 
 // HELPER: SEND MAIL
 ////////////////////////////////////////////////////
 const sendMail = async (to: string, subject: string, html: string) => {
-  const apiKey = env.RESEND_API_KEY || process.env.RESEND_API_KEY;
-
-  if (apiKey) {
+  // Hanya jalankan email jika env SMTP disetting, jika tidak, log saja
+  if (env.SMTP_USER && env.SMTP_PASS) {
     try {
-      const resend = new Resend(apiKey);
-      const res = await resend.emails.send({
-        from: "PIKI System <onboarding@resend.dev>",
+      const info = await transporter.sendMail({
+        from: `"PIKI System" <${env.SMTP_USER}>`,
         to,
         subject,
         html,
       });
-
-      if (res.error) {
-        console.error("❌ Resend API Error:", res.error);
-      } else {
-        console.log(`📧 [RESEND EMAIL SENT SUCCESS] To: ${to} (ID: ${res.data?.id})`);
-      }
-      return res;
+      console.log(`📧 [NODEMAILER SENT SUCCESS] To: ${to} (ID: ${info.messageId})`);
+      return info;
     } catch (err) {
-      console.error("❌ Resend API Exception:", err);
+      console.error("❌ Nodemailer Exception:", err);
     }
   }
 
+  // Fallback mode jika tidak ada setting SMTP (console.log)
   console.log("====================================================");
   console.log(`📧 [EMAIL LOG DRIVER] ${subject}`);
-  console.log(`To (User Pendaftar): ${to}`);
+  console.log(`To: ${to}`);
   console.log("====================================================");
   return { messageId: "logged" };
 };
@@ -804,3 +796,28 @@ export const sendRegistrasiAktivasiKtaEmail = async (
   );
 };
 
+////////////////////////////////////////////////////
+// REGISTRASI PENGURUS EMAILS
+////////////////////////////////////////////////////
+export const sendNotifikasiPendaftarBaru = async (
+  emailPengurus: string,
+  namaPengurus: string,
+  namaPendaftar: string,
+  urlDashboard: string
+) => {
+  const subject = "Pemberitahuan Pendaftar Baru (Menunggu Verifikasi)";
+  const preheader = `Halo ${namaPengurus}, ada pendaftar baru yang menunggu verifikasi dari Anda.`;
+  
+  const content = `
+    <p style="margin-bottom: 20px;">Halo <strong>${namaPengurus}</strong>,</p>
+    <p style="margin-bottom: 24px;">Sistem mencatat ada pendaftar baru bernama <strong>${namaPendaftar}</strong> di wilayah Anda yang saat ini menunggu verifikasi dari pihak Pengurus.</p>
+    
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="${urlDashboard}" style="background-color: #015da8; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 15px; box-shadow: 0 2px 4px rgba(1, 93, 168, 0.25);">Buka Dashboard Verifikasi</a>
+    </div>
+    
+    <p style="margin-bottom: 20px;">Mohon segera periksa kelengkapan data pendaftar tersebut melalui dashboard Anda.</p>
+  `;
+
+  return sendMail(emailPengurus, subject, createEmailTemplate(subject, preheader, content));
+};
