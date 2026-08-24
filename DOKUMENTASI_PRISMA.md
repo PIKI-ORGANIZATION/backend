@@ -39,12 +39,14 @@ REDIS_PORT=6379
 JWT_SECRET=piki-super-secret-key-dev-2026
 ```
 
-### 3️⃣ Sinkronkan Database & Generate Prisma Client (`db:push`)
-Jalankan perintah ini untuk membuat seluruh tabel database di PostgreSQL berdasarkan isi `prisma/schema.prisma`:
+### 3️⃣ Sinkronkan Database dengan Histori Migrasi (`db:migrate`)
+**⚠️ PENTING UNTUK KERJA TIM:** JANGAN gunakan `db:push` jika sudah ada file di dalam folder `prisma/migrations`. Gunakan `db:migrate` agar riwayat migrasi database tetap sinkron.
+
+Jalankan perintah ini untuk menerapkan seluruh histori migrasi SQL ke PostgreSQL lokal kamu:
 ```bash
-bun run db:push
+bun run db:migrate
 ```
-> **Catatan**: Perintah ini juga otomatis menjalankan `bun run db:generate` sehingga tipe data TypeScript Prisma Client langsung siap digunakan di dalam kode.
+> **Catatan**: Perintah ini otomatis membuat tabel sesuai skema dan menjalankan `bun run db:generate` sehingga tipe data TypeScript Prisma Client langsung siap digunakan.
 
 ### 4️⃣ Jalankan Data Seeding (`bun run seed`)
 Untuk mengisikan data awal / master ke dalam database (seperti Data Master Wilayah, Cabang, RBAC Roles/Permissions `REGISTRASI_*`, News, Struktur Organisasi, dan Page Settings):
@@ -68,21 +70,21 @@ Backend akan berjalan di **`http://localhost:3000`**. Kamu bisa langsung menggun
 
 ---
 
-## 🔄 WORKFLOW HARIAN PRISMA & GIT
+## 🔄 WORKFLOW HARIAN PRISMA & GIT (BEBAS KONFLIK)
 
-Setiap kali bekerja dalam tim:
+Agar tidak terjadi konflik riwayat database dengan teman satu tim, **IKUTI ATURAN INI**:
 
 1. 📥 **Setiap Habis `git pull`**:
-   Jalankan 2 perintah ini agar Prisma Client & Database di laptopmu langsung ter-sync dengan kodingan terbaru dari teman:
+   Jika temanmu membuat tabel baru atau ada perubahan skema, jalankan perintah ini agar tabel di laptopmu ikut ter-update:
    ```bash
-   bun run db:generate
-   bun run db:push
+   bun run db:migrate
+   bun run seed
    ```
 
-2. 📤 **Setiap Sebelum `git push`**:
-   Pastikan tipe TypeScript Prisma valid dan bebas error:
+2. 📤 **Setiap Mengubah `schema.prisma` (Menambah Tabel/Kolom Baru)**:
+   **Sebelum di-push ke git**, kamu wajib membuat file migrasi SQL baru. Jalankan perintah ini dan beri nama migrasinya (misal: `tambah_tabel_x`):
    ```bash
-   bun run db:generate
+   bun run db:migrate
    ```
 
 ---
