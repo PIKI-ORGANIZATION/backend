@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient({
   log: ["info", "warn", "error"],
@@ -46,6 +48,10 @@ async function main() {
 
   // 10. E-Commerce
   await seedEcommerce();
+
+  // 11. Master Wilayah & DPP DPC PIKI
+  await seedDataMasterWilayah();
+  await seedDppDpc();
 
   console.log("✅ Seeding selesai.");
 }
@@ -2281,6 +2287,68 @@ async function seedEcommerce() {
   console.log("✅ PengaturanPesanan seeded");
 
   console.log("🎉 E-Commerce seeding selesai");
+}
+
+// ============================================================
+// 11. MASTER WILAYAH & DPP DPC PIKI
+// ============================================================
+async function seedDppDpc() {
+  console.log("Seeding DPP DPC...");
+  const dppDpcDataPath = path.join(__dirname, "data/dpp_dpc.json");
+
+  if (fs.existsSync(dppDpcDataPath)) {
+    const raw = fs.readFileSync(dppDpcDataPath, "utf-8");
+    const list: any[] = JSON.parse(raw);
+
+    for (const item of list) {
+      const existing = await prisma.dppDpc.findFirst({
+        where: {
+          dpp: { equals: item.dpp, mode: "insensitive" },
+          dpc: { equals: item.dpc, mode: "insensitive" },
+        },
+      });
+
+      if (!existing) {
+        await prisma.dppDpc.create({ data: item });
+      } else {
+        await prisma.dppDpc.update({
+          where: { id: existing.id },
+          data: item,
+        });
+      }
+    }
+    console.log(`✅ ${list.length} DPP DPC records seeded.`);
+  } else {
+    console.log("⚠️ dpp_dpc.json file not found, skipping.");
+  }
+}
+
+async function seedDataMasterWilayah() {
+  console.log("Seeding Data Master Wilayah...");
+  const wilayahPath = path.join(__dirname, "data/master_wilayah_kabupaten.json");
+
+  if (fs.existsSync(wilayahPath)) {
+    const raw = fs.readFileSync(wilayahPath, "utf-8");
+    const list: any[] = JSON.parse(raw);
+
+    const count = await prisma.dataMasterWilayah.count();
+    if (count === 0) {
+      await prisma.dataMasterWilayah.createMany({
+        data: list.map((w) => ({
+          kode_provinsi: w.kode_provinsi,
+          nama_provinsi: w.nama_provinsi,
+          kode_kabupaten: w.kode_kabupaten,
+          nama_kabupaten: w.nama_kabupaten,
+        })),
+        skipDuplicates: true,
+      });
+      console.log(`✅ ${list.length} Master Wilayah Kabupaten records seeded.`);
+    } else {
+      console.log(`✅ DataMasterWilayah already contains ${count} records.`);
+    }
+  } else {
+    console.log("⚠️ master_wilayah_kabupaten.json file not found, skipping.");
+  }
 }
 
 // ============================================================

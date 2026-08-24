@@ -1,0 +1,1442 @@
+[
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kota Medan",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.71",
+    "pengurus": "Magdalena Linda Leonita Sibarani, SE, Msi.",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "18/08/2024"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kota Binjai",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.75",
+    "pengurus": "Drs. Sardi Purba",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Langkat",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.05",
+    "pengurus": "St. Drs. BASRY SITORUS",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Deli Serdang",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.07",
+    "pengurus": "JONI HENDEI KELIAT, S.P",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Dairi",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.11",
+    "pengurus": "PANA AKBAR SIMATUPANG",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kota Pematangsiantar",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.72",
+    "pengurus": "Basrin Aritama Nababan, SE",
+    "no_handphone": null,
+    "keterangan": "Defintif",
+    "penerbitan_sk": "06/06/2023"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Toba",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.12",
+    "pengurus": "Tonny Sumanjuntak",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "26/10/2022"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Tapanuli Utara",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.02",
+    "pengurus": "BETTY ADELINA SIHOMBING, SKM",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "16/06/2023"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kota Sibolga",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.73",
+    "pengurus": "NIXON PENDI SIMANJUNTAK",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kota Gunungsitoli",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.78",
+    "pengurus": "TRIMEN VEBRIYANTO HAREFA",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Nias",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.04",
+    "pengurus": "AMAL AGUS S Zega",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": null
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Labuhan Batu",
+    "kode_provinsi": "12",
+    "kode_kabupaten": null,
+    "pengurus": "BAHDER JOHAN LUMBAN GAOL",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kota Padangsidempuan",
+    "kode_provinsi": "12",
+    "kode_kabupaten": null,
+    "pengurus": "HENRY ANTHONIUS HUTAURUK",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Tapanuli Selatan",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.03",
+    "pengurus": "EDISON RAMBE",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Tapanuli Tengah",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.01",
+    "pengurus": "PARLAUNGAN SILALAHI",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Padang Lawas",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.21",
+    "pengurus": "Asro Simamora",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Pakpak Bharat",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.15",
+    "pengurus": "Rendy Sihombing",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Mandailing",
+    "kode_provinsi": "12",
+    "kode_kabupaten": null,
+    "pengurus": "HOBBI BUTAR BUTAR",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kota Tanjung Balai",
+    "kode_provinsi": "12",
+    "kode_kabupaten": null,
+    "pengurus": "dr. ANDREW G. Sitorus",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Batu Bara",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.19",
+    "pengurus": "HITLER MAULIATE SILALAHI",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "08/12/2022"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Simalungun",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.08",
+    "pengurus": "Pdt. Drs.Mardison Simanjorang, S.Th. M.Hum",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "25/10/2023"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Labuhanbatu Utara",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.23",
+    "pengurus": "PATAR LUMBANTORUAN",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "04/10/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Karo",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.06",
+    "pengurus": "Hendra Mitcon Purba, ST, M.Si",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "20/10/2023"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Nias Utara",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.24",
+    "pengurus": "Noferman Zega",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "21/11/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Nias Barat",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.25",
+    "pengurus": "Budieli Hia",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "27/06/2021"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Humbang Hasudutan",
+    "kode_provinsi": "12",
+    "kode_kabupaten": null,
+    "pengurus": "Jhonsar Lumbantoruan",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "25/11/2022"
+  },
+  {
+    "dpp": "Sumatera Utara",
+    "dpc": "Kabupaten Nias Selatan",
+    "kode_provinsi": "12",
+    "kode_kabupaten": "12.14",
+    "pengurus": "Aferili Harita",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "12/01/2024"
+  },
+  {
+    "dpp": "Sumatera Barat",
+    "dpc": "Kota Padang",
+    "kode_provinsi": "13",
+    "kode_kabupaten": "13.71",
+    "pengurus": "Bangun Hermanto Hutapea, S.T",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "09/03/2020"
+  },
+  {
+    "dpp": "Sumatera Barat",
+    "dpc": "Kabupaten Mentawai",
+    "kode_provinsi": "13",
+    "kode_kabupaten": null,
+    "pengurus": "Nikanor Saguruk, S.Th., M.Si",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "09/03/2020"
+  },
+  {
+    "dpp": "Lampung",
+    "dpc": "Kota Bandar Lampung",
+    "kode_provinsi": "18",
+    "kode_kabupaten": "18.71",
+    "pengurus": "Naek Siregar. Ketua",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "21/06/2021"
+  },
+  {
+    "dpp": "Lampung",
+    "dpc": "Kabupaten Way Kanan",
+    "kode_provinsi": "18",
+    "kode_kabupaten": "18.08",
+    "pengurus": "Dra Rohjayati. Ketua",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "21/06/2021"
+  },
+  {
+    "dpp": "Lampung",
+    "dpc": "Kabupaten Lampung Timur",
+    "kode_provinsi": "18",
+    "kode_kabupaten": "18.07",
+    "pengurus": "Kornelius Agni Suryawan. Ketua",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "21/06/2021"
+  },
+  {
+    "dpp": "Lampung",
+    "dpc": "Kabupaten Lampung Selatan",
+    "kode_provinsi": "18",
+    "kode_kabupaten": "18.01",
+    "pengurus": "Salatiely Daely, S.H",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "21/07/2019"
+  },
+  {
+    "dpp": "Riau",
+    "dpc": "Kota Dumai",
+    "kode_provinsi": "14",
+    "kode_kabupaten": "14.72",
+    "pengurus": "ZAINAL ARIF",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "20/08/2021"
+  },
+  {
+    "dpp": "Riau",
+    "dpc": "Kabupaten Pelalawan",
+    "kode_provinsi": "14",
+    "kode_kabupaten": "14.05",
+    "pengurus": "Ir. Robert Sitorus",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "01/11/2021"
+  },
+  {
+    "dpp": "Riau",
+    "dpc": "Kota Pekan Baru",
+    "kode_provinsi": "14",
+    "kode_kabupaten": null,
+    "pengurus": "Ferry Shandra Pardede, S.H., M.A",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "04/12/2020"
+  },
+  {
+    "dpp": "Kepulauan Riau",
+    "dpc": "Kota Batam",
+    "kode_provinsi": "21",
+    "kode_kabupaten": "21.71",
+    "pengurus": "Dr. (HC) Efraim Mokosuli, M.Pd., M.Th",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "14/11/2023"
+  },
+  {
+    "dpp": "Kepulauan Riau",
+    "dpc": "Kabupaten Bintan",
+    "kode_provinsi": "21",
+    "kode_kabupaten": "21.01",
+    "pengurus": "Dadi Priadi Immanuel Elia",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "21/11/2022"
+  },
+  {
+    "dpp": "Kepulauan Riau",
+    "dpc": "Kota Tanjung Pinang",
+    "kode_provinsi": "21",
+    "kode_kabupaten": "21.72",
+    "pengurus": "Pdt Aprillo A. Q Pangemanan S.Pd.K",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "21/11/2022"
+  },
+  {
+    "dpp": "Dki Jakarta",
+    "dpc": "Kota Jakarta Utara Dan Kepulauan Seribu",
+    "kode_provinsi": null,
+    "kode_kabupaten": null,
+    "pengurus": "Anthony Salim, ST",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "14/02/2023"
+  },
+  {
+    "dpp": "Dki Jakarta",
+    "dpc": "Kota Jakarta Selatan",
+    "kode_provinsi": null,
+    "kode_kabupaten": null,
+    "pengurus": "Roy Otto Joost Awuy",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "14/02/2023"
+  },
+  {
+    "dpp": "Dki Jakarta",
+    "dpc": "Kota Jakarta Pusat",
+    "kode_provinsi": null,
+    "kode_kabupaten": null,
+    "pengurus": "Ivan Takaria",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "14/02/2023"
+  },
+  {
+    "dpp": "Dki Jakarta",
+    "dpc": "Kota Jakarta Timur",
+    "kode_provinsi": null,
+    "kode_kabupaten": null,
+    "pengurus": "Handoyo",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "14/02/2023"
+  },
+  {
+    "dpp": "Dki Jakarta",
+    "dpc": "Kota Jakarta Barat",
+    "kode_provinsi": null,
+    "kode_kabupaten": null,
+    "pengurus": "Dra. Christine Panjaitan",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "07/12/2023"
+  },
+  {
+    "dpp": "Banten",
+    "dpc": "Kota Cilegon",
+    "kode_provinsi": "36",
+    "kode_kabupaten": "36.72",
+    "pengurus": "St. U. Sitinjak",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "10/11/2021"
+  },
+  {
+    "dpp": "Banten",
+    "dpc": "Kabupaten Lebak",
+    "kode_provinsi": "36",
+    "kode_kabupaten": "36.02",
+    "pengurus": "Pdt. Gideon Krisna Widjaya",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "10/09/2022"
+  },
+  {
+    "dpp": "Banten",
+    "dpc": "Kabupaten Serang",
+    "kode_provinsi": "36",
+    "kode_kabupaten": "36.04",
+    "pengurus": "Pdt Algren Tambunan, MTh (cand)",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "01/11/2021"
+  },
+  {
+    "dpp": "Banten",
+    "dpc": "Kota Tanggerang",
+    "kode_provinsi": "36",
+    "kode_kabupaten": null,
+    "pengurus": "Eliezer Wambrau MBA.",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "18/06/2020"
+  },
+  {
+    "dpp": "Banten",
+    "dpc": "Kabupaten Tanggerang",
+    "kode_provinsi": "36",
+    "kode_kabupaten": null,
+    "pengurus": "Lukas Labiro, M.Pd",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "18/06/2020"
+  },
+  {
+    "dpp": "Banten",
+    "dpc": "Kota Tanggerang Selatan",
+    "kode_provinsi": "36",
+    "kode_kabupaten": null,
+    "pengurus": "Dr. Esrom H Panjaitan, S.Si. M.E.E",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "18/06/2020"
+  },
+  {
+    "dpp": "Banten",
+    "dpc": "Kota Serang",
+    "kode_provinsi": "36",
+    "kode_kabupaten": "36.73",
+    "pengurus": "Pdt. Herri LS Engka, MTh, MPd",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "18/06/2020"
+  },
+  {
+    "dpp": "Jawa Barat",
+    "dpc": "Kota Cirebon",
+    "kode_provinsi": "32",
+    "kode_kabupaten": "32.74",
+    "pengurus": "John Ivan Lee",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "15/11/2021"
+  },
+  {
+    "dpp": "Jawa Barat",
+    "dpc": "Kota Bekasi",
+    "kode_provinsi": "32",
+    "kode_kabupaten": "32.75",
+    "pengurus": "Pdt. (Em) Saud A. Sigalingging, Th.",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "29/01/2026"
+  },
+  {
+    "dpp": "Jawa Barat",
+    "dpc": "Kota Depok",
+    "kode_provinsi": "32",
+    "kode_kabupaten": "32.76",
+    "pengurus": "Mangaranap Sinaga, S.E., M.H",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "25/04/2025"
+  },
+  {
+    "dpp": "Daerah Istimewa Yogyakarta",
+    "dpc": "Kabupaten Bantul",
+    "kode_provinsi": "34",
+    "kode_kabupaten": "34.02",
+    "pengurus": "Agus Sedyaito",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "01/07/2022"
+  },
+  {
+    "dpp": "Daerah Istimewa Yogyakarta",
+    "dpc": "Kabupaten Gunung Kidul",
+    "kode_provinsi": "34",
+    "kode_kabupaten": null,
+    "pengurus": "Drs. Suko Rahmadi",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "01/07/2022"
+  },
+  {
+    "dpp": "Daerah Istimewa Yogyakarta",
+    "dpc": "Kabupaten Kulon Progo",
+    "kode_provinsi": "34",
+    "kode_kabupaten": "34.01",
+    "pengurus": "Yohanes Nugroho P",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "01/07/2022"
+  },
+  {
+    "dpp": "Daerah Istimewa Yogyakarta",
+    "dpc": "Kabupaten Sleman",
+    "kode_provinsi": "34",
+    "kode_kabupaten": "34.04",
+    "pengurus": "Pdt. Purwantoro Kurniawan",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "01/07/2022"
+  },
+  {
+    "dpp": "Daerah Istimewa Yogyakarta",
+    "dpc": "Kota Yogyakarta",
+    "kode_provinsi": "34",
+    "kode_kabupaten": "34.71",
+    "pengurus": "Dr. Ir. Jacky Latuperissa",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "01/07/2022"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Pati",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.18",
+    "pengurus": "Dr Drs S Agus Nurdijanto",
+    "no_handphone": null,
+    "keterangan": "Defintif",
+    "penerbitan_sk": "22/09/2021"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Semarang",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.22",
+    "pengurus": "Pdt. Dr. Julian Frank Rouw",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "15/01/2024"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Boyolali",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.09",
+    "pengurus": "Drs. St. Darjatmo",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "14/11/2023"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kota Salatiga",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.73",
+    "pengurus": "Dr. Ir. Sri Suwartiningsih, M.Si",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "06/12/2023"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Sukoharjo",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.11",
+    "pengurus": "Teguh Suroso, SH",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "05/09/2023"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Wonogiri",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.12",
+    "pengurus": "Pdt. Dibyo",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "05/09/2023"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Karanganyar",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.13",
+    "pengurus": "Ir. Joko Digdoyo",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "05/09/2023"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Sragen",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.14",
+    "pengurus": "Pdt. Christian Galabara",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "05/09/2023"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Klaten",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.10",
+    "pengurus": "Pdt. Daniel Ngatnu",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "05/09/2023"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Cilacap",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.01",
+    "pengurus": "Agus Sutrisno, SH",
+    "no_handphone": null,
+    "keterangan": null,
+    "penerbitan_sk": "12/05/2025"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Semarang",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.22",
+    "pengurus": "Pdt. Dr. Julian Frank Rouw",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "15/01/2024"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kota Semarang",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.74",
+    "pengurus": "Pdt. Dr. Antonio Sartono, S.Pd., D.Th",
+    "no_handphone": null,
+    "keterangan": "Definitf",
+    "penerbitan_sk": "18/06/2025"
+  },
+  {
+    "dpp": "Jawa Tengah",
+    "dpc": "Kabupaten Banyumas",
+    "kode_provinsi": "33",
+    "kode_kabupaten": "33.02",
+    "pengurus": "Sanubari Hia",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "12/05/2025"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Alor",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.05",
+    "pengurus": "Dr. Fredrik Abia Kande",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "14/01/2023"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Timor Tengah Selatan",
+    "kode_provinsi": "53",
+    "kode_kabupaten": null,
+    "pengurus": "Ared J Billik",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "23/03/2022"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Sumba Timur",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.11",
+    "pengurus": "Pdt. Naftali Djoru",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "16/12/2021"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Rote Ndao",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.14",
+    "pengurus": "PETSON S. HANGGE",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "23/03/2022"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Timor Tengah Utara",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.03",
+    "pengurus": "Fried M. Allung Blegur",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "23/03/2022"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Sabu Raijua",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.20",
+    "pengurus": "Dra. Rachel Billik Tallo",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "23/03/2022"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Sumba Barat",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.12",
+    "pengurus": "Pdt Theofilus Mete",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "06/05/2022"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Kupang",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.01",
+    "pengurus": "Deasy Ballo Foeh",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "05/05/2022"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kota Kupang",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.71",
+    "pengurus": "Ejbenbes Doeka",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "05/05/2022"
+  },
+  {
+    "dpp": "Nusa Tenggara Timur",
+    "dpc": "Kabupaten Sumba Barat Daya",
+    "kode_provinsi": "53",
+    "kode_kabupaten": "53.18",
+    "pengurus": "Pdt. Yakub Malo Bili",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "06/05/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kota Singkawang",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.72",
+    "pengurus": "Pdt. Martinus Pien",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "05/02/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Melawi",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.10",
+    "pengurus": "JIDAN",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "16/03/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Sambas",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.01",
+    "pengurus": "Drs. Timotius Ketak",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Bengkayang",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.07",
+    "pengurus": "Robertus",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "23/12/2023"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Kayong Utara",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.11",
+    "pengurus": "Marlon Refles Watuseke",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Landak",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.08",
+    "pengurus": "Erani",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Mempawah",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.02",
+    "pengurus": "Erani, ST., MT",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Kubu Raya",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.12",
+    "pengurus": "Ir. Bride Suryanus Allorante",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "10/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Sanggau",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.03",
+    "pengurus": "Ginting, S.Si., Apt., M.K.M",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kota Pontianak",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.71",
+    "pengurus": "Amat Tanjaya",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Ketapang",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.04",
+    "pengurus": "Otto Win Aryant",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Sekadau",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.09",
+    "pengurus": "Radius",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Sintang",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.05",
+    "pengurus": "Heri Jambri",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "31/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Barat",
+    "dpc": "Kabupaten Kapuas Hulu",
+    "kode_provinsi": "61",
+    "kode_kabupaten": "61.06",
+    "pengurus": "Herberia Karosekali",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "31/07/2022"
+  },
+  {
+    "dpp": "Kalimantan Timur",
+    "dpc": "Kota Balikpapan",
+    "kode_provinsi": "64",
+    "kode_kabupaten": "64.71",
+    "pengurus": "Dr. Piatur Pangaribuan",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "14/11/2021"
+  },
+  {
+    "dpp": "Kalimantan Timur",
+    "dpc": "Kabupaten Kutai Kartanegara",
+    "kode_provinsi": "64",
+    "kode_kabupaten": "64.02",
+    "pengurus": "Drs. Getsemani Zeth, MM",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "03/11/2023"
+  },
+  {
+    "dpp": "Kalimantan Timur",
+    "dpc": "Kota Samarinda",
+    "kode_provinsi": "64",
+    "kode_kabupaten": "64.72",
+    "pengurus": "DR. Drs. Y. MUHAJIYANTO",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "08/06/2022"
+  },
+  {
+    "dpp": "Kalimantan Timur",
+    "dpc": "Kabupaten Kutai Barat",
+    "kode_provinsi": "64",
+    "kode_kabupaten": "64.07",
+    "pengurus": "Pdt. Dr. DAVID JEMS TIGAU",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "15/05/2023"
+  },
+  {
+    "dpp": "Kalimantan Timur",
+    "dpc": "Kota Bontang",
+    "kode_provinsi": "64",
+    "kode_kabupaten": "64.74",
+    "pengurus": "Ir. APOLOS AGUSTINUS LENGIRAN",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "22/02/2023"
+  },
+  {
+    "dpp": "Kalimantan Timur",
+    "dpc": "Kabupaten Paser",
+    "kode_provinsi": "64",
+    "kode_kabupaten": "64.01",
+    "pengurus": "Pdt. Boyke Tambaani",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "08/06/2022"
+  },
+  {
+    "dpp": "Kalimantan Timur",
+    "dpc": "Kabupaten Kutai Timur",
+    "kode_provinsi": "64",
+    "kode_kabupaten": "64.08",
+    "pengurus": "Dr. Roma Malau. SE., MM",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "17/01/2024"
+  },
+  {
+    "dpp": "Kalimantan Timur",
+    "dpc": "Kabupaten Berau",
+    "kode_provinsi": "64",
+    "kode_kabupaten": "64.03",
+    "pengurus": "Dr. dr. Andarias Baso Kombong",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "30/09/2023"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Minahasa",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.02",
+    "pengurus": "Prof. DR. Theo Mautang, M.Kes, AIFO",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "05/08/2022"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kota Tomohon",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.73",
+    "pengurus": "Carol Senduk",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "05/08/2022"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kota Bitung",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.72",
+    "pengurus": "Pitter Lumingkewas",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "27/10/2020"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kota Manado",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.71",
+    "pengurus": "James Karinda, S.H., M.H",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Minahasa Utara",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.06",
+    "pengurus": "Denny Lolong, S.Sos",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "06/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Minahasa Selatan",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.05",
+    "pengurus": "Franky Donny Wongkar",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "13/06/2023"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Minahasa Tenggara",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.07",
+    "pengurus": "Novie E. Legie, S.T., M.E",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kota Kotamobagu",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.74",
+    "pengurus": "Friska Rantung, M.Si",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Bolaang Mongondow Timur",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.10",
+    "pengurus": "Wiken Rareho, M.H",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Bolaang Mongondow",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.01",
+    "pengurus": "Tjeny Kaarouwan, M.Pd",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Bolaang Mongondow Utara",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.08",
+    "pengurus": "Richard Kandung, S.IP., MAP",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "26/01/2026"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Bolaang Mongondow Selatan",
+    "kode_provinsi": "71",
+    "kode_kabupaten": "71.11",
+    "pengurus": "Gbl Daud Umboh, M.Theol",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Sitaro",
+    "kode_provinsi": "71",
+    "kode_kabupaten": null,
+    "pengurus": null,
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Sangihe",
+    "kode_provinsi": "71",
+    "kode_kabupaten": null,
+    "pengurus": "Jefry Gaghana, S.H",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Utara",
+    "dpc": "Kabupaten Talaud",
+    "kode_provinsi": "71",
+    "kode_kabupaten": null,
+    "pengurus": "Vence Sondang, S.Sos",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "18/12/2019"
+  },
+  {
+    "dpp": "Sulawesi Barat",
+    "dpc": "Kabupaten Mamasa",
+    "kode_provinsi": "76",
+    "kode_kabupaten": "76.03",
+    "pengurus": "Yohannes Karatong",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "15/02/2022"
+  },
+  {
+    "dpp": "Sulawesi Barat",
+    "dpc": "Kabupaten Polewali Mandar",
+    "kode_provinsi": "76",
+    "kode_kabupaten": "76.04",
+    "pengurus": "Yusrianto Putra Allo",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "15/02/2022"
+  },
+  {
+    "dpp": "Sulawesi Barat",
+    "dpc": "Kabupaten Majene",
+    "kode_provinsi": "76",
+    "kode_kabupaten": "76.05",
+    "pengurus": "Steelson Purnama",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "15/02/2022"
+  },
+  {
+    "dpp": "Sulawesi Barat",
+    "dpc": "Kabupaten Mamuju",
+    "kode_provinsi": "76",
+    "kode_kabupaten": "76.02",
+    "pengurus": "Daud Eko Cahyo Rukmono",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "16/02/2022"
+  },
+  {
+    "dpp": "Sulawesi Barat",
+    "dpc": "Kab Mamuju Tengah",
+    "kode_provinsi": "76",
+    "kode_kabupaten": null,
+    "pengurus": "Ines Pradhana Ruso",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "16/02/2022"
+  },
+  {
+    "dpp": "Sulawesi Barat",
+    "dpc": "Kabupaten Pasangkayu",
+    "kode_provinsi": "76",
+    "kode_kabupaten": "76.01",
+    "pengurus": "Agustinus Pasereng",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "15/02/2022"
+  },
+  {
+    "dpp": "Sulawesi Selatan",
+    "dpc": "Kota Makassar",
+    "kode_provinsi": "73",
+    "kode_kabupaten": "73.71",
+    "pengurus": "Dr. Osye Magdalena, M. Pd. M.Th.",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "29/01/2026"
+  },
+  {
+    "dpp": "Sulawesi Selatan",
+    "dpc": "Kabupaten Toraja Utara",
+    "kode_provinsi": "73",
+    "kode_kabupaten": "73.26",
+    "pengurus": "Pdt Hans Lura, M.Si",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "12/03/2021"
+  },
+  {
+    "dpp": "Sulawesi Selatan",
+    "dpc": "Kabupaten Luwu Timur",
+    "kode_provinsi": "73",
+    "kode_kabupaten": "73.24",
+    "pengurus": "Senfri Octavianus, S.STP.,M.PA",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "19/03/2021"
+  },
+  {
+    "dpp": "Sulawesi Selatan",
+    "dpc": "Kabupaten Maros",
+    "kode_provinsi": "73",
+    "kode_kabupaten": "73.09",
+    "pengurus": "Barnabas Pangloli, S.Pd",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "19/03/2021"
+  },
+  {
+    "dpp": "Sulawesi Selatan",
+    "dpc": "Kota Palopo",
+    "kode_provinsi": "73",
+    "kode_kabupaten": "73.73",
+    "pengurus": "Johnson Pasabaan, S.E",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "19/03/2021"
+  },
+  {
+    "dpp": "Sulawesi Selatan",
+    "dpc": "Kabupaten Tana Toraja",
+    "kode_provinsi": "73",
+    "kode_kabupaten": "73.18",
+    "pengurus": "Dr. Ir. Yunus Sirante, M.Si",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "26/01/2026"
+  },
+  {
+    "dpp": "Maluku",
+    "dpc": "Maluku Tenggara-Kota Tual",
+    "kode_provinsi": "81",
+    "kode_kabupaten": null,
+    "pengurus": "Ir. Hendrik Koedoeboen",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "22/09/2021"
+  },
+  {
+    "dpp": "Maluku",
+    "dpc": "Kabupaten Kepulauan Aru",
+    "kode_provinsi": "81",
+    "kode_kabupaten": "81.07",
+    "pengurus": "Mika Ganobal",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "26/01/2023"
+  },
+  {
+    "dpp": "Maluku",
+    "dpc": "Kabupaten Seram Bagian Barat",
+    "kode_provinsi": "81",
+    "kode_kabupaten": "81.06",
+    "pengurus": "Agusthina Matapere",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "26/01/2023"
+  },
+  {
+    "dpp": "Maluku",
+    "dpc": "Kabupaten Maluku Tengah",
+    "kode_provinsi": "81",
+    "kode_kabupaten": "81.01",
+    "pengurus": "Nova Anakotta",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "26/01/2023"
+  },
+  {
+    "dpp": "Maluku",
+    "dpc": "Kota Ambon",
+    "kode_provinsi": "81",
+    "kode_kabupaten": "81.71",
+    "pengurus": "Kevin Tupamahu",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "26/01/2023"
+  },
+  {
+    "dpp": "Maluku",
+    "dpc": "Kabupaten Kepulauan Tanimbar",
+    "kode_provinsi": "81",
+    "kode_kabupaten": "81.03",
+    "pengurus": "Simson Loblobly",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "26/01/2023"
+  },
+  {
+    "dpp": "Maluku",
+    "dpc": "Kabupaten Maluku Barat Daya",
+    "kode_provinsi": "81",
+    "kode_kabupaten": "81.08",
+    "pengurus": "Herdy Ubro",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "26/01/2023"
+  },
+  {
+    "dpp": "Maluku Utara",
+    "dpc": "Kabupaten Halmahera Barat",
+    "kode_provinsi": "82",
+    "kode_kabupaten": "82.01",
+    "pengurus": "RIKO DJANTI",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "08/07/2021"
+  },
+  {
+    "dpp": "Maluku Utara",
+    "dpc": "Kabupaten Morotai",
+    "kode_provinsi": "82",
+    "kode_kabupaten": null,
+    "pengurus": "Steiven O Ngongira, M.Pd",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "11/03/2021"
+  },
+  {
+    "dpp": "Maluku Utara",
+    "dpc": "Kabupaten Halmahera Utara",
+    "kode_provinsi": "82",
+    "kode_kabupaten": "82.03",
+    "pengurus": "Erland Mouw, S.IP., MPA",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "05/10/2021"
+  },
+  {
+    "dpp": "Maluku Utara",
+    "dpc": "Kota Ternate",
+    "kode_provinsi": "82",
+    "kode_kabupaten": "82.71",
+    "pengurus": "Pdt. Yakobus Tjanu, M.Si",
+    "no_handphone": null,
+    "keterangan": "Caretaker",
+    "penerbitan_sk": "05/10/2019"
+  },
+  {
+    "dpp": "Maluku Utara",
+    "dpc": "Kabupaten Halmahera Timur",
+    "kode_provinsi": "82",
+    "kode_kabupaten": "82.06",
+    "pengurus": "Ailen Goeslaw, S.E",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "25/11/2019"
+  },
+  {
+    "dpp": "Maluku Utara",
+    "dpc": "Kabupaten Halmahera Selatan",
+    "kode_provinsi": "82",
+    "kode_kabupaten": "82.04",
+    "pengurus": "Noce Totononu,SH, MSi",
+    "no_handphone": null,
+    "keterangan": "Definitif",
+    "penerbitan_sk": "25/11/2019"
+  }
+]
