@@ -42,11 +42,12 @@ JWT_SECRET=piki-super-secret-key-dev-2026
 ### 3️⃣ Sinkronkan Database dengan Histori Migrasi (`db:migrate`)
 **⚠️ PENTING UNTUK KERJA TIM:** JANGAN gunakan `db:push` jika sudah ada file di dalam folder `prisma/migrations`. Gunakan `db:migrate` agar riwayat migrasi database tetap sinkron.
 
-Jalankan perintah ini untuk menerapkan seluruh histori migrasi SQL ke PostgreSQL lokal kamu:
+Jalankan 2 perintah ini secara berurutan untuk menerapkan histori migrasi SQL ke PostgreSQL lokal kamu dan menyiapkan Prisma Client:
 ```bash
 bun run db:migrate
+bun run db:generate
 ```
-> **Catatan**: Perintah ini otomatis membuat tabel sesuai skema dan menjalankan `bun run db:generate` sehingga tipe data TypeScript Prisma Client langsung siap digunakan.
+> **Catatan**: `db:migrate` bertugas membuat tabel di database, sedangkan `db:generate` memastikan tipe data TypeScript Prisma Client sudah up-to-date dan siap digunakan.
 
 ### 4️⃣ Jalankan Data Seeding (`bun run seed`)
 Untuk mengisikan data awal / master ke dalam database (seperti Data Master Wilayah, Cabang, RBAC Roles/Permissions `REGISTRASI_*`, News, Struktur Organisasi, dan Page Settings):
