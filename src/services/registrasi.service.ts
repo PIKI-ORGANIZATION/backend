@@ -44,8 +44,13 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
   if (!data.noWa) {
     throw new Error("Nomor WhatsApp wajib diisi");
   }
-  if (data.confirmEmail && data.confirmEmail.trim().toLowerCase() !== data.email.trim().toLowerCase()) {
-    throw new Error("Email konfirmasi akun tidak cocok dengan email pendaftaran");
+  if (
+    data.confirmEmail &&
+    data.confirmEmail.trim().toLowerCase() !== data.email.trim().toLowerCase()
+  ) {
+    throw new Error(
+      "Email konfirmasi akun tidak cocok dengan email pendaftaran",
+    );
   }
 
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
@@ -53,6 +58,17 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
   const noTagihan = `INV-PIKI-${dateStr}-${randomNum}`;
 
   const registrasi = await prisma.$transaction(async (tx) => {
+    // 0. Cek apakah email sudah pernah mendaftar
+    const existingReg = await tx.registrasi.findFirst({
+      where: { email: data.email },
+    });
+
+    if (existingReg) {
+      throw new Error(
+        "Email ini sudah digunakan untuk pendaftaran. Silakan gunakan email lain atau cek status pendaftaran Anda.",
+      );
+    }
+
     // 1. Buat atau cari Akun pengguna berdasarkan email
     let akun = await tx.akun.findUnique({
       where: { email: data.email },
@@ -75,7 +91,12 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
 
       // Hubungkan Role USER jika tersedia
       const defaultRole = await tx.role.findFirst({
-        where: { namaRole: { in: ["USER", "MEMBER", "User", "Member"], mode: "insensitive" } },
+        where: {
+          namaRole: {
+            in: ["USER", "MEMBER", "User", "Member"],
+            mode: "insensitive",
+          },
+        },
       });
 
       if (defaultRole) {
@@ -145,7 +166,8 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
       data: {
         registrasiId: newReg.id,
         aksi: "SUBMIT_REGISTRASI",
-        keterangan: "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPC.",
+        keterangan:
+          "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPC.",
         actorNama: data.namaLengkap,
       },
     });
@@ -188,7 +210,8 @@ export const getRegistrasiList = async (params: {
   if (params.statusVerifikasi) where.statusVerifikasi = params.statusVerifikasi;
   if (params.statusPembayaran) where.statusPembayaran = params.statusPembayaran;
   if (params.statusKta) where.statusKta = params.statusKta;
-  if (params.langkahSekarang) where.langkahSekarang = Number(params.langkahSekarang);
+  if (params.langkahSekarang)
+    where.langkahSekarang = Number(params.langkahSekarang);
 
   const take = params.take ? Number(params.take) : 10;
   const skip = params.skip ? Number(params.skip) : 0;
@@ -204,7 +227,14 @@ export const getRegistrasiList = async (params: {
         akun: {
           select: { uuid: true, email: true, username: true, statusAkun: true },
         },
-        cabang: { select: { uuid: true, namaCabang: true, kabupatenKota: true, provinsi: true } },
+        cabang: {
+          select: {
+            uuid: true,
+            namaCabang: true,
+            kabupatenKota: true,
+            provinsi: true,
+          },
+        },
       },
     }),
   ]);
@@ -235,7 +265,11 @@ export const getRegistrasiById = async (id: string) => {
   });
 };
 
-export const updateRegistrasi = async (id: string, data: any, updatedBy?: string) => {
+export const updateRegistrasi = async (
+  id: string,
+  data: any,
+  updatedBy?: string,
+) => {
   const updated = await prisma.registrasi.update({
     where: { id },
     data: {
@@ -256,7 +290,8 @@ export const verifikasiRegistrasi = async (params: {
   const reg = await prisma.registrasi.findUnique({ where: { id: params.id } });
   if (!reg) throw new Error("Data registrasi tidak ditemukan");
 
-  const isApproved = params.status === "APPROVED_DPC" || params.status === "APPROVED_DPP";
+  const isApproved =
+    params.status === "APPROVED_DPC" || params.status === "APPROVED_DPP";
   const langkahNext = isApproved ? 4 : 2;
 
   const updated = await prisma.$transaction(async (tx) => {
@@ -287,7 +322,12 @@ export const verifikasiRegistrasi = async (params: {
 
   // Email Notification
   try {
-    await sendRegistrasiVerifikasiEmail(reg.email, reg.namaLengkap, params.status, params.catatanVerifikasi);
+    await sendRegistrasiVerifikasiEmail(
+      reg.email,
+      reg.namaLengkap,
+      params.status,
+      params.catatanVerifikasi,
+    );
   } catch (err) {
     console.error("Gagal mengirim email verifikasi:", err);
   }
@@ -295,7 +335,9 @@ export const verifikasiRegistrasi = async (params: {
   return updated;
 };
 
-export const checkAndBypassSla = async (actorNama: string = "System SLA Scheduler") => {
+export const checkAndBypassSla = async (
+  actorNama: string = "System SLA Scheduler",
+) => {
   const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
 
   const pendingList = await prisma.registrasi.findMany({
@@ -323,7 +365,8 @@ export const checkAndBypassSla = async (actorNama: string = "System SLA Schedule
         data: {
           registrasiId: reg.id,
           aksi: "SLA_AUTO_BYPASS_DPP",
-          keterangan: "DPC tidak memproses verifikasi dalam 3 hari kerja. Berkas otomatis diekskalasi (auto-bypass) ke DPP.",
+          keterangan:
+            "DPC tidak memproses verifikasi dalam 3 hari kerja. Berkas otomatis diekskalasi (auto-bypass) ke DPP.",
           actorNama,
         },
       });
@@ -338,7 +381,7 @@ export const checkAndBypassSla = async (actorNama: string = "System SLA Schedule
         reg.email,
         reg.namaLengkap,
         "BYPASSED_TO_DPP",
-        "Berkas Anda diekskalasi otomatis ke DPP karena batas waktu DPC melebihi 3 hari kerja."
+        "Berkas Anda diekskalasi otomatis ke DPP karena batas waktu DPC melebihi 3 hari kerja.",
       );
     } catch (err) {
       console.error(`Gagal kirim email bypass ke ${reg.email}:`, err);
@@ -390,7 +433,11 @@ export const prosesPembayaran = async (params: {
 
   if (statusPay === "PAID") {
     try {
-      await sendRegistrasiPembayaranEmail(reg.email, reg.namaLengkap, reg.noTagihan || undefined);
+      await sendRegistrasiPembayaranEmail(
+        reg.email,
+        reg.namaLengkap,
+        reg.noTagihan || undefined,
+      );
     } catch (err) {
       console.error("Gagal mengirim email pembayaran:", err);
     }
