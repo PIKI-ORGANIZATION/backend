@@ -437,6 +437,13 @@ async function seedPermissions() {
     // SETTINGS
     { namaPermission: "APP_SETTING_MANAGE", deskripsi: "Mengelola pengaturan aplikasi" },
     
+    // REGISTRASI & KTANISASI
+    { namaPermission: "REGISTRASI_READ",    deskripsi: "Melihat pendaftaran registrasi anggota" },
+    { namaPermission: "REGISTRASI_CREATE",  deskripsi: "Membuat pendaftaran registrasi" },
+    { namaPermission: "REGISTRASI_UPDATE",  deskripsi: "Mengubah data pendaftaran registrasi" },
+    { namaPermission: "REGISTRASI_APPROVE", deskripsi: "Verifikasi berkas & aktivasi KTA pendaftaran" },
+    { namaPermission: "REGISTRASI_DELETE",  deskripsi: "Menghapus data pendaftaran registrasi" },
+
     // SUPERADMIN (akses penuh)
     { namaPermission: "MANAGE_ALL_CABANG", deskripsi: "Akses penuh ke semua fitur cabang" },
   ];
