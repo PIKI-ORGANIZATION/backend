@@ -701,18 +701,15 @@ export const sendRegistrasiSubmitEmail = async (
     <p style="margin-bottom: 24px;">Terima kasih telah mendaftar di <strong>PIKI (Perkumpulan Intelegensia Kristen Indonesia)</strong>.</p>
     
     <div style="background-color: #f0f9ff; border-left: 4px solid #0284c7; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
-      <p style="margin: 0 0 6px 0; font-size: 13px; color: #0369a1; font-weight: 700;">STATUS REGISTRASI: TAHAP 1 SELESAI</p>
-      <p style="margin: 0; font-size: 14px; color: #0c4a6e;">Berkas pendaftaran Anda telah berhasil diterima oleh sistem dan otomatis masuk ke antrean verifikasi Pengurus DPC daerah domisili Anda.</p>
-      ${noTagihan ? `<p style="margin: 12px 0 0 0; font-size: 13px; color: #0369a1;">Nomor Tagihan Iuran: <strong>${noTagihan}</strong></p>` : ""}
+      <p style="margin: 0 0 6px 0; font-size: 13px; color: #0369a1; font-weight: 700;">STATUS REGISTRASI: SEDANG DALAM ANTREAN</p>
+      <p style="margin: 0; font-size: 14px; color: #0c4a6e;">Pendaftaran Anda sedang dalam antrean, mohon menunggu sedang diproses oleh Admin.</p>
     </div>
-    
-    <p style="margin: 0; font-size: 14px; color: #475569;">Verifikasi berkas membutuhkan waktu maksimal 3 hari kerja. Anda akan menerima notifikasi email selanjutnya setelah berkas diverifikasi.</p>
   `;
 
   return sendMail(
     to,
-    "Pendaftaran Diterima - Registrasi & KTAnisasi PIKI",
-    createEmailTemplate("Pendaftaran Berhasil Diterima 📝", "Berkas pendaftaran Anda telah masuk ke sistem PIKI.", content)
+    "Pendaftaran Sedang Dalam Antrean - Registrasi PIKI",
+    createEmailTemplate("Pendaftaran Sedang Diproses 📝", "Pendaftaran Anda sedang dalam antrean untuk diproses.", content)
   );
 };
 
@@ -722,28 +719,23 @@ export const sendRegistrasiVerifikasiEmail = async (
   status: string,
   catatan?: string
 ) => {
-  const isApproved = status === "APPROVED_DPC" || status === "APPROVED_DPP" || status === "BYPASSED_TO_DPP";
-  const statusTitle = isApproved ? "BERKAS DISETUJUI" : "BERKAS PERLU REVISI / DITOLAK";
-  const statusColor = isApproved ? "#059669" : "#dc2626";
-  const statusBg = isApproved ? "#ecfdf5" : "#fef2f2";
-
   const content = `
     <p style="margin-bottom: 20px;">Halo <strong>${nama}</strong>,</p>
-    <p style="margin-bottom: 24px;">Berikut adalah pembaruan status verifikasi berkas pendaftaran keanggotaan PIKI Anda.</p>
+    <p style="margin-bottom: 24px;">Mohon maaf, pendaftaran Anda saat ini ditolak atau memerlukan revisi.</p>
     
-    <div style="background-color: ${statusBg}; border-left: 4px solid ${statusColor}; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
-      <p style="margin: 0 0 6px 0; font-size: 13px; color: ${statusColor}; font-weight: 700;">HASIL VERIFIKASI: ${statusTitle}</p>
-      <p style="margin: 0; font-size: 14px; color: #1e293b;">Status: <strong>${status}</strong></p>
-      ${catatan ? `<p style="margin: 12px 0 0 0; font-size: 13px; color: #334155;">Catatan Verifikator: <em>${catatan}</em></p>` : ""}
+    <div style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
+      <p style="margin: 0 0 6px 0; font-size: 13px; color: #dc2626; font-weight: 700;">HASIL VERIFIKASI: BERKAS DITOLAK</p>
+      <p style="margin: 0; font-size: 14px; color: #1e293b;">Alasan Penolakan:</p>
+      <p style="margin: 6px 0 0 0; font-size: 14px; color: #334155; font-style: italic;">"${catatan || 'Data tidak lengkap atau tidak sesuai kriteria.'}"</p>
     </div>
     
-    ${isApproved ? `<p style="margin: 0; font-size: 14px; color: #475569;">Silakan lanjutkan ke tahap berikutnya yaitu pembayaran iuran keanggotaan bulan pertama.</p>` : `<p style="margin: 0; font-size: 14px; color: #475569;">Silakan periksa kembali data berkas Anda atau hubungi pengurus DPC/DPP untuk info selengkapnya.</p>`}
+    <p style="margin: 0; font-size: 14px; color: #475569;">Silakan hubungi pengurus DPC/DPP untuk informasi lebih lanjut mengenai pendaftaran Anda.</p>
   `;
 
   return sendMail(
     to,
-    `Hasil Verifikasi Berkas (${status}) - Registrasi PIKI`,
-    createEmailTemplate(`Verifikasi Berkas ${statusTitle}`, `Pembaruan status verifikasi pendaftaran PIKI.`, content)
+    "Pendaftaran Ditolak - Registrasi PIKI",
+    createEmailTemplate("Verifikasi Berkas Ditolak ⚠️", "Pembaruan status verifikasi pendaftaran PIKI.", content)
   );
 };
 
@@ -774,16 +766,32 @@ export const sendRegistrasiPembayaranEmail = async (
 export const sendRegistrasiAktivasiKtaEmail = async (
   to: string,
   nama: string,
-  noKta: string
+  noKta: string,
+  username?: string,
+  plainPassword?: string
 ) => {
   const content = `
     <p style="margin-bottom: 20px;">Halo <strong>${nama}</strong>,</p>
-    <p style="margin-bottom: 24px;">Selamat! Kartu Tanda Anggota (KTA) Digital PIKI Anda telah resmi terbit dan status keanggotaan Anda telah <strong>AKTIF RESMI</strong>.</p>
+    <p style="margin-bottom: 24px;">Selamat! Pendaftaran Anda telah diterima dan Kartu Tanda Anggota (KTA) Digital PIKI Anda telah resmi terbit. Status keanggotaan Anda kini <strong>AKTIF RESMI</strong>.</p>
     
     <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px;">
       <p style="margin: 0 0 6px 0; font-size: 12px; color: #1d4ed8; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">KTA DIGITAL RESMI PIKI</p>
       <p style="margin: 0 0 8px 0; font-size: 24px; font-weight: 800; color: #1e40af; font-family: monospace;">${noKta}</p>
       <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">Atas Nama: ${nama}</p>
+    </div>
+    
+    ${username && plainPassword ? `
+    <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
+      <p style="margin: 0 0 12px 0; font-size: 14px; color: #92400e; font-weight: 700;">INFORMASI LOGIN DASHBOARD PIKI</p>
+      <p style="margin: 0 0 8px 0; font-size: 14px; color: #1e293b;">Username Login: <strong>${username}</strong></p>
+      <p style="margin: 0 0 8px 0; font-size: 14px; color: #1e293b;">Email Login: <strong>${to}</strong></p>
+      <p style="margin: 0; font-size: 14px; color: #1e293b;">Password Default: <strong style="background-color: #fef3c7; padding: 2px 6px; border-radius: 4px; font-family: monospace;">${plainPassword}</strong></p>
+      <p style="margin: 12px 0 0 0; font-size: 12px; color: #b45309;"><em>Penting: Segera ubah password Anda setelah berhasil login untuk alasan keamanan.</em></p>
+    </div>
+    ` : ""}
+
+    <div style="text-align: center; margin: 32px 0;">
+      <a href="${env.FRONTEND_URL || "https://piki.or.id"}" style="background-color: #015da8; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 15px; box-shadow: 0 2px 4px rgba(1, 93, 168, 0.25);">Login ke Dashboard PIKI</a>
     </div>
     
     <p style="margin: 0; font-size: 14px; color: #475569;">Terima kasih telah bergabung menjadi bagian dari Perkumpulan Intelegensia Kristen Indonesia (PIKI).</p>
@@ -810,13 +818,28 @@ export const sendNotifikasiPendaftarBaru = async (
   
   const content = `
     <p style="margin-bottom: 20px;">Halo <strong>${namaPengurus}</strong>,</p>
-    <p style="margin-bottom: 24px;">Sistem mencatat ada pendaftar baru bernama <strong>${namaPendaftar}</strong> di wilayah Anda yang saat ini menunggu verifikasi dari pihak Pengurus.</p>
+    <p style="margin-bottom: 24px;">Sistem mencatat ada pendaftar baru yang menunggu verifikasi dari pihak Pengurus PIKI.</p>
     
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; background-color: #ffffff;">
+      <tr>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: 600; width: 35%;">Nama Pendaftar</td>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; color: #111827;"><strong>${namaPendaftar}</strong></td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: 600;">Wilayah DPC/DPP</td>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; color: #374151;">Silakan cek di Dashboard</td>
+      </tr>
+      <tr>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: 600;">Status</td>
+        <td style="padding: 10px; border: 1px solid #e5e7eb;"><span style="background-color: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">Menunggu Verifikasi</span></td>
+      </tr>
+    </table>
+
     <div style="text-align: center; margin: 32px 0;">
       <a href="${urlDashboard}" style="background-color: #015da8; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 15px; box-shadow: 0 2px 4px rgba(1, 93, 168, 0.25);">Buka Dashboard Verifikasi</a>
     </div>
     
-    <p style="margin-bottom: 20px;">Mohon segera periksa kelengkapan data pendaftar tersebut melalui dashboard Anda.</p>
+    <p style="margin: 0; font-size: 14px; color: #6b7280;">Mohon segera periksa kelengkapan data pendaftar beserta bukti transfer pembayaran awal yang telah dilampirkan melalui dashboard Anda.</p>
   `;
 
   return sendMail(emailPengurus, subject, createEmailTemplate(subject, preheader, content));

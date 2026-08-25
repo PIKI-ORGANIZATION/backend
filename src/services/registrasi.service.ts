@@ -14,10 +14,9 @@ export interface CreateRegistrasiDTO {
   tanggalLahir: string | Date;
   noWa: string;
   email: string;
-  confirmEmail?: string;
-  password?: string;
   alamatDomisili: string;
   fileKtpUrl: string;
+  buktiBayarUrl: string;
 
   dpp?: string;
   dpc?: string;
@@ -46,14 +45,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
   if (!data.noWa) {
     throw new Error("Nomor WhatsApp wajib diisi");
   }
-  if (
-    data.confirmEmail &&
-    data.confirmEmail.trim().toLowerCase() !== data.email.trim().toLowerCase()
-  ) {
-    throw new Error(
-      "Email konfirmasi akun tidak cocok dengan email pendaftaran",
-    );
-  }
+  // Validasi tambahan ditiadakan (confirmEmail dihapus)
 
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const randomNum = Math.floor(1000 + Math.random() * 9000);
@@ -71,45 +63,8 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
       );
     }
 
-    // 1. Buat atau cari Akun pengguna berdasarkan email
-    let akun = await tx.akun.findUnique({
-      where: { email: data.email },
-    });
-
-    if (!akun) {
-      const emailPrefix = data.email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "");
-      const username = `${emailPrefix}_${Math.floor(1000 + Math.random() * 9000)}`;
-      const rawPassword = data.password || "password123";
-      const hashedPassword = await bcrypt.hash(rawPassword, 10);
-
-      akun = await tx.akun.create({
-        data: {
-          email: data.email,
-          username,
-          password: hashedPassword,
-          statusAkun: "ACTIVE",
-        },
-      });
-
-      // Hubungkan Role USER jika tersedia
-      const defaultRole = await tx.role.findFirst({
-        where: {
-          namaRole: {
-            in: ["USER", "MEMBER", "User", "Member"],
-            mode: "insensitive",
-          },
-        },
-      });
-
-      if (defaultRole) {
-        await tx.akunRole.create({
-          data: {
-            akunUuid: akun.uuid,
-            roleUuid: defaultRole.uuid,
-          },
-        });
-      }
-    }
+    // 1. Pembuatan Akun dipindahkan ke Tahap 5 (Aktivasi KTA)
+    // agar password yang di-generate bisa dikirim di email ke-3 tanpa kolom sementara.
 
     // 2. Buat Pendaftaran Registrasi
     const newReg = await tx.registrasi.create({
@@ -121,9 +76,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         email: data.email,
         alamatDomisili: data.alamatDomisili,
         fileKtpUrl: data.fileKtpUrl,
-
-        akunUuid: akun.uuid,
-
+        // akunUuid dihapus karena belum dibuat
         dpp: data.dpp || null,
         dpc: data.dpc || null,
         kode_provinsi: data.kode_provinsi || null,
@@ -143,10 +96,11 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         setujuKerahasiaanData: data.setujuKerahasiaanData ?? true,
         tglPersetujuanPdp: new Date(),
 
-        statusVerifikasi: "PENDING_VERIFIKASI_DPP",
-        statusPembayaran: "UNPAID",
+        statusVerifikasi: "PENDING_VERIFIKASI_DPC",
+        statusPembayaran: "PENDING_CONFIRMATION",
         noTagihan,
-        nominalIuran: 50000,
+        nominalIuran: 25000,
+        buktiBayarUrl: data.buktiBayarUrl,
         statusKta: "INACTIVE",
         langkahSekarang: 1,
 
@@ -195,14 +149,25 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
           `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`
         );
       }
-      // Kirim ke Superadmin juga
-      await sendNotifikasiPendaftarBaru(
-        "adiyahardi335@gmail.com",
-        "Superadmin",
-        data.namaLengkap,
-        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`
-      );
     }
+
+    // Kirim ke Superadmin selalu (ambil otomatis dari database)
+    const superadmins = await prisma.akunRole.findMany({
+      where: { role: { namaRole: { in: ["SUPERADMIN", "Superadmin"] } } },
+      include: { akun: true }
+    });
+    
+    for (const sa of superadmins) {
+      if (sa.akun && sa.akun.email) {
+        await sendNotifikasiPendaftarBaru(
+          sa.akun.email,
+          sa.akun.username || "Superadmin",
+          data.namaLengkap,
+          `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`
+        );
+      }
+    }
+
   } catch (err) {
     console.error("Gagal mengirim email submit registrasi:", err);
   }
@@ -345,16 +310,18 @@ export const verifikasiRegistrasi = async (params: {
     return updatedReg;
   });
 
-  // Email Notification
-  try {
-    await sendRegistrasiVerifikasiEmail(
-      reg.email,
-      reg.namaLengkap,
-      params.status,
-      params.catatanVerifikasi,
-    );
-  } catch (err) {
-    console.error("Gagal mengirim email verifikasi:", err);
+  // Email Notification hanya jika ditolak
+  if (params.status === "REJECTED") {
+    try {
+      await sendRegistrasiVerifikasiEmail(
+        reg.email,
+        reg.namaLengkap,
+        params.status,
+        params.catatanVerifikasi,
+      );
+    } catch (err) {
+      console.error("Gagal mengirim email penolakan:", err);
+    }
   }
 
   return updated;
@@ -456,18 +423,6 @@ export const prosesPembayaran = async (params: {
     return res;
   });
 
-  if (statusPay === "PAID") {
-    try {
-      await sendRegistrasiPembayaranEmail(
-        reg.email,
-        reg.namaLengkap,
-        reg.noTagihan || undefined,
-      );
-    } catch (err) {
-      console.error("Gagal mengirim email pembayaran:", err);
-    }
-  }
-
   return updated;
 };
 
@@ -480,13 +435,77 @@ export const aktivasiKta = async (params: {
   const reg = await prisma.registrasi.findUnique({ where: { id: params.id } });
   if (!reg) throw new Error("Data registrasi tidak ditemukan");
 
-  const year = new Date().getFullYear();
-  const randomNum = Math.floor(1000 + Math.random() * 9000);
-  const noKta = params.customNoKta || `KTA-PIKI-${year}-${randomNum}`;
+  // 1. Generate Nomor KTA: PP.KK.UUUU.DDMMYY
+  const pp = (reg.kode_provinsi || "00").padStart(2, "0").slice(-2);
+  const kk = (reg.kode_kabupaten || "00").padStart(2, "0").slice(-2);
+  
+  // Format Tanggal Lahir (DDMMYY)
+  const dob = new Date(reg.tanggalLahir);
+  const dd = String(dob.getDate()).padStart(2, "0");
+  const mm = String(dob.getMonth() + 1).padStart(2, "0");
+  const yy = String(dob.getFullYear()).slice(-2);
+  const ddmmyy = `${dd}${mm}${yy}`;
+
+  // Ambil nomor urut KTA (berdasarkan total KTA aktif + 1)
+  const totalKtaActive = await prisma.registrasi.count({
+    where: { statusKta: "ACTIVE" }
+  });
+  const uuuu = String(totalKtaActive + 1).padStart(4, "0");
+
+  const noKta = params.customNoKta || `${pp}.${kk}.${uuuu}.${ddmmyy}`;
   const fileKtaUrl = `/uploads/kta/${reg.id}.pdf`;
 
+  // 2. Generate Password 8 Karakter Unik
+  const generatePassword = () => {
+    const chars = "abcdefghijklmnopqrstuvwxyz";
+    const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const nums = "0123456789";
+    const syms = "!@#$%^&*";
+    let pass = "";
+    pass += chars[Math.floor(Math.random() * chars.length)];
+    pass += upper[Math.floor(Math.random() * upper.length)];
+    pass += nums[Math.floor(Math.random() * nums.length)];
+    pass += syms[Math.floor(Math.random() * syms.length)];
+    const all = chars + upper + nums + syms;
+    for (let i = 0; i < 4; i++) {
+      pass += all[Math.floor(Math.random() * all.length)];
+    }
+    return pass.split('').sort(() => 0.5 - Math.random()).join('');
+  };
+
+  const plainPassword = generatePassword();
+  const hashedPassword = await bcrypt.hash(plainPassword, 10);
+  let finalUsername = "";
+
   const updated = await prisma.$transaction(async (tx) => {
-    // 1. Buat record Senior baru jika belum ada
+    // 3. Buat Akun User
+    const namePrefix = reg.namaLengkap.replace(/[^a-zA-Z0-9]/g, "").toLowerCase().substring(0, 10);
+    finalUsername = `${namePrefix}${Math.floor(100 + Math.random() * 900)}`;
+
+    const newAkun = await tx.akun.create({
+      data: {
+        email: reg.email,
+        username: finalUsername,
+        password: hashedPassword,
+        statusAkun: "ACTIVE",
+      },
+    });
+
+    // Hubungkan Role USER
+    const defaultRole = await tx.role.findFirst({
+      where: { namaRole: { in: ["USER", "MEMBER", "User", "Member"], mode: "insensitive" } },
+    });
+
+    if (defaultRole) {
+      await tx.akunRole.create({
+        data: {
+          akunUuid: newAkun.uuid,
+          roleUuid: defaultRole.uuid,
+        },
+      });
+    }
+
+    // 4. Buat record Senior baru jika belum ada
     let seniorUuid = reg.seniorUuid;
     if (!seniorUuid) {
       const newSenior = await tx.senior.create({
@@ -507,13 +526,11 @@ export const aktivasiKta = async (params: {
       seniorUuid = newSenior.uuid;
     }
 
-    // 2. Hubungkan seniorUuid ke Akun jika ada
-    if (reg.akunUuid) {
-      await tx.akun.update({
-        where: { uuid: reg.akunUuid },
-        data: { seniorUuid },
-      });
-    }
+    // 5. Hubungkan seniorUuid ke Akun
+    await tx.akun.update({
+      where: { uuid: newAkun.uuid },
+      data: { seniorUuid },
+    });
 
     // 3. Update status Registrasi
     const res = await tx.registrasi.update({
@@ -523,6 +540,7 @@ export const aktivasiKta = async (params: {
         noKta,
         fileKtaUrl,
         tglAktivasiKta: new Date(),
+        akunUuid: newAkun.uuid,
         seniorUuid,
         langkahSekarang: 5,
         updated_by: params.actorUuid || null,
@@ -544,7 +562,7 @@ export const aktivasiKta = async (params: {
   });
 
   try {
-    await sendRegistrasiAktivasiKtaEmail(reg.email, reg.namaLengkap, noKta);
+    await sendRegistrasiAktivasiKtaEmail(reg.email, reg.namaLengkap, noKta, finalUsername, plainPassword);
   } catch (err) {
     console.error("Gagal mengirim email aktivasi KTA:", err);
   }
