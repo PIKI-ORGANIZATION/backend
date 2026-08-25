@@ -170,7 +170,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         registrasiId: newReg.id,
         aksi: "SUBMIT_REGISTRASI",
         keterangan:
-          "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPC.",
+          "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
         actorNama: data.namaLengkap,
       },
     });
