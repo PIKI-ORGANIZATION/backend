@@ -96,6 +96,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         setujuKerahasiaanData: data.setujuKerahasiaanData ?? true,
         tglPersetujuanPdp: new Date(),
 
+        // statusVerifikasi: "PENDING_VERIFIKASI_DPC",
         statusVerifikasi: "PENDING_VERIFIKASI_DPP",
         statusPembayaran: "PENDING_CONFIRMATION",
         noTagihan,
