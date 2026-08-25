@@ -30,9 +30,9 @@ model Akun {
   // ========================
   // RELASI KE SENIOR & REGISTRASI
   // ========================
-  seniorUuid     String?      @unique @db.Uuid
-  senior         Senior?      @relation(fields: [seniorUuid], references: [uuid])
-  registrasiList Registrasi[]
+  seniorUuid         String?             @unique @db.Uuid
+  senior             Senior?             @relation(fields: [seniorUuid], references: [uuid])
+  registrasiList     Registrasi[]
   registrasiPengurus RegistrasiPengurus?
 
   ulasanProduk UlasanProduk[]
@@ -114,17 +114,17 @@ model Senior {
   pesanKesan   String?   @db.Text
   angkatan     String?
   // jabatan           String?
-  
-  provinsi       String?
-  kotaDomisili   String?
+
+  provinsi     String?
+  kotaDomisili String?
 
   // ========================
   // MASTER DATA RELATIONS (NEW)
   // ========================
-  pendidikanUuid   String? @db.Uuid
-  pekerjaanUuid    String? @db.Uuid
-  bidangStudiUuid  String? @db.Uuid
-  bidangMinatUuid  String? @db.Uuid
+  pendidikanUuid  String? @db.Uuid
+  pekerjaanUuid   String? @db.Uuid
+  bidangStudiUuid String? @db.Uuid
+  bidangMinatUuid String? @db.Uuid
 
   pendidikanRef     MasterPendidikan?  @relation(fields: [pendidikanUuid], references: [uuid])
   pekerjaanRef      MasterPekerjaan?   @relation(fields: [pekerjaanUuid], references: [uuid])
@@ -242,7 +242,7 @@ model Cabang {
   newsList NewsUtama[]
 
   // RELASI KE REGISTRASI
-  registrasiList Registrasi[]
+  registrasiList         Registrasi[]
   registrasiPengurusList RegistrasiPengurus[]
 
   // RELASI KE GALERI
@@ -1090,8 +1090,8 @@ model ProdukPesanan {
   spesifikasi ProdukPesananSpesifikasi[]
   pajak       PajakProdukPesanan[]
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt @default(now())
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
   deleted_at DateTime?
 
   ulasanProduk UlasanProduk?
@@ -1322,10 +1322,10 @@ model Registrasi {
   nik            String?  @unique
 
   // TAHAP 1.2: KUALIFIKASI ORGANISASI
-  dpp               String?  // Pilihan DPP (misal: "Sumatera Utara")
-  dpc               String?  // Pilihan DPC (misal: "Kota Medan" / "Kabupaten Langkat")
-  kode_provinsi     String?  // Kode provinsi dari master wilayah
-  kode_kabupaten    String?  // Kode kabupaten dari master wilayah
+  dpp               String? // Pilihan DPP (misal: "Sumatera Utara")
+  dpc               String? // Pilihan DPC (misal: "Kota Medan" / "Kabupaten Langkat")
+  kode_provinsi     String? // Kode provinsi dari master wilayah
+  kode_kabupaten    String? // Kode kabupaten dari master wilayah
   cabangUuid        String? @db.Uuid
   cabang            Cabang? @relation(fields: [cabangUuid], references: [uuid])
   kotaDomisili      String?
@@ -1387,11 +1387,11 @@ model RegistrasiLog {
   registrasiId String     @db.Uuid
   registrasi   Registrasi @relation(fields: [registrasiId], references: [id], onDelete: Cascade)
 
-  aksi        String
-  keterangan  String?  @db.Text
-  actorUuid   String?  @db.Uuid
-  actorNama   String?
-  created_at  DateTime @default(now())
+  aksi       String
+  keterangan String?  @db.Text
+  actorUuid  String?  @db.Uuid
+  actorNama  String?
+  created_at DateTime @default(now())
 
   @@map("registrasi_log")
 }
@@ -1419,17 +1419,17 @@ model DataMasterWilayah {
 // DPP DPC (MASTER PENGURUS CABANG PIKI)
 //////////////////////////////////////////////////
 model DppDpc {
-  id            Int       @id @default(autoincrement())
-  dpp           String?   @db.VarChar(255) // DPP (Provinsi)
-  dpc           String?   @db.VarChar(255) // DPC (Kab/Kota)
-  kode_provinsi String?   @db.VarChar(20)
-  kode_kabupaten String?  @db.VarChar(20)
-  pengurus      String?   @db.VarChar(255)
-  no_handphone  String?   @db.VarChar(100)
-  keterangan    String?   @db.VarChar(255)
-  penerbitan_sk String?   @db.VarChar(50)
-  created_at    DateTime? @default(now())
-  updated_at    DateTime? @default(now()) @updatedAt
+  id             Int       @id @default(autoincrement())
+  dpp            String?   @db.VarChar(255) // DPP (Provinsi)
+  dpc            String?   @db.VarChar(255) // DPC (Kab/Kota)
+  kode_provinsi  String?   @db.VarChar(20)
+  kode_kabupaten String?   @db.VarChar(20)
+  pengurus       String?   @db.VarChar(255)
+  no_handphone   String?   @db.VarChar(100)
+  keterangan     String?   @db.VarChar(255)
+  penerbitan_sk  String?   @db.VarChar(50)
+  created_at     DateTime? @default(now())
+  updated_at     DateTime? @default(now()) @updatedAt
 
   @@map("dpp_dpc")
 }
@@ -1439,26 +1439,26 @@ model DppDpc {
 //////////////////////////////////////////////////
 model RegistrasiPengurus {
   id String @id @default(uuid()) @db.Uuid
-  
+
   namaLengkap String
   noWa        String
   email       String
-  tingkat     String   // DPP atau DPC
+  tingkat     String // DPP atau DPC
   jabatan     String
-  
+
   // Relasi opsional ke master wilayah/cabang
   kode_provinsi  String?
   kode_kabupaten String?
   cabangUuid     String? @db.Uuid
   cabang         Cabang? @relation(fields: [cabangUuid], references: [uuid])
-  
+
   skKepengurusanUrl String
-  
+
   statusVerifikasi  String    @default("PENDING_VERIFIKASI")
   verifikatorUuid   String?   @db.Uuid
   catatanVerifikasi String?   @db.Text
   tglVerifikasi     DateTime?
-  
+
   // Ketika di-ACC, kita buatkan akun
   akunUuid String? @unique @db.Uuid
   akun     Akun?   @relation(fields: [akunUuid], references: [uuid])

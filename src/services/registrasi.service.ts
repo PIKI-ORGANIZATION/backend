@@ -282,13 +282,14 @@ export const verifikasiRegistrasi = async (params: {
 
   const isApproved =
     params.status === "APPROVED_DPC" || params.status === "APPROVED_DPP";
-  const langkahNext = isApproved ? 4 : 2;
+  const langkahNext = isApproved ? 5 : 2; // Langsung ke tahap 5 (KTA Aktif) jika di-approve
 
   const updated = await prisma.$transaction(async (tx) => {
     const updatedReg = await tx.registrasi.update({
       where: { id: params.id },
       data: {
         statusVerifikasi: params.status,
+        ...(isApproved && { statusPembayaran: "PAID" }), // Otomatis dianggap PAID karena sudah upload bukti
         verifikatorUuid: params.verifikatorUuid || null,
         catatanVerifikasi: params.catatanVerifikasi || null,
         tglVerifikasi: new Date(),
@@ -321,6 +322,21 @@ export const verifikasiRegistrasi = async (params: {
       );
     } catch (err) {
       console.error("Gagal mengirim email penolakan:", err);
+    }
+  }
+
+  // Jika disetujui, langsung jalankan proses aktivasi KTA otomatis
+  if (isApproved) {
+    try {
+      console.log(`Auto-Aktivasi KTA untuk registrasi ${params.id}...`);
+      return await aktivasiKta({
+        id: params.id,
+        actorNama: params.actorNama || "System Auto-Aktivasi",
+        actorUuid: params.verifikatorUuid,
+      });
+    } catch (err) {
+      console.error("Gagal auto-aktivasi KTA:", err);
+      // Fallback return data jika auto-aktivasi gagal
     }
   }
 
