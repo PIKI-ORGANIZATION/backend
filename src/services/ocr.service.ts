@@ -22,28 +22,50 @@ export const scanKtp = async (imageBuffer: Buffer) => {
     let alamat = null;
     let agama = null;
     
+    let nikLineIndex = -1;
+
+    // 1. Ekstrak Tanggal Lahir (Global Regex - KTP selalu DD-MM-YYYY)
+    const dateMatch = text.match(/\b\d{2}[-/]\d{2}[-/]\d{4}\b/);
+    if (dateMatch) {
+        tempatTglLahir = dateMatch[0];
+    }
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].toUpperCase();
         
         // Pembersihan karakter aneh hasil scan
         const cleanLine = line.replace(/[^A-Z0-9\s:/,-]/g, '');
 
-        if (cleanLine.includes("NAMA")) {
-            const splitName = cleanLine.split(/[:]/);
-            namaLengkap = splitName[1]?.trim() || lines[i+1]?.trim() || null;
+        if (nik && line.includes(nik)) {
+            nikLineIndex = i;
         }
-        if (cleanLine.includes("TEMPAT/TGL LAHIR") || cleanLine.includes("TEMPAT")) {
-            const splitTempat = cleanLine.split(/[:]/);
-            tempatTglLahir = splitTempat[1]?.trim() || lines[i+1]?.trim() || null;
+
+        // Ekstrak Nama
+        if (/(NAMA|MAMA|NANA)\b/.test(cleanLine) && !namaLengkap) {
+            const parts = line.split(/[:;=]/);
+            if (parts.length > 1 && parts[1].trim().length > 0) {
+                namaLengkap = parts[1].replace(/^[^a-zA-Z]+/, '').trim();
+            } else {
+                namaLengkap = lines[i+1]?.replace(/^[^a-zA-Z]+/, '').trim() || null;
+            }
         }
+        
+        // Ekstrak Alamat
         if (cleanLine.includes("ALAMAT")) {
-            const splitAlamat = cleanLine.split(/[:]/);
-            alamat = splitAlamat[1]?.trim() || lines[i+1]?.trim() || null;
+            const parts = line.split(/[:;=]/);
+            alamat = parts.length > 1 && parts[1].trim().length > 0 ? parts[1].trim() : lines[i+1]?.trim() || null;
         }
+
+        // Ekstrak Agama
         if (cleanLine.includes("AGAMA")) {
-            const splitAgama = cleanLine.split(/[:]/);
-            agama = splitAgama[1]?.trim() || lines[i+1]?.trim() || null;
+            const parts = line.split(/[:;=]/);
+            agama = parts.length > 1 && parts[1].trim().length > 0 ? parts[1].trim() : lines[i+1]?.trim() || null;
         }
+    }
+
+    // Fallback Nama: Jika keyword "NAMA" tidak terbaca jelas, di KTP nama biasanya berada persis 1 baris di bawah NIK
+    if (!namaLengkap && nikLineIndex !== -1 && nikLineIndex + 1 < lines.length) {
+        namaLengkap = lines[nikLineIndex + 1].replace(/^[^a-zA-Z]+/, '').trim();
     }
 
     // Validasi sederhana jika ini benar-benar KTP (ada kata kunci atau ada NIK)

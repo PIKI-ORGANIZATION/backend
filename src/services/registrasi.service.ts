@@ -9,6 +9,7 @@ import {
 } from "../config/email";
 
 export interface CreateRegistrasiDTO {
+  nik: string;
   namaLengkap: string;
   tanggalLahir: string | Date;
   noWa: string;
@@ -113,6 +114,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
     // 2. Buat Pendaftaran Registrasi
     const newReg = await tx.registrasi.create({
       data: {
+        nik: data.nik,
         namaLengkap: data.namaLengkap,
         tanggalLahir: new Date(data.tanggalLahir),
         noWa: data.noWa,
@@ -141,7 +143,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         setujuKerahasiaanData: data.setujuKerahasiaanData ?? true,
         tglPersetujuanPdp: new Date(),
 
-        statusVerifikasi: "PENDING_VERIFIKASI_DPC",
+        statusVerifikasi: "PENDING_VERIFIKASI_DPP",
         statusPembayaran: "UNPAID",
         noTagihan,
         nominalIuran: 50000,

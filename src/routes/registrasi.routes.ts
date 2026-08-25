@@ -13,6 +13,8 @@ import {
   scanKtpHandler,
 } from "../controllers/registrasi.controller";
 
+import { authenticate } from "../middlewares/auth.middleware";
+
 import { validate } from "../middlewares/validate.middleware";
 import { createRegistrasiSchema } from "../validators/registrasi.schema";
 
@@ -26,27 +28,27 @@ router.post("/scan-ktp", upload.single("ktp"), scanKtpHandler);
 router.post("/", validate(createRegistrasiSchema), createRegistrasiHandler);
 
 // 2. Ambil Daftar Registrasi (dengan filter status/search/pagination)
-router.get("/", getRegistrasiListHandler);
+router.get("/", authenticate, getRegistrasiListHandler);
 
 // 3. Trigger Manual Pengecekan SLA Auto-Bypass 3 Hari Kerja ke DPP
-router.post("/check-sla", checkSlaHandler);
+router.post("/check-sla", authenticate, checkSlaHandler);
 
 // 4. Detail Registrasi berdasarkan ID/UUID
-router.get("/:id", getRegistrasiByIdHandler);
+router.get("/:id", authenticate, getRegistrasiByIdHandler);
 
 // 5. Update/Edit Data Registrasi
-router.put("/:id", updateRegistrasiHandler);
+router.put("/:id", authenticate, updateRegistrasiHandler);
 
 // 6. Verifikasi DPC / DPP (Tahap 2 & 3)
-router.patch("/:id/verifikasi", verifikasiRegistrasiHandler);
+router.patch("/:id/verifikasi", authenticate, verifikasiRegistrasiHandler);
 
 // 7. Process / Konfirmasi Pembayaran Iuran (Tahap 4)
-router.patch("/:id/pembayaran", prosesPembayaranHandler);
+router.patch("/:id/pembayaran", authenticate, prosesPembayaranHandler);
 
 // 8. Penerbitan & Aktivasi KTA Digital (Tahap 5)
-router.patch("/:id/aktivasi-kta", aktivasiKtaHandler);
+router.patch("/:id/aktivasi-kta", authenticate, aktivasiKtaHandler);
 
 // 9. Hapus Data Registrasi
-router.delete("/:id", deleteRegistrasiHandler);
+router.delete("/:id", authenticate, deleteRegistrasiHandler);
 
 export default router;
