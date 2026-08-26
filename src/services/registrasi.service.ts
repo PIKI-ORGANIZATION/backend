@@ -133,45 +133,41 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
     return newReg;
   });
 
-  // Kirim Notifikasi Email
-  try {
-    await sendRegistrasiSubmitEmail(data.email, data.namaLengkap, noTagihan);
+  // Kirim Notifikasi Email di background tanpa await agar respons API instan
+  sendRegistrasiSubmitEmail(data.email, data.namaLengkap, noTagihan).catch(err => console.error(err));
 
-    // Kirim notifikasi ke Pengurus DPC/DPP (Jika cabang dipilih)
-    if (registrasi.cabangUuid) {
-      const pengurusList = await prisma.registrasiPengurus.findMany({
-        where: { cabangUuid: registrasi.cabangUuid, statusVerifikasi: "APPROVED" }
-      });
+  // Kirim notifikasi ke Pengurus DPC/DPP (Jika cabang dipilih)
+  if (registrasi.cabangUuid) {
+    prisma.registrasiPengurus.findMany({
+      where: { cabangUuid: registrasi.cabangUuid, statusVerifikasi: "APPROVED" }
+    }).then(pengurusList => {
       for (const p of pengurusList) {
-        await sendNotifikasiPendaftarBaru(
+        sendNotifikasiPendaftarBaru(
           p.email,
           p.namaLengkap,
           data.namaLengkap,
           `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`
-        );
+        ).catch(err => console.error(err));
       }
-    }
+    }).catch(err => console.error(err));
+  }
 
-    // Kirim ke Superadmin selalu (ambil otomatis dari database)
-    const superadmins = await prisma.akunRole.findMany({
-      where: { role: { namaRole: { in: ["SUPERADMIN", "Superadmin"] } } },
-      include: { akun: true }
-    });
-    
+  // Kirim ke Superadmin selalu (ambil otomatis dari database)
+  prisma.akunRole.findMany({
+    where: { role: { namaRole: { in: ["SUPERADMIN", "Superadmin"] } } },
+    include: { akun: true }
+  }).then(superadmins => {
     for (const sa of superadmins) {
       if (sa.akun && sa.akun.email) {
-        await sendNotifikasiPendaftarBaru(
+        sendNotifikasiPendaftarBaru(
           sa.akun.email,
           sa.akun.username || "Superadmin",
           data.namaLengkap,
           `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`
-        );
+        ).catch(err => console.error(err));
       }
     }
-
-  } catch (err) {
-    console.error("Gagal mengirim email submit registrasi:", err);
-  }
+  }).catch(err => console.error(err));
 
   return registrasi;
 };
@@ -312,18 +308,16 @@ export const verifikasiRegistrasi = async (params: {
     return updatedReg;
   });
 
-  // Email Notification hanya jika ditolak
+  // Email Notification hanya jika ditolak (berjalan asinkron di background)
   if (params.status === "REJECTED") {
-    try {
-      await sendRegistrasiVerifikasiEmail(
-        reg.email,
-        reg.namaLengkap,
-        params.status,
-        params.catatanVerifikasi,
-      );
-    } catch (err) {
+    sendRegistrasiVerifikasiEmail(
+      reg.email,
+      reg.namaLengkap,
+      params.status,
+      params.catatanVerifikasi,
+    ).catch(err => {
       console.error("Gagal mengirim email penolakan:", err);
-    }
+    });
   }
 
   // Jika disetujui, langsung jalankan proses aktivasi KTA otomatis
@@ -385,16 +379,14 @@ export const checkAndBypassSla = async (
 
     bypassed.push(updated);
 
-    try {
-      await sendRegistrasiVerifikasiEmail(
-        reg.email,
-        reg.namaLengkap,
-        "BYPASSED_TO_DPP",
-        "Berkas Anda diekskalasi otomatis ke DPP karena batas waktu DPC melebihi 3 hari kerja.",
-      );
-    } catch (err) {
+    sendRegistrasiVerifikasiEmail(
+      reg.email,
+      reg.namaLengkap,
+      "BYPASSED_TO_DPP",
+      "Berkas Anda diekskalasi otomatis ke DPP karena batas waktu DPC melebihi 3 hari kerja.",
+    ).catch(err => {
       console.error(`Gagal kirim email bypass ke ${reg.email}:`, err);
-    }
+    });
   }
 
   return { count: bypassed.length, bypassed };
@@ -578,11 +570,15 @@ export const aktivasiKta = async (params: {
     return res;
   });
 
-  try {
-    await sendRegistrasiAktivasiKtaEmail(reg.email, reg.namaLengkap, noKta, finalUsername, plainPassword);
-  } catch (err) {
+  sendRegistrasiAktivasiKtaEmail(
+    reg.email, 
+    reg.namaLengkap, 
+    noKta, 
+    finalUsername, 
+    plainPassword
+  ).catch(err => {
     console.error("Gagal mengirim email aktivasi KTA:", err);
-  }
+  });
 
   return updated;
 };
