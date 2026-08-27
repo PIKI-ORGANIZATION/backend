@@ -77,6 +77,7 @@ import youtubeRoutes from './routes/youtube.routes';
 import registrasiRoutes from './routes/registrasi.routes';
 import registrasiPengurusRoutes from './routes/registrasiPengurus.routes';
 import masterWilayahRoutes from './routes/masterWilayah.routes';
+import ktaRoutes from './routes/kta.routes';
 
 // Routes
 app.get('/', (req, res) => {
@@ -135,6 +136,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/master', masterRoutes);
 app.use('/api/v1/youtube', youtubeRoutes);
+app.use('/api/v1/kta', ktaRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
