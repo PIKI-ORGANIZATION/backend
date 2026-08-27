@@ -541,6 +541,9 @@ export const getMe = async (req: Request, res: Response) => {
       kotaDomisili: akun.senior?.kotaDomisili,
       instagram: akun.senior?.instagram,
       facebook: akun.senior?.facebook,
+      bio: akun.senior?.bio,
+      pesanKesan: akun.senior?.pesanKesan,
+      angkatan: akun.senior?.angkatan,
       cabang: akun.senior?.cabang,
     };
 
