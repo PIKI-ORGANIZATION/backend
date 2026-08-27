@@ -537,8 +537,8 @@ export const getMe = async (req: Request, res: Response) => {
       noWa: akun.senior?.noWa,
       bidangStudiUuid: akun.senior?.bidangStudiUuid,
       bidangMinatUuid: akun.senior?.bidangMinatUuid,
-      provinsiUuid: akun.senior?.provinsiUuid,
-      kotaDomisiliUuid: akun.senior?.kotaDomisiliUuid,
+      provinsi: akun.senior?.provinsi,
+      kotaDomisili: akun.senior?.kotaDomisili,
       instagram: akun.senior?.instagram,
       facebook: akun.senior?.facebook,
       cabang: akun.senior?.cabang,
@@ -581,8 +581,11 @@ export const updateProfile = async (req: Request, res: Response) => {
       noWa,
       bidangStudiUuid,
       bidangMinatUuid,
-      provinsiUuid,
-      kotaDomisiliUuid,
+      provinsi,
+      kotaDomisili,
+      bio,
+      pesanKesan,
+      angkatan,
       instagram,
       facebook,
     } = req.body;
@@ -602,8 +605,11 @@ export const updateProfile = async (req: Request, res: Response) => {
     if (noWa !== undefined) updateData.noWa = noWa;
     if (bidangStudiUuid !== undefined) updateData.bidangStudiUuid = bidangStudiUuid;
     if (bidangMinatUuid !== undefined) updateData.bidangMinatUuid = bidangMinatUuid;
-    if (provinsiUuid !== undefined) updateData.provinsiUuid = provinsiUuid;
-    if (kotaDomisiliUuid !== undefined) updateData.kotaDomisiliUuid = kotaDomisiliUuid;
+    if (provinsi !== undefined) updateData.provinsi = provinsi;
+    if (kotaDomisili !== undefined) updateData.kotaDomisili = kotaDomisili;
+    if (bio !== undefined) updateData.bio = bio;
+    if (pesanKesan !== undefined) updateData.pesanKesan = pesanKesan;
+    if (angkatan !== undefined) updateData.angkatan = angkatan;
     if (instagram !== undefined) updateData.instagram = instagram;
     if (facebook !== undefined) updateData.facebook = facebook;
 

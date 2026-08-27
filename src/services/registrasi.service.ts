@@ -522,6 +522,7 @@ export const aktivasiKta = async (params: {
           namaLengkap: reg.namaLengkap,
           tanggalLahir: reg.tanggalLahir,
           alamat: reg.alamatDomisili,
+          noWa: reg.noWa,
           kotaDomisili: reg.kotaDomisili || null,
           cabangUuid: reg.cabangUuid || null,
           pendidikanUuid: reg.pendidikanUuid || null,
