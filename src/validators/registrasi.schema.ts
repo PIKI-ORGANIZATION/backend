@@ -29,9 +29,9 @@ export const createRegistrasiSchema = z
       .string({ required_error: "Konfirmasi email wajib diisi" })
       .email("Format konfirmasi email tidak valid"),
 
-    buktiBayarUrl: z
-      .string({ required_error: "Bukti transfer wajib diisi" })
-      .min(1, "Upload bukti transfer wajib diisi"),
+    // buktiBayarUrl: z
+    //   .string({ required_error: "Bukti transfer wajib diisi" })
+    //   .min(1, "Upload bukti transfer wajib diisi"),
 
     alamatDomisili: z
       .string({ required_error: "Alamat domisili wajib diisi" })

@@ -101,7 +101,8 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         statusPembayaran: "PENDING_CONFIRMATION",
         noTagihan,
         nominalIuran: 25000,
-        buktiBayarUrl: data.buktiBayarUrl,
+        // buktiBayarUrl: data.buktiBayarUrl,
+        buktiBayarUrl: null, // dihapus sementara karena belum upload
         statusKta: "INACTIVE",
         langkahSekarang: 1,
 
