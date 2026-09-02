@@ -3,7 +3,7 @@
 // const decimal = z.union([z.string(), z.number()]);
 
 // const baseSchema = z.object({
-//   seniorUuid: z.string().uuid(),
+//   anggotaUuid: z.string().uuid(),
 //   akunUuid: z.string().uuid().optional().nullable(),
 
 //   namaPenerima: z.string().min(3),
@@ -72,7 +72,7 @@ const decimal = z.union([
 ]);
 
 const baseSchema = z.object({
-  seniorUuid: z.string().uuid(),
+  anggotaUuid: z.string().uuid(),
 
   akunUuid: z.string()
     .uuid()

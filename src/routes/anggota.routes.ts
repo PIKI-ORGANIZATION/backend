@@ -1,25 +1,25 @@
 import { Router } from "express";
 import {
-  getSeniors,
-  getSeniorById,
-  updateSenior,
-  getSeniorSearch,
-  createSenior,
+  getAnggotas,
+  getAnggotaById,
+  updateAnggota,
+  getAnggotaSearch,
+  createAnggota,
   approve,
   generatePublicLink,
-  getSeniorByToken,
-  updateSeniorByToken,
-} from "../controllers/senior.controller";
+  getAnggotaByToken,
+  updateAnggotaByToken,
+} from "../controllers/anggota.controller";
 
 import {
-  exportSeniors,
+  exportAnggotas,
   downloadExport,
   downloadTemplate,
   parseHeaders,
   previewImport,
   confirmImport,
   getJobStatus,
-} from "../controllers/senior-io.controller";
+} from "../controllers/anggota-io.controller";
 
 import { authenticate } from "../middlewares/auth.middleware";
 import { authorize } from "../middlewares/authorize.middleware";
@@ -30,9 +30,9 @@ import { scope } from "../middlewares/scope.middleware";
 
 import {
   uuidParamSchema,
-  updateSeniorSchema,
-  createSeniorSchema,
-} from "../validators/senior.schema";
+  updateAnggotaSchema,
+  createAnggotaSchema,
+} from "../validators/anggota.schema";
 
 import multer from "multer";
 
@@ -55,20 +55,20 @@ const excelUpload = multer({
 const router = Router();
 
 ////////////////////////////////////////////////////
-// PUBLIC: GET SENIOR BY TOKEN (no auth)
+// PUBLIC: GET ANGGOTA BY TOKEN (no auth)
 // Must be BEFORE /:uuid to avoid parameter collision
 ////////////////////////////////////////////////////
 router.get(
   "/public/by-token",
-  getSeniorByToken
+  getAnggotaByToken
 );
 
 ////////////////////////////////////////////////////
-// PUBLIC: UPDATE SENIOR BY TOKEN (no auth)
+// PUBLIC: UPDATE ANGGOTA BY TOKEN (no auth)
 ////////////////////////////////////////////////////
 router.post(
   "/public/update-by-token",
-  updateSeniorByToken
+  updateAnggotaByToken
 );
 
 ////////////////////////////////////////////////////
@@ -77,9 +77,9 @@ router.post(
 router.get(
   "/export",
   authenticate,
-  authorize("SENIOR_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
   scope,
-  exportSeniors
+  exportAnggotas
 );
 
 ////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ router.get(
 router.get(
   "/export/template",
   authenticate,
-  authorize("SENIOR_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
   downloadTemplate
 );
 
@@ -98,7 +98,7 @@ router.get(
 router.get(
   "/export/download/:filename",
   authenticate,
-  authorize("SENIOR_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
   downloadExport
 );
 
@@ -108,7 +108,7 @@ router.get(
 router.post(
   "/import/parse-headers",
   authenticate,
-  authorize("SENIOR_CREATE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_CREATE", "MANAGE_ALL_CABANG"),
   excelUpload.single("file"),
   parseHeaders
 );
@@ -119,7 +119,7 @@ router.post(
 router.post(
   "/import/preview",
   authenticate,
-  authorize("SENIOR_CREATE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_CREATE", "MANAGE_ALL_CABANG"),
   excelUpload.single("file"),
   previewImport
 );
@@ -130,7 +130,7 @@ router.post(
 router.post(
   "/import/confirm",
   authenticate,
-  authorize("SENIOR_CREATE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_CREATE", "MANAGE_ALL_CABANG"),
   scope,
   confirmImport
 );
@@ -141,39 +141,39 @@ router.post(
 router.get(
   "/job/:jobId",
   authenticate,
-  authorize("SENIOR_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
   getJobStatus
 );
 
 ////////////////////////////////////////////////////
-// CREATE SENIOR
+// CREATE ANGGOTA
 ////////////////////////////////////////////////////
 router.post(
   "/",
   authenticate,
-  authorize("SENIOR_CREATE"),
-  validate(createSeniorSchema), // default body
-  createSenior
+  authorize("ANGGOTA_CREATE"),
+  validate(createAnggotaSchema), // default body
+  createAnggota
 );
 
 ////////////////////////////////////////////////////
-// GET ALL SENIORS
+// GET ALL ANGGOTAS
 ////////////////////////////////////////////////////
 router.get(
   "/",
   optionalAuthenticate,
   scope,
-  getSeniors
+  getAnggotas
 );
 
 ////////////////////////////////////////////////////
-// SEARCH SENIOR
+// SEARCH ANGGOTA
 ////////////////////////////////////////////////////
 router.get(
   "/search",
   authenticate,
-  authorize("SENIOR_READ", "MANAGE_ALL_CABANG"),
-  getSeniorSearch
+  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  getAnggotaSearch
 );
 
 ////////////////////////////////////////////////////
@@ -182,8 +182,8 @@ router.get(
 router.get(
   "/:uuid",
   authenticate,
-  authorize("SENIOR_READ", "MANAGE_ALL_CABANG"),
-  getSeniorById
+  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  getAnggotaById
 );
 
 ////////////////////////////////////////////////////
@@ -192,10 +192,10 @@ router.get(
 router.post(
   "/:uuid",
   authenticate,
-  authorize("SENIOR_UPDATE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_UPDATE", "MANAGE_ALL_CABANG"),
   validate(uuidParamSchema, "params"),
-  validate(updateSeniorSchema),
-  updateSenior
+  validate(updateAnggotaSchema),
+  updateAnggota
 );
 
 ////////////////////////////////////////////////////
@@ -204,7 +204,7 @@ router.post(
 router.post(
   "/:uuid/approve",
   authenticate,
-  authorize("SENIOR_APPROVE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_APPROVE", "MANAGE_ALL_CABANG"),
   validate(uuidParamSchema, "params"),
   approve
 );
@@ -215,7 +215,7 @@ router.post(
 router.post(
   "/:uuid/public-link",
   authenticate,
-  authorize("SENIOR_UPDATE", "SENIOR_APPROVE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_UPDATE", "ANGGOTA_APPROVE", "MANAGE_ALL_CABANG"),
   validate(uuidParamSchema, "params"),
   generatePublicLink
 );

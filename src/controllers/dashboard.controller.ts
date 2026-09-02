@@ -6,20 +6,20 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     const scope = req.scope;
 
     // Default filters
-    const seniorWhere: any = {};
+    const anggotaWhere: any = {};
     const newsWhere: any = {};
     const pendingWhere: any = {};
 
     if (!scope?.isAdmin) {
       // Public / Member level scope (if they ever hit this endpoint)
-      seniorWhere.isApprovedByPCPS = true;
-      seniorWhere.isApprovedByPNPS = true;
+      anggotaWhere.isApprovedByPCPS = true;
+      anggotaWhere.isApprovedByPNPS = true;
       
       pendingWhere.isApprovedByPCPS = false; // dummy for public
     } else {
       if (!scope.isSuperAdmin) {
         // ADMIN_CABANG
-        seniorWhere.cabangUuid = scope.cabangId;
+        anggotaWhere.cabangUuid = scope.cabangId;
         newsWhere.cabangUuid = scope.cabangId;
         
         pendingWhere.isApprovedByPCPS = false;
@@ -33,10 +33,10 @@ export const getDashboardStats = async (req: Request, res: Response) => {
 
     const [totalAnggota, totalBerita, totalKelasGrit, pendingApprovalCount] =
       await Promise.all([
-        prisma.senior.count({ where: seniorWhere }),
+        prisma.anggota.count({ where: anggotaWhere }),
         prisma.newsUtama.count({ where: newsWhere }),
         prisma.kelas.count(), // global
-        prisma.senior.count({ where: pendingWhere }),
+        prisma.anggota.count({ where: pendingWhere }),
       ]);
 
     res.json({

@@ -19,7 +19,7 @@ const baseProdukSchema = z.object({
   ]).optional(),
 
   produkKategoriUuid: z.string().uuid(),
-  seniorUuid: z.string().uuid(),
+  anggotaUuid: z.string().uuid(),
 });
 
 export const createProdukSchema = z.any().superRefine((val, ctx) => {

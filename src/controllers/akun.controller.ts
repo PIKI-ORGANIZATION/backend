@@ -53,7 +53,7 @@ export const getAkuns = async (req: Request, res: Response) => {
 
     if (!scope.isSuperAdmin) {
       // 🛠 ADMIN CABANG
-      whereCondition.senior = {
+      whereCondition.anggota = {
         is: {
           cabangUuid: scope.cabangId,
         },
@@ -69,7 +69,7 @@ export const getAkuns = async (req: Request, res: Response) => {
     const akuns = await prisma.akun.findMany({
       where: whereCondition,
       include: {
-        senior: true,
+        anggota: true,
         roles: {
           include: { role: true },
         },
@@ -115,7 +115,7 @@ export const getAkunById = async (req: Request, res: Response) => {
     const akun = await prisma.akun.findUnique({
       where: { uuid: String(uuid) },
       include: {
-        senior: true,
+        anggota: true,
         roles: {
           include: { role: true },
         },
@@ -157,7 +157,7 @@ export const getAkunByIdentifier = async (
         ],
       },
       include: {
-        senior: true,
+        anggota: true,
         roles: {
           include: {
             role: true,
@@ -192,11 +192,11 @@ export const getAkunByIdentifier = async (
 ////////////////////////////////////////////////////
   export const createAkun = async (req: Request, res: Response) => {
     try {
-      const { email, username, password, seniorUuid, roleUuids } = req.body;
+      const { email, username, password, anggotaUuid, roleUuids } = req.body;
   
-      if (!email || !username || !password || !seniorUuid) {
+      if (!email || !username || !password || !anggotaUuid) {
         return res.status(400).json({
-          message: "email, username, password dan seniorUuid wajib diisi",
+          message: "email, username, password dan anggotaUuid wajib diisi",
         });
       }
   
@@ -220,7 +220,7 @@ export const getAkunByIdentifier = async (
             email,
             username,
             password: hashedPassword,
-            seniorUuid,
+            anggotaUuid,
           },
         });
   

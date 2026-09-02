@@ -85,7 +85,7 @@ export const getCabang = async (req: Request, res: Response) => {
           include: {
             strukturList: {
               include: {
-                senior: true,
+                anggota: true,
                 jabatan: true,
                 bidang: true,
               },
@@ -139,7 +139,7 @@ export const getCabang = async (req: Request, res: Response) => {
       const struktur =
         periodeList?.[0]?.strukturList?.map((s: any) => ({
           uuid: s.uuid,
-          senior: s.senior,
+          anggota: s.anggota,
           jabatan: s.jabatan,
           bidang: s.bidang,
           urutan: s.urutan,
@@ -196,7 +196,7 @@ export const getCabangById = async (req: Request, res: Response) => {
           include: {
             strukturList: {
               include: {
-                senior: true,
+                anggota: true,
                 jabatan: true,
                 bidang: true,
               },
@@ -230,7 +230,7 @@ export const getCabangById = async (req: Request, res: Response) => {
     const struktur =
       periodeList?.[0]?.strukturList?.map((s: any) => ({
         uuid: s.uuid,
-        senior: s.senior,
+        anggota: s.anggota,
         jabatan: s.jabatan,
         bidang: s.bidang,
         urutan: s.urutan,

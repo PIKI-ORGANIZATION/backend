@@ -30,7 +30,7 @@ export const pesananController = {
     try {
       const data = await prisma.pesanan.findMany({
         include: {
-          senior: true,
+          anggota: true,
           akun: true,
 
           produkPesanan: {
@@ -60,7 +60,7 @@ export const pesananController = {
         where: { uuid },
 
         include: {
-          senior: true,
+          anggota: true,
           akun: true,
 
           produkPesanan: {
@@ -86,10 +86,10 @@ export const pesananController = {
     }
   },
 
-  // ================= GET BY SENIOR =================
-  async getBySenior(req: Request, res: Response) {
+  // ================= GET BY ANGGOTA =================
+  async getByAnggota(req: Request, res: Response) {
     try {
-      const { seniorUuid } = req.params;
+      const { anggotaUuid } = req.params;
 
       const { status, currentPage, pageSize } = req.query as any;
 
@@ -98,7 +98,7 @@ export const pesananController = {
       const skip = (page - 1) * size;
 
       let where: any = {
-        seniorUuid,
+        anggotaUuid,
       };
 
       if (status) {
@@ -111,7 +111,7 @@ export const pesananController = {
         where,
 
         include: {
-          senior: true,
+          anggota: true,
           akun: true,
 
           produkPesanan: {
@@ -221,7 +221,7 @@ export const pesananController = {
         // ================= CREATE PESANAN =================
         const created = await tx.pesanan.create({
           data: {
-            seniorUuid: body.seniorUuid,
+            anggotaUuid: body.anggotaUuid,
             akunUuid: body.akunUuid,
 
             namaPenerima: body.namaPenerima,
@@ -250,7 +250,7 @@ export const pesananController = {
           },
 
           include: {
-            senior: {
+            anggota: {
               include: {
                 akun: true,
               },
@@ -286,12 +286,12 @@ export const pesananController = {
       // EMAIL KE PENJUAL
       // =================================================
       const sellerEmail =
-        result?.senior?.akun?.email;
+        result?.anggota?.akun?.email;
 
       if (sellerEmail) {
         sendSellerNewOrderEmail(
           sellerEmail,
-          result?.senior?.akun?.nama || "Penjual",
+          result?.anggota?.akun?.nama || "Penjual",
           result.uuid
         ).catch((err) =>
           console.error("Seller new order email gagal:", err)
@@ -355,7 +355,7 @@ export const pesananController = {
         where: { uuid },
 
         include: {
-          senior: {
+          anggota: {
             include: {
               akun: true,
             },
@@ -475,13 +475,13 @@ export const pesananController = {
         // EMAIL KE PENJUAL
         // =============================================
         const sellerEmail =
-          existing?.senior?.akun?.email;
+          existing?.anggota?.akun?.email;
 
         if (sellerEmail) {
 
           sendSellerPaymentNotificationEmail(
             sellerEmail,
-            existing?.senior?.akun?.nama || "Penjual",
+            existing?.anggota?.akun?.nama || "Penjual",
             existing.uuid
           ).catch((err) =>
             console.error("Seller payment notification email gagal:", err)
@@ -667,15 +667,15 @@ export const pesananController = {
 
       const akun = await prisma.akun.findUnique({
         where: { uuid: req.user.sub },
-        select: { seniorUuid: true },
+        select: { anggotaUuid: true },
       });
 
-      if (!akun || !akun.seniorUuid) {
-        return res.status(403).json({ message: "Akun ini tidak terkait dengan senior" });
+      if (!akun || !akun.anggotaUuid) {
+        return res.status(403).json({ message: "Akun ini tidak terkait dengan anggota" });
       }
 
       let where: any = {
-        seniorUuid: akun.seniorUuid,
+        anggotaUuid: akun.anggotaUuid,
       };
 
       if (status) {
@@ -687,7 +687,7 @@ export const pesananController = {
       const data = await prisma.pesanan.findMany({
         where,
         include: {
-          senior: true,
+          anggota: true,
           akun: true,
           produkPesanan: {
             include: { produk: true, spesifikasi: true, pajak: true },

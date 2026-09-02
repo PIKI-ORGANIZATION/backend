@@ -2,7 +2,7 @@ import app from './app';
 import { env } from './config/env';
 import { connectRedis } from './config/redis';
 import "./queue/pesanan.worker";
-import "./queue/senior.worker";
+import "./queue/anggota.worker";
 
 const startServer = async () => {
   try {

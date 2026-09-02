@@ -54,10 +54,10 @@ export const pesananController = {
     }
   },
 
-  // ================= GET BY SENIOR =================
-    async getBySenior(req: Request, res: Response) {
+  // ================= GET BY ANGGOTA =================
+    async getByAnggota(req: Request, res: Response) {
     try {
-        const { seniorUuid } = req.params;
+        const { anggotaUuid } = req.params;
 
         const { status, currentPage, pageSize } = req.query as any;
 
@@ -66,7 +66,7 @@ export const pesananController = {
         const skip = (page - 1) * size;
 
         let where: any = {
-        seniorUuid,
+        anggotaUuid,
         };
 
         // optional filter status pesanan
@@ -161,7 +161,7 @@ export const pesananController = {
         // ================= CREATE =================
         const created = await tx.pesanan.create({
             data: {
-            seniorUuid: body.seniorUuid,
+            anggotaUuid: body.anggotaUuid,
             akunUuid: body.akunUuid,
 
             namaPenerima: body.namaPenerima,

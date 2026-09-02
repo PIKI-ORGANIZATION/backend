@@ -30,7 +30,7 @@ router.post("/", validate(createRegistrasiSchema), createRegistrasiHandler);
 // 2. Ambil Daftar Registrasi (dengan filter status/search/pagination)
 router.get("/", authenticate, getRegistrasiListHandler);
 
-// 3. Trigger Manual Pengecekan SLA Auto-Bypass 3 Hari Kerja ke DPP
+// 3. Trigger Manual Pengecekan SLA Auto-Bypass 3 Hari Kerja ke DPD
 router.post("/check-sla", authenticate, checkSlaHandler);
 
 // 4. Detail Registrasi berdasarkan ID/UUID
@@ -39,7 +39,7 @@ router.get("/:id", authenticate, getRegistrasiByIdHandler);
 // 5. Update/Edit Data Registrasi
 router.put("/:id", authenticate, updateRegistrasiHandler);
 
-// 6. Verifikasi DPC / DPP (Tahap 2 & 3)
+// 6. Verifikasi DPC / DPD (Tahap 2 & 3)
 router.patch("/:id/verifikasi", authenticate, verifikasiRegistrasiHandler);
 
 // 7. Process / Konfirmasi Pembayaran Iuran (Tahap 4)

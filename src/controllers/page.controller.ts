@@ -58,10 +58,10 @@ export const getBotPreview = async (req: Request, res: Response) => {
     const rawUrl = req.query.url as string || '/';
     
     let title = "PNPS GMKI";
-    let description = "Website Resmi Pengurus Nasional Perkumpulan Senior (PNPS) GMKI.";
+    let description = "Website Resmi Pengurus Nasional Perkumpulan Anggota (PNPS) GMKI.";
 
     // Paksa HTTPS di production agar WhatsApp mau men-download gambar
-    const host = req.headers['x-forwarded-host'] || req.get('host') || 'seniorgmki.com';
+    const host = req.headers['x-forwarded-host'] || req.get('host') || 'anggotagmki.com';
     const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
     const protocol = isLocal ? 'http' : 'https';
     

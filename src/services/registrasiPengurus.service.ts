@@ -78,8 +78,8 @@ export const approveRegistrasiPengurus = async (id: string, verifikatorUuid: str
       }
     });
 
-    // 2. Assign Role (DPC atau DPP)
-    let roleName = registrasi.tingkat === "DPP" ? "DPP" : "DPC";
+    // 2. Assign Role (DPC atau DPD)
+    let roleName = registrasi.tingkat === "DPD" ? "DPD" : "DPC";
     const role = await tx.role.findUnique({ where: { name: roleName } });
     if (role) {
       await tx.akunRole.create({

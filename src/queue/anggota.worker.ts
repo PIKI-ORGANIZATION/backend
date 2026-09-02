@@ -31,8 +31,8 @@ const EXPORT_COLUMNS = [
   { header: "Approved PNPS", key: "approvedPNPS", width: 14 },
 ];
 
-// Re-usable: build the same Prisma `where` used in getSeniors
-function buildSeniorWhere(data: any) {
+// Re-usable: build the same Prisma `where` used in getAnggotas
+function buildAnggotaWhere(data: any) {
   const andConditions: any[] = [];
 
   if (data.search) {
@@ -94,18 +94,18 @@ function buildSeniorWhere(data: any) {
 }
 
 new Worker(
-  "senior-io",
+  "anggota-io",
 
   async (job) => {
     // ============================================================
     // EXPORT
     // ============================================================
-    if (job.name === "EXPORT_SENIORS") {
+    if (job.name === "EXPORT_ANGGOTAS") {
       await job.updateProgress(5);
 
-      const where = buildSeniorWhere(job.data);
+      const where = buildAnggotaWhere(job.data);
 
-      const seniors = await prisma.senior.findMany({
+      const anggotas = await prisma.anggota.findMany({
         where,
         orderBy: { insert_at: "desc" },
         include: {
@@ -123,7 +123,7 @@ new Worker(
       workbook.creator = "PNPS Admin";
       workbook.created = new Date();
 
-      const ws = workbook.addWorksheet("Senior");
+      const ws = workbook.addWorksheet("Anggota");
       ws.columns = EXPORT_COLUMNS;
 
       // Style header
@@ -136,7 +136,7 @@ new Worker(
         };
       });
 
-      seniors.forEach((s, i) => {
+      anggotas.forEach((s, i) => {
         ws.addRow({
           no: i + 1,
           namaLengkap: s.namaLengkap,
@@ -163,18 +163,18 @@ new Worker(
 
       await job.updateProgress(80);
 
-      const filename = `senior-export-${Date.now()}.xlsx`;
+      const filename = `anggota-export-${Date.now()}.xlsx`;
       const filepath = path.join(EXPORTS_DIR, filename);
       await workbook.xlsx.writeFile(filepath);
 
       await job.updateProgress(100);
-      return { filename, total: seniors.length };
+      return { filename, total: anggotas.length };
     }
 
     // ============================================================
     // IMPORT
     // ============================================================
-    if (job.name === "IMPORT_SENIORS") {
+    if (job.name === "IMPORT_ANGGOTAS") {
       const { rows, scope } = job.data;
       await job.updateProgress(5);
 
@@ -238,7 +238,7 @@ new Worker(
             if (found) cabangUuid = found.uuid;
           }
 
-          await prisma.senior.create({
+          await prisma.anggota.create({
             data: {
               namaLengkap: row.namaLengkap.trim(),
               namaPanggil: row.namaPanggil?.trim() || null,

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  getDppListHandler,
+  getDpdListHandler,
   getDpcListHandler,
   getMasterProvinsiHandler,
   getMasterKabupatenHandler,
@@ -8,10 +8,10 @@ import {
 
 const router = Router();
 
-// 1. Dropdown 1: Ambil daftar DPP (Provinsi) dari dpp_dpc
-router.get("/dpp", getDppListHandler);
+// 1. Dropdown 1: Ambil daftar DPD (Provinsi) dari dpd_dpc
+router.get("/dpd", getDpdListHandler);
 
-// 2. Dropdown 2: Ambil daftar DPC (Kabupaten/Kota) berantai dari dpp_dpc (Filter by ?dpp=Sumatera Utara / ?kode_provinsi=12)
+// 2. Dropdown 2: Ambil daftar DPC (Kabupaten/Kota) berantai dari dpd_dpc (Filter by ?dpd=Sumatera Utara / ?kode_provinsi=12)
 router.get("/dpc", getDpcListHandler);
 
 // 3. Referensi Master Provinsi Lengkap (dari data_master_wilayah)

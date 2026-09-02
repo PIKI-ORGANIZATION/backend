@@ -30,7 +30,7 @@ export const getAdminFeePercent = async (): Promise<number> => {
  * Key: "eco-admin-email" (stored as a JSON array)
  * Supports both:
  *   - Direct email strings: ["admin@pnps.id", "john@example.com"]
- *   - Senior UUIDs: ["uuid-1", "uuid-2"] → resolved to their Akun emails
+ *   - Anggota UUIDs: ["uuid-1", "uuid-2"] → resolved to their Akun emails
  * Returns an array of email strings.
  */
 export const getAdminEmailRecipients = async (): Promise<string[]> => {
@@ -57,15 +57,15 @@ export const getAdminEmailRecipients = async (): Promise<string[]> => {
       }
     }
 
-    // Resolve Senior UUIDs → Akun emails
+    // Resolve Anggota UUIDs → Akun emails
     let resolvedEmails: string[] = [];
     if (uuids.length > 0) {
-      const seniors = await prisma.senior.findMany({
+      const anggotas = await prisma.anggota.findMany({
         where: { uuid: { in: uuids } },
         include: { akun: { select: { email: true } } },
       });
 
-      resolvedEmails = seniors
+      resolvedEmails = anggotas
         .map((s) => s.akun?.email)
         .filter((email): email is string => !!email);
     }

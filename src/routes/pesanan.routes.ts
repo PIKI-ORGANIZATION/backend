@@ -20,10 +20,10 @@ router.get("/", optionalAuthenticate, scope, pesananController.getAll);
 router.get("/me/list", authenticate, authorize("PESANAN_READ", "MANAGE_ALL_CABANG"), pesananController.getMyPesanan);
 
 router.get(
-  "/senior/:seniorUuid",
+  "/anggota/:anggotaUuid",
   authenticate,
   authorize("PESANAN_READ", "MANAGE_ALL_CABANG"),
-  pesananController.getBySenior
+  pesananController.getByAnggota
 );
 
 router.get("/:uuid", optionalAuthenticate, scope, pesananController.getById);

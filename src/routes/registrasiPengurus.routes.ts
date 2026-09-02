@@ -7,7 +7,7 @@ import {
 
 const router = Router();
 
-// Pendaftaran pengurus (DPP/DPC)
+// Pendaftaran pengurus (DPD/DPC)
 router.post("/", createHandler);
 
 // Ambil daftar pendaftar pengurus (untuk admin pusat)

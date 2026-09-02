@@ -37,10 +37,9 @@ export const scanKtpHandler = async (req: Request, res: Response, next: NextFunc
 
 export const getRegistrasiListHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { search, cabangUuid, statusVerifikasi, statusPembayaran, statusKta, langkahSekarang, skip, take } = req.query;
+    const { search, statusVerifikasi, statusPembayaran, statusKta, langkahSekarang, skip, take } = req.query;
     const result = await registrasiService.getRegistrasiList({
       search: search as string,
-      cabangUuid: cabangUuid as string,
       statusVerifikasi: statusVerifikasi as string,
       statusPembayaran: statusPembayaran as string,
       statusKta: statusKta as string,
@@ -112,7 +111,7 @@ export const checkSlaHandler = async (req: Request, res: Response, next: NextFun
     const result = await registrasiService.checkAndBypassSla(actorNama || "System SLA Scheduler");
     res.json({
       success: true,
-      message: `Pengecekan SLA selesai. ${result.count} pendaftaran berhasil diekskalasi otomatis ke DPP.`,
+      message: `Pengecekan SLA selesai. ${result.count} pendaftaran berhasil diekskalasi otomatis ke DPD.`,
       data: result,
     });
   } catch (error) {
@@ -123,12 +122,11 @@ export const checkSlaHandler = async (req: Request, res: Response, next: NextFun
 export const prosesPembayaranHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { buktiBayarUrl, statusPembayaran, nominalIuran, actorUuid, actorNama } = req.body;
+    const { buktiBayarUrl, statusPembayaran, actorUuid, actorNama } = req.body;
     const result = await registrasiService.prosesPembayaran({
       id,
       buktiBayarUrl,
       statusPembayaran,
-      nominalIuran,
       actorUuid,
       actorNama,
     });

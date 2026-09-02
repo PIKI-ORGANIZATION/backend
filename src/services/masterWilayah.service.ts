@@ -1,48 +1,48 @@
 import { prisma } from "../config/prisma";
 
 /**
- * 1. Ambil daftar unik DPP (Provinsi) dari dpp_dpc / data_master_wilayah
+ * 1. Ambil daftar unik DPD (Provinsi) dari dpd_dpc / data_master_wilayah
  */
-export const getDppList = async () => {
-  // Group by dpp & kode_provinsi di tabel dpp_dpc
-  const list = await prisma.dppDpc.groupBy({
-    by: ["dpp", "kode_provinsi"],
+export const getDpdList = async () => {
+  // Group by dpd & kode_provinsi di tabel dpd_dpc
+  const list = await prisma.dpdDpc.groupBy({
+    by: ["dpd", "kode_provinsi"],
     where: {
-      dpp: { not: null },
+      dpd: { not: null },
     },
     orderBy: {
-      dpp: "asc",
+      dpd: "asc",
     },
   });
 
   return list.map((item) => ({
-    dpp: item.dpp,
+    dpd: item.dpd,
     kode_provinsi: item.kode_provinsi,
   }));
 };
 
 /**
- * 2. Ambil daftar DPC (Kabupaten/Kota) yang berada di bawah DPP / Kode Provinsi tertentu
+ * 2. Ambil daftar DPC (Kabupaten/Kota) yang berada di bawah DPD / Kode Provinsi tertentu
  */
-export const getDpcList = async (params: { dpp?: string; kode_provinsi?: string }) => {
+export const getDpcList = async (params: { dpd?: string; kode_provinsi?: string }) => {
   const where: any = {
     dpc: { not: null },
   };
 
-  if (params.dpp) {
-    where.dpp = { equals: params.dpp, mode: "insensitive" };
+  if (params.dpd) {
+    where.dpd = { equals: params.dpd, mode: "insensitive" };
   } else if (params.kode_provinsi) {
     where.kode_provinsi = params.kode_provinsi;
   }
 
-  const list = await prisma.dppDpc.findMany({
+  const list = await prisma.dpdDpc.findMany({
     where,
     orderBy: {
       dpc: "asc",
     },
     select: {
       id: true,
-      dpp: true,
+      dpd: true,
       dpc: true,
       kode_provinsi: true,
       kode_kabupaten: true,

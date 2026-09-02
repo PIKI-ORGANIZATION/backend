@@ -8,9 +8,9 @@ export const uuidParamSchema = z.object({
 });
 
 ////////////////////////////////////////////////////
-// BASE SENIOR SCHEMA
+// BASE ANGGOTA SCHEMA
 ////////////////////////////////////////////////////
-export const seniorSchema = z.object({
+export const anggotaSchema = z.object({
   namaLengkap: z.string().trim().min(3, "Nama lengkap minimal 3 karakter"),
   namaPanggil: z.string().trim().nullable().optional(),
   tempatLahir: z.string().trim().nullable().optional(),
@@ -56,12 +56,12 @@ export const seniorSchema = z.object({
 ////////////////////////////////////////////////////
 // CREATE (BISA OBJECT ATAU ARRAY)
 ////////////////////////////////////////////////////
-export const createSeniorSchema = z.any().superRefine((val, ctx) => {
+export const createAnggotaSchema = z.any().superRefine((val, ctx) => {
   if (Array.isArray(val)) {
-    const res = z.array(seniorSchema).safeParse(val);
+    const res = z.array(anggotaSchema).safeParse(val);
     if (!res.success) res.error.issues.forEach(i => ctx.addIssue(i));
   } else {
-    const res = seniorSchema.safeParse(val);
+    const res = anggotaSchema.safeParse(val);
     if (!res.success) res.error.issues.forEach(i => ctx.addIssue(i));
   }
 });
@@ -69,16 +69,16 @@ export const createSeniorSchema = z.any().superRefine((val, ctx) => {
 ////////////////////////////////////////////////////
 // UPDATE
 ////////////////////////////////////////////////////
-export const updateSeniorSchema = seniorSchema.partial();
+export const updateAnggotaSchema = anggotaSchema.partial();
 
 ////////////////////////////////////////////////////
 // APPROVAL
 ////////////////////////////////////////////////////
-export const approveSeniorSchema = z.object({});
+export const approveAnggotaSchema = z.object({});
 
 ////////////////////////////////////////////////////
 // TYPES
 ////////////////////////////////////////////////////
-export type CreateSeniorInput = z.infer<typeof createSeniorSchema>;
-export type UpdateSeniorInput = z.infer<typeof updateSeniorSchema>;
-export type ApproveSeniorInput = z.infer<typeof approveSeniorSchema>;
+export type CreateAnggotaInput = z.infer<typeof createAnggotaSchema>;
+export type UpdateAnggotaInput = z.infer<typeof updateAnggotaSchema>;
+export type ApproveAnggotaInput = z.infer<typeof approveAnggotaSchema>;

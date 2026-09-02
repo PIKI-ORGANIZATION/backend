@@ -21,7 +21,7 @@ const baseStrukturOrganisasiSchema = z.object({
   ////////////////////////////////////////////////////
   // RELASI WAJIB
   ////////////////////////////////////////////////////
-  seniorUuid: z.string().uuid(),
+  anggotaUuid: z.string().uuid(),
 
   jabatanUuid: z.string().uuid(),
 

@@ -729,7 +729,7 @@ export const sendRegistrasiVerifikasiEmail = async (
       <p style="margin: 6px 0 0 0; font-size: 14px; color: #334155; font-style: italic;">"${catatan || 'Data tidak lengkap atau tidak sesuai kriteria.'}"</p>
     </div>
     
-    <p style="margin: 0; font-size: 14px; color: #475569;">Silakan hubungi pengurus DPC/DPP untuk informasi lebih lanjut mengenai pendaftaran Anda.</p>
+    <p style="margin: 0; font-size: 14px; color: #475569;">Silakan hubungi pengurus DPC/DPD untuk informasi lebih lanjut mengenai pendaftaran Anda.</p>
   `;
 
   return sendMail(
@@ -826,7 +826,7 @@ export const sendNotifikasiPendaftarBaru = async (
         <td style="padding: 10px; border: 1px solid #e5e7eb; color: #111827;"><strong>${namaPendaftar}</strong></td>
       </tr>
       <tr>
-        <td style="padding: 10px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: 600;">Wilayah DPC/DPP</td>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: 600;">Wilayah DPC/DPD</td>
         <td style="padding: 10px; border: 1px solid #e5e7eb; color: #374151;">Silakan cek di Dashboard</td>
       </tr>
       <tr>

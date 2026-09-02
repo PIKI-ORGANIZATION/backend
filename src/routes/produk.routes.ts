@@ -6,7 +6,7 @@ import { authenticate } from "../middlewares/auth.middleware";
 import { optionalAuthenticate } from "../middlewares/optionalAuthenticate.middleware";
 import { authorize } from "../middlewares/authorize.middleware";
 import { scope } from "../middlewares/scope.middleware";
-import { injectSeniorUuid } from "../middlewares/injectSeniorUuid.middleware";
+import { injectAnggotaUuid } from "../middlewares/injectAnggotaUuid.middleware";
 
 import {
   createProdukSchema,
@@ -23,10 +23,10 @@ router.get("/:uuid", optionalAuthenticate, scope, produkController.getById);
 router.get("/me/list", authenticate, authorize("PRODUK_READ", "MANAGE_ALL_CABANG"), produkController.getMyProduk);
 
 router.get(
-  "/senior/:seniorUuid",
+  "/anggota/:anggotaUuid",
   optionalAuthenticate,
   scope,
-  produkController.getBySenior
+  produkController.getByAnggota
 );
 
 // ================= CREATE =================
@@ -34,7 +34,7 @@ router.post(
   "/",
   authenticate,
   authorize("PRODUK_CREATE", "MANAGE_ALL_CABANG"),
-  injectSeniorUuid,
+  injectAnggotaUuid,
   validate(createProdukSchema),
   produkController.create
 );
@@ -44,7 +44,7 @@ router.post(
   "/:uuid/update",
   authenticate,
   authorize("PRODUK_UPDATE", "MANAGE_ALL_CABANG"),
-  injectSeniorUuid,
+  injectAnggotaUuid,
   validate(updateProdukSchema),
   produkController.update
 );

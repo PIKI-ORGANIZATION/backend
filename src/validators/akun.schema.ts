@@ -4,7 +4,7 @@ const akunSchema = z.object({
   email: z.string().email("Format email tidak valid"),
   username: z.string().min(3, "Username minimal 3 karakter"),
   password: z.string().min(8, "Password minimal 8 karakter"),
-  seniorUuid: z.string().uuid("Senior UUID tidak valid"),
+  anggotaUuid: z.string().uuid("Anggota UUID tidak valid"),
   roleUuids: z.array(z.string().uuid()).optional(),
 });
 

@@ -3,19 +3,19 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
 
-/** Resolve Senior UUID from Akun UUID (for audit FK fields) */
-async function getSeniorUuid(akunUuid: string): Promise<string | null> {
+/** Resolve Anggota UUID from Akun UUID (for audit FK fields) */
+async function getAnggotaUuid(akunUuid: string): Promise<string | null> {
   const akun = await prisma.akun.findUnique({
     where: { uuid: akunUuid },
-    select: { seniorUuid: true },
+    select: { anggotaUuid: true },
   });
-  return akun?.seniorUuid ?? null;
+  return akun?.anggotaUuid ?? null;
 }
 
 ////////////////////////////////////////////////////
-// GET ALL SENIOR (paginated)
+// GET ALL ANGGOTA (paginated)
 ////////////////////////////////////////////////////
-export const getSeniors = async (req: Request, res: Response) => {
+export const getAnggotas = async (req: Request, res: Response) => {
   try {
     const {
       search,
@@ -193,8 +193,8 @@ export const getSeniors = async (req: Request, res: Response) => {
 
     ////////////////////////////////////////////////////
 
-    const [seniors, total] = await Promise.all([
-      prisma.senior.findMany({
+    const [anggotas, total] = await Promise.all([
+      prisma.anggota.findMany({
         where,
         orderBy: { insert_at: "desc" },
         skip,
@@ -242,11 +242,11 @@ export const getSeniors = async (req: Request, res: Response) => {
           bidangMinatRef: true,
         },
       }),
-      prisma.senior.count({ where }),
+      prisma.anggota.count({ where }),
     ]);
 
     res.json({
-      data: seniors,
+      data: anggotas,
       pagination: {
         total,
         currentPage: page,
@@ -255,11 +255,11 @@ export const getSeniors = async (req: Request, res: Response) => {
       },
     });
   } catch {
-    res.status(500).json({ message: "Failed to fetch seniors" });
+    res.status(500).json({ message: "Failed to fetch anggotas" });
   }
 };
 
-export const getSeniorSearch = async (req: Request, res: Response) => {
+export const getAnggotaSearch = async (req: Request, res: Response) => {
   try {
     const { search, isApprovedByPCPS, isApprovedByPNPS } = req.query;
 
@@ -300,7 +300,7 @@ export const getSeniorSearch = async (req: Request, res: Response) => {
     });
     }
 
-    const seniors = await prisma.senior.findMany({
+    const anggotas = await prisma.anggota.findMany({
     where: {
         AND: filters,
     },
@@ -342,24 +342,24 @@ export const getSeniorSearch = async (req: Request, res: Response) => {
     },
     });
 
-    res.json(seniors);
+    res.json(anggotas);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 ////////////////////////////////////////////////////
-// CREATE SENIOR
+// CREATE ANGGOTA
 ////////////////////////////////////////////////////
-export const createSenior = async (req: Request, res: Response) => {
+export const createAnggota = async (req: Request, res: Response) => {
   try {
     const user = req.user!;
-    const seniorUuid = await getSeniorUuid(user.sub);
+    const anggotaUuid = await getAnggotaUuid(user.sub);
 
-    const seniors = Array.isArray(req.body) ? req.body : [req.body];
+    const anggotas = Array.isArray(req.body) ? req.body : [req.body];
 
-    const result = await prisma.senior.createMany({
-      data: seniors.map((s: any) => ({
+    const result = await prisma.anggota.createMany({
+      data: anggotas.map((s: any) => ({
         ...s,
         insert_by: user.sub,
       })),
@@ -367,24 +367,24 @@ export const createSenior = async (req: Request, res: Response) => {
     });
 
     return res.status(201).json({
-      message: "Senior berhasil dibuat",
+      message: "Anggota berhasil dibuat",
       totalInserted: result.count,
     });
   } catch (error: any) {
     return res.status(500).json({
-      message: error.message || "Failed to create senior",
+      message: error.message || "Failed to create anggota",
     });
   }
 };
 
 ////////////////////////////////////////////////////
-// GET SENIOR BY UUID
+// GET ANGGOTA BY UUID
 ////////////////////////////////////////////////////
-export const getSeniorById = async (req: Request, res: Response) => {
+export const getAnggotaById = async (req: Request, res: Response) => {
   try {
     const { uuid } = req.params;
 
-    const senior = await prisma.senior.findUnique({
+    const anggota = await prisma.anggota.findUnique({
       where: { uuid: uuid as string },
       include: {
         cabang: true,
@@ -431,24 +431,24 @@ export const getSeniorById = async (req: Request, res: Response) => {
       },
     });
 
-    if (!senior) {
-      return res.status(404).json({ message: "Senior not found" });
+    if (!anggota) {
+      return res.status(404).json({ message: "Anggota not found" });
     }
 
-    res.json(senior);
+    res.json(anggota);
   } catch {
-    res.status(500).json({ message: "Failed to fetch senior" });
+    res.status(500).json({ message: "Failed to fetch anggota" });
   }
 };
 
 ////////////////////////////////////////////////////
-// UPDATE SENIOR
+// UPDATE ANGGOTA
 ////////////////////////////////////////////////////
-export const updateSenior = async (req: Request, res: Response) => {
+export const updateAnggota = async (req: Request, res: Response) => {
   try {
     const { uuid } = req.params;
     const user = req.user!;
-    // const seniorUuid = await getSeniorUuid(user.sub);
+    // const anggotaUuid = await getAnggotaUuid(user.sub);
 
     const body = { ...req.body };
     // Prisma DateTime @db.Date requires a Date object, not a string
@@ -456,7 +456,7 @@ export const updateSenior = async (req: Request, res: Response) => {
       body.tanggalLahir = body.tanggalLahir ? new Date(body.tanggalLahir) : null;
     }
 
-    const updated = await prisma.senior.update({
+    const updated = await prisma.anggota.update({
       where: { uuid: uuid as string },
       data: {
         ...body,
@@ -466,13 +466,13 @@ export const updateSenior = async (req: Request, res: Response) => {
 
     return res.status(200).json(
       ApiResponse.success({
-        message: "Senior berhasil diperbarui",
+        message: "Anggota berhasil diperbarui",
         data: updated,
       })
     );
   } catch (error: any) {
     res.status(500).json({
-      message: error.message || "Failed to update senior",
+      message: error.message || "Failed to update anggota",
     });
   }
 };
@@ -485,35 +485,35 @@ export const approve = async (req: Request, res: Response) => {
     const { uuid } = req.params;
     const user = req.user!;
 
-    // Look up the approver's cabang via Akun → Senior → Cabang
+    // Look up the approver's cabang via Akun → Anggota → Cabang
     const approver = await prisma.akun.findUnique({
       where: { uuid: user.sub },
       include: {
-        senior: {
+        anggota: {
           include: { cabang: true },
         },
       },
     });
 
-    if (!approver?.senior?.cabang) {
+    if (!approver?.anggota?.cabang) {
       return res.status(403).json({
         message: "Tidak dapat melakukan approval: data cabang tidak ditemukan",
       });
     }
 
-    const isPCPS = approver.senior.cabang.isCabang === true;
+    const isPCPS = approver.anggota.cabang.isCabang === true;
 
-    // SECURITY CHECK: Target Senior
-    const targetSenior = await prisma.senior.findUnique({
+    // SECURITY CHECK: Target Anggota
+    const targetAnggota = await prisma.anggota.findUnique({
       where: { uuid: uuid as string },
       select: { cabangUuid: true, cabang: { select: { isCabang: true } } }
     });
 
-    if (!targetSenior) {
-      return res.status(404).json({ message: "Data senior tidak ditemukan" });
+    if (!targetAnggota) {
+      return res.status(404).json({ message: "Data anggota tidak ditemukan" });
     }
 
-    if (isPCPS && targetSenior.cabangUuid !== approver.senior.cabang.uuid) {
+    if (isPCPS && targetAnggota.cabangUuid !== approver.anggota.cabang.uuid) {
       return res.status(403).json({
         message: "Akses ditolak: PCPS hanya dapat menyetujui anggota dari cabangnya sendiri",
       });
@@ -527,25 +527,25 @@ export const approve = async (req: Request, res: Response) => {
 
     if (isPCPS) {
       updateData.isApprovedByPCPS = true;
-      updateData.approvedByPCPSUuid = approver.seniorUuid;
+      updateData.approvedByPCPSUuid = approver.anggotaUuid;
       updateData.approvedAtPCPS = now;
     } else {
       // Pusat (PNPS)
       updateData.isApprovedByPNPS = true;
-      updateData.approvedByPNPSUuid = approver.seniorUuid;
+      updateData.approvedByPNPSUuid = approver.anggotaUuid;
       updateData.approvedAtPNPS = now;
       
-      // Auto-approve PCPS level if the senior belongs to PNPS Pusat (not a cabang)
-      if (targetSenior.cabang?.isCabang === false) {
+      // Auto-approve PCPS level if the anggota belongs to PNPS Pusat (not a cabang)
+      if (targetAnggota.cabang?.isCabang === false) {
         updateData.isApprovedByPCPS = true;
-        updateData.approvedByPCPSUuid = approver.seniorUuid;
+        updateData.approvedByPCPSUuid = approver.anggotaUuid;
         updateData.approvedAtPCPS = now;
       }
 
       updateData.statusKeanggotaan = "MEMBER";
     }
 
-    const updated = await prisma.senior.update({
+    const updated = await prisma.anggota.update({
       where: { uuid: uuid as string },
       data: updateData,
       include: {
@@ -571,13 +571,13 @@ export const generatePublicLink = async (req: Request, res: Response) => {
     const { uuid } = req.params;
     const { expiresIn } = req.body; // e.g., '1d', '3d', '7d', '30d'
 
-    // Verify senior exists
-    const senior = await prisma.senior.findUnique({
+    // Verify anggota exists
+    const anggota = await prisma.anggota.findUnique({
       where: { uuid: uuid as string },
     });
 
-    if (!senior) {
-      return res.status(404).json({ message: "Senior tidak ditemukan" });
+    if (!anggota) {
+      return res.status(404).json({ message: "Anggota tidak ditemukan" });
     }
 
     const expiry = expiresIn || "7d";
@@ -589,8 +589,8 @@ export const generatePublicLink = async (req: Request, res: Response) => {
 
     const token = jwt.sign(
       { 
-        sub: senior.uuid, 
-        type: "senior_public_update" 
+        sub: anggota.uuid, 
+        type: "anggota_public_update" 
       }, 
       secret, 
       { expiresIn: expiry }
@@ -609,9 +609,9 @@ export const generatePublicLink = async (req: Request, res: Response) => {
 };
 
 ////////////////////////////////////////////////////
-// GET SENIOR BY PUBLIC TOKEN (no auth required)
+// GET ANGGOTA BY PUBLIC TOKEN (no auth required)
 ////////////////////////////////////////////////////
-export const getSeniorByToken = async (req: Request, res: Response) => {
+export const getAnggotaByToken = async (req: Request, res: Response) => {
   try {
     const { token } = req.query;
 
@@ -634,33 +634,33 @@ export const getSeniorByToken = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Token tidak valid" });
     }
 
-    if (decoded.type !== "senior_public_update") {
+    if (decoded.type !== "anggota_public_update") {
       return res.status(401).json({ message: "Token tidak valid untuk aksi ini" });
     }
 
-    const senior = await prisma.senior.findUnique({
+    const anggota = await prisma.anggota.findUnique({
       where: { uuid: decoded.sub },
       include: {
         cabang: { select: { uuid: true, namaCabang: true } },
       },
     });
 
-    if (!senior) {
-      return res.status(404).json({ message: "Senior tidak ditemukan" });
+    if (!anggota) {
+      return res.status(404).json({ message: "Anggota tidak ditemukan" });
     }
 
-    res.json(senior);
+    res.json(anggota);
   } catch (error: any) {
     res.status(500).json({
-      message: error.message || "Failed to fetch senior data",
+      message: error.message || "Failed to fetch anggota data",
     });
   }
 };
 
 ////////////////////////////////////////////////////
-// UPDATE SENIOR BY PUBLIC TOKEN (no auth required)
+// UPDATE ANGGOTA BY PUBLIC TOKEN (no auth required)
 ////////////////////////////////////////////////////
-export const updateSeniorByToken = async (req: Request, res: Response) => {
+export const updateAnggotaByToken = async (req: Request, res: Response) => {
   try {
     const { token } = req.query;
 
@@ -683,7 +683,7 @@ export const updateSeniorByToken = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Token tidak valid" });
     }
 
-    if (decoded.type !== "senior_public_update") {
+    if (decoded.type !== "anggota_public_update") {
       return res.status(401).json({ message: "Token tidak valid untuk aksi ini" });
     }
 
@@ -714,18 +714,18 @@ export const updateSeniorByToken = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Tidak ada data yang diperbarui" });
     }
 
-    const updated = await prisma.senior.update({
+    const updated = await prisma.anggota.update({
       where: { uuid: decoded.sub },
       data: updateData,
     });
 
     res.json({
-      message: "Data senior berhasil diperbarui",
+      message: "Data anggota berhasil diperbarui",
       data: updated,
     });
   } catch (error: any) {
     res.status(500).json({
-      message: error.message || "Failed to update senior data",
+      message: error.message || "Failed to update anggota data",
     });
   }
 };

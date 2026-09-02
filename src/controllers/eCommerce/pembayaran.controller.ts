@@ -36,7 +36,7 @@ export const pembayaranController = {
         include: {
           pesanan: {
             include: {
-              senior: true,
+              anggota: true,
             },
           },
         },
@@ -76,11 +76,11 @@ export const pembayaranController = {
       // =========================================
       // EMAIL KE PENJUAL
       // =========================================
-      if (pesanan?.senior?.email) {
+      if (pesanan?.anggota?.email) {
         try {
           await sendSellerPaymentNotificationEmail(
-            pesanan.senior.email,
-            pesanan.senior.nama,
+            pesanan.anggota.email,
+            pesanan.anggota.nama,
             pesanan.uuid
           );
         } catch (emailErr) {
@@ -163,7 +163,7 @@ export const pembayaranController = {
         include: {
           pesanan: {
             include: {
-              senior: true,
+              anggota: true,
             },
           },
         },
@@ -182,7 +182,7 @@ export const pembayaranController = {
         include: {
           pesanan: {
             include: {
-              senior: true,
+              anggota: true,
             },
           },
         },
@@ -257,10 +257,10 @@ export const pembayaranController = {
         // =========================================
         // EMAIL SELLER
         // =========================================
-        if (pesanan?.senior?.email) {
+        if (pesanan?.anggota?.email) {
             sendSellerPaymentNotificationEmail(
-            pesanan.senior.email,
-            pesanan.senior.nama,
+            pesanan.anggota.email,
+            pesanan.anggota.nama,
             pesanan.uuid
             ).catch((err) =>
             console.error("Seller payment notification email gagal:", err)

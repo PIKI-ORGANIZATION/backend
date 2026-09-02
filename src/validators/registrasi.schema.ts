@@ -2,13 +2,6 @@ import { z } from "zod";
 
 export const createRegistrasiSchema = z
   .object({
-    nik: z
-      .string()
-      .min(16, "NIK minimal 16 karakter")
-      .max(16, "NIK maksimal 16 karakter")
-      .optional()
-      .or(z.literal("")),
-
     namaLengkap: z
       .string({ required_error: "Nama lengkap wajib diisi" })
       .min(2, "Nama lengkap minimal 2 karakter"),
@@ -43,11 +36,10 @@ export const createRegistrasiSchema = z
       .string({ required_error: "Upload KTP wajib diisi" })
       .min(1, "Upload KTP wajib diisi"),
 
-    dpp: z.string().optional(),
+    dpd: z.string().optional(),
     dpc: z.string().optional(),
     kode_provinsi: z.string().optional(),
     kode_kabupaten: z.string().optional(),
-    cabangUuid: z.string().optional(),
     kotaDomisili: z.string().optional(),
     tingkatPendidikan: z.string().optional(),
     pendidikanUuid: z.string().optional(),

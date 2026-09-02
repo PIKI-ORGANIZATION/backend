@@ -112,7 +112,7 @@ router.post('/public', upload.single('file'), async (req: Request, res: Response
 
   try {
     const decoded = jwt.verify(token, secret);
-    if (decoded.type !== 'senior_public_update') {
+    if (decoded.type !== 'anggota_public_update') {
       res.status(401).json({ error: 'Token tidak valid' });
       return;
     }

@@ -46,7 +46,7 @@ export const getStrukturOrganisasi = async (req: Request, res: Response) => {
           },
         },
         {
-          senior: {
+          anggota: {
             namaLengkap: {
               contains: search,
               mode: "insensitive",
@@ -103,7 +103,7 @@ export const getStrukturOrganisasi = async (req: Request, res: Response) => {
     const struktur = await prisma.strukturOrganisasi.findMany({
       where: whereCondition,
       include: {
-        senior: true,
+        anggota: true,
         periode: {
           include: {
             cabang: true,
@@ -198,7 +198,7 @@ export const getStrukturOrganisasiAdminByCabang = async (
           },
         },
         {
-          senior: {
+          anggota: {
             namaLengkap: {
               contains: search,
               mode: "insensitive",
@@ -241,7 +241,7 @@ export const getStrukturOrganisasiAdminByCabang = async (
     const struktur = await prisma.strukturOrganisasi.findMany({
       where: whereCondition,
       include: {
-        senior: true,
+        anggota: true,
         periode: true,
         jabatan: true,
         bidang: true,
@@ -281,7 +281,7 @@ export const getStrukturOrganisasiById = async (req: Request, res: Response) => 
     const data = await prisma.strukturOrganisasi.findUnique({
       where: { uuid },
       include: {
-        senior: true,
+        anggota: true,
         periode: true,
         jabatan: true,
         bidang: true,
@@ -318,9 +318,9 @@ export const createStrukturOrganisasi = async (
     // VALIDASI FIELD WAJIB
     ////////////////////////////////////////////////////
     for (const d of dataArray) {
-      if (!d.periodeUuid || !d.seniorUuid || !d.jabatanUuid) {
+      if (!d.periodeUuid || !d.anggotaUuid || !d.jabatanUuid) {
         return res.status(400).json({
-          message: "periodeUuid, seniorUuid, dan jabatanUuid wajib diisi",
+          message: "periodeUuid, anggotaUuid, dan jabatanUuid wajib diisi",
         });
       }
     }
@@ -339,17 +339,17 @@ export const createStrukturOrganisasi = async (
     }
 
     ////////////////////////////////////////////////////
-    // VALIDASI SENIOR
+    // VALIDASI ANGGOTA
     ////////////////////////////////////////////////////
-    const seniorUuids = dataArray.map((d) => d.seniorUuid);
+    const anggotaUuids = dataArray.map((d) => d.anggotaUuid);
 
-    const seniors = await prisma.senior.findMany({
-      where: { uuid: { in: seniorUuids } },
+    const anggotas = await prisma.anggota.findMany({
+      where: { uuid: { in: anggotaUuids } },
     });
 
-    if (seniors.length !== seniorUuids.length) {
+    if (anggotas.length !== anggotaUuids.length) {
       return res.status(400).json({
-        message: "Ada senior yang tidak ditemukan",
+        message: "Ada anggota yang tidak ditemukan",
       });
     }
 
@@ -369,18 +369,18 @@ export const createStrukturOrganisasi = async (
     }
 
     ////////////////////////////////////////////////////
-    // VALIDASI SENIOR DOUBLE ROLE
+    // VALIDASI ANGGOTA DOUBLE ROLE
     ////////////////////////////////////////////////////
-    const seniorExist = await prisma.strukturOrganisasi.findMany({
+    const anggotaExist = await prisma.strukturOrganisasi.findMany({
       where: {
         periodeUuid,
-        seniorUuid: { in: seniorUuids },
+        anggotaUuid: { in: anggotaUuids },
       },
     });
 
-    if (seniorExist.length > 0) {
+    if (anggotaExist.length > 0) {
       return res.status(400).json({
-        message: "Ada senior yang sudah punya jabatan di periode ini",
+        message: "Ada anggota yang sudah punya jabatan di periode ini",
       });
     }
 
@@ -456,24 +456,24 @@ export const updateStrukturOrganisasi = async (
     }
 
     const finalPeriodeUuid = req.body.periodeUuid ?? existing.periodeUuid;
-    const finalSeniorUuid = req.body.seniorUuid ?? existing.seniorUuid;
+    const finalAnggotaUuid = req.body.anggotaUuid ?? existing.anggotaUuid;
     const finalJabatanUuid = req.body.jabatanUuid ?? existing.jabatanUuid;
     const finalBidangUuid = req.body.bidangUuid ?? existing.bidangUuid ?? null;
 
     ////////////////////////////////////////////////////
-    // VALIDASI SENIOR DOUBLE ROLE
+    // VALIDASI ANGGOTA DOUBLE ROLE
     ////////////////////////////////////////////////////
-    const seniorExist = await prisma.strukturOrganisasi.findFirst({
+    const anggotaExist = await prisma.strukturOrganisasi.findFirst({
       where: {
-        seniorUuid: finalSeniorUuid,
+        anggotaUuid: finalAnggotaUuid,
         periodeUuid: finalPeriodeUuid,
         NOT: { uuid },
       },
     });
 
-    if (seniorExist) {
+    if (anggotaExist) {
       return res.status(400).json({
-        message: "Senior sudah punya jabatan di periode ini",
+        message: "Anggota sudah punya jabatan di periode ini",
       });
     }
 

@@ -29,7 +29,7 @@ export const login = async (req: Request, res: Response) => {
       OR: [{ email: identifier }, { username: identifier }],
     },
     include: {
-      senior: {
+      anggota: {
         include: {
           cabang: true,
         },
@@ -67,16 +67,16 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 
-  // ── Gate 2: Belum di-approve PCPS & PNPS (jika memiliki data Senior) ──
-  if (akun.senior && (!akun.senior.isApprovedByPCPS || !akun.senior.isApprovedByPNPS)) {
-    const pcps = akun.senior.isApprovedByPCPS ? "✓" : "Pending";
-    const pnps = akun.senior.isApprovedByPNPS ? "✓" : "Pending";
+  // ── Gate 2: Belum di-approve PCPS & PNPS (jika memiliki data Anggota) ──
+  if (akun.anggota && (!akun.anggota.isApprovedByPCPS || !akun.anggota.isApprovedByPNPS)) {
+    const pcps = akun.anggota.isApprovedByPCPS ? "✓" : "Pending";
+    const pnps = akun.anggota.isApprovedByPNPS ? "✓" : "Pending";
     return res.status(403).json({
       message: `Akun Anda menunggu approval. Status: PCPS ${pcps}, PNPS ${pnps}.`,
       code: "APPROVAL_PENDING",
       approval: {
-        pcps: akun.senior.isApprovedByPCPS,
-        pnps: akun.senior.isApprovedByPNPS,
+        pcps: akun.anggota.isApprovedByPCPS,
+        pnps: akun.anggota.isApprovedByPNPS,
       },
     });
   }
@@ -98,11 +98,11 @@ export const login = async (req: Request, res: Response) => {
       username: akun.username,
       roles: akun.roles.map(r => r.role.namaRole),
       permissions: uniquePermissions,
-      cabangId: akun.senior?.cabangUuid ?? null,
-      cabang: akun.senior?.cabang?.namaCabang ?? null,
-      isCabang: akun.senior?.cabang?.isCabang ?? null,
-      isApprovedByPCPS: akun.senior?.isApprovedByPCPS ?? false,
-      isApprovedByPNPS: akun.senior?.isApprovedByPNPS ?? false,
+      cabangId: akun.anggota?.cabangUuid ?? null,
+      cabang: akun.anggota?.cabang?.namaCabang ?? null,
+      isCabang: akun.anggota?.cabang?.isCabang ?? null,
+      isApprovedByPCPS: akun.anggota?.isApprovedByPCPS ?? false,
+      isApprovedByPNPS: akun.anggota?.isApprovedByPNPS ?? false,
       isFromAdmin: true,
     };
   } else {
@@ -113,11 +113,11 @@ export const login = async (req: Request, res: Response) => {
       username: akun.username,
       roles: akun.roles.map(r => r.role.namaRole),
       permissions: uniquePermissions,
-      cabangId: akun.senior?.cabangUuid ?? null,
-      cabang: akun.senior?.cabang?.namaCabang ?? null,
-      isCabang: akun.senior?.cabang?.isCabang ?? null,
-      isApprovedByPCPS: akun.senior?.isApprovedByPCPS ?? false,
-      isApprovedByPNPS: akun.senior?.isApprovedByPNPS ?? false,
+      cabangId: akun.anggota?.cabangUuid ?? null,
+      cabang: akun.anggota?.cabang?.namaCabang ?? null,
+      isCabang: akun.anggota?.cabang?.isCabang ?? null,
+      isApprovedByPCPS: akun.anggota?.isApprovedByPCPS ?? false,
+      isApprovedByPNPS: akun.anggota?.isApprovedByPNPS ?? false,
       isFromAdmin: false,
     };
   }
@@ -198,8 +198,8 @@ export const register = async (req: Request, res: Response) => {
     const emailVerifyExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     const result = await prisma.$transaction(async (tx) => {
-      // 1️ Create Senior first
-      const senior = await tx.senior.create({
+      // 1️ Create Anggota first
+      const anggota = await tx.anggota.create({
         data: {
           namaLengkap,
           namaPanggil,
@@ -224,7 +224,7 @@ export const register = async (req: Request, res: Response) => {
         },
       });
 
-      // 2️ Create Akun linked to Senior
+      // 2️ Create Akun linked to Anggota
       const akun = await tx.akun.create({
         data: {
           email,
@@ -233,13 +233,13 @@ export const register = async (req: Request, res: Response) => {
           statusAkun: "PENDING_VERIFICATION",
           emailVerifyToken,
           emailVerifyExpiry,
-          seniorUuid: senior.uuid,
+          anggotaUuid: anggota.uuid,
         },
       });
 
-      // 3️ Update Senior insert_by
-      await tx.senior.update({
-        where: { uuid: senior.uuid },
+      // 3️ Update Anggota insert_by
+      await tx.anggota.update({
+        where: { uuid: anggota.uuid },
         data: { insert_by: akun.uuid },
       });
 
@@ -501,11 +501,11 @@ export const getMe = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
     
-    // Fetch latest status from DB, including the complete senior profile
+    // Fetch latest status from DB, including the complete anggota profile
     const akun = await prisma.akun.findUnique({
       where: { uuid: user.sub },
       include: {
-        senior: {
+        anggota: {
           include: {
             cabang: true,
           },
@@ -526,31 +526,31 @@ export const getMe = async (req: Request, res: Response) => {
       select: { noKta: true },
     });
 
-    // Format response to include user data AND senior profile mapped
+    // Format response to include user data AND anggota profile mapped
     const profileResponse = {
       ...akun,
       // Overwrite the password field silently
       password: undefined,
-      // Map senior properties flat if needed by frontend (or keep nested)
-      namaLengkap: akun.senior?.namaLengkap,
-      namaPanggil: akun.senior?.namaPanggil,
-      profileImg: akun.senior?.profileImg,
-      tempatLahir: akun.senior?.tempatLahir,
-      tanggalLahir: akun.senior?.tanggalLahir,
-      alamat: akun.senior?.alamat,
-      pendidikanUuid: akun.senior?.pendidikanUuid,
-      pekerjaanUuid: akun.senior?.pekerjaanUuid,
-      noWa: akun.senior?.noWa,
-      bidangStudiUuid: akun.senior?.bidangStudiUuid,
-      bidangMinatUuid: akun.senior?.bidangMinatUuid,
-      provinsi: akun.senior?.provinsi,
-      kotaDomisili: akun.senior?.kotaDomisili,
-      instagram: akun.senior?.instagram,
-      facebook: akun.senior?.facebook,
-      bio: akun.senior?.bio,
-      pesanKesan: akun.senior?.pesanKesan,
-      angkatan: akun.senior?.angkatan,
-      cabang: akun.senior?.cabang,
+      // Map anggota properties flat if needed by frontend (or keep nested)
+      namaLengkap: akun.anggota?.namaLengkap,
+      namaPanggil: akun.anggota?.namaPanggil,
+      profileImg: akun.anggota?.profileImg,
+      tempatLahir: akun.anggota?.tempatLahir,
+      tanggalLahir: akun.anggota?.tanggalLahir,
+      alamat: akun.anggota?.alamat,
+      pendidikanUuid: akun.anggota?.pendidikanUuid,
+      pekerjaanUuid: akun.anggota?.pekerjaanUuid,
+      noWa: akun.anggota?.noWa,
+      bidangStudiUuid: akun.anggota?.bidangStudiUuid,
+      bidangMinatUuid: akun.anggota?.bidangMinatUuid,
+      provinsi: akun.anggota?.provinsi,
+      kotaDomisili: akun.anggota?.kotaDomisili,
+      instagram: akun.anggota?.instagram,
+      facebook: akun.anggota?.facebook,
+      bio: akun.anggota?.bio,
+      pesanKesan: akun.anggota?.pesanKesan,
+      angkatan: akun.anggota?.angkatan,
+      cabang: akun.anggota?.cabang,
       noKta: registrasi?.noKta || null, // <- tambahkan ini agar UI bisa membaca NIA dari db
     };
 
@@ -572,11 +572,11 @@ export const updateProfile = async (req: Request, res: Response) => {
     const user = req.user!;
     const akun = await prisma.akun.findUnique({
       where: { uuid: user.sub },
-      include: { senior: true },
+      include: { anggota: true },
     });
 
-    if (!akun || !akun.senior) {
-      return res.status(404).json({ message: "Senior profile not found" });
+    if (!akun || !akun.anggota) {
+      return res.status(404).json({ message: "Anggota profile not found" });
     }
 
     const {
@@ -623,14 +623,14 @@ export const updateProfile = async (req: Request, res: Response) => {
     if (instagram !== undefined) updateData.instagram = instagram;
     if (facebook !== undefined) updateData.facebook = facebook;
 
-    const updatedSenior = await prisma.senior.update({
-      where: { uuid: akun.senior.uuid },
+    const updatedAnggota = await prisma.anggota.update({
+      where: { uuid: akun.anggota.uuid },
       data: updateData,
     });
 
     return res.status(200).json({
       message: "Profil berhasil diperbarui",
-      data: updatedSenior,
+      data: updatedAnggota,
     });
   } catch (error: any) {
     console.error("Update Profile error:", error);

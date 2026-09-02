@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { seniorQueue } from "../queue/senior.queue";
+import { anggotaQueue } from "../queue/anggota.queue";
 import { Queue } from "bullmq";
 import ExcelJS from "exceljs";
 import path from "path";
@@ -10,7 +10,7 @@ const EXPORTS_DIR = path.resolve(process.cwd(), "uploads", "exports");
 ////////////////////////////////////////////////////
 // EXPORT: Enqueue export job
 ////////////////////////////////////////////////////
-export const exportSeniors = async (req: Request, res: Response) => {
+export const exportAnggotas = async (req: Request, res: Response) => {
   try {
     const {
       search, approvalStatus,
@@ -18,7 +18,7 @@ export const exportSeniors = async (req: Request, res: Response) => {
       cabangUuid, angkatanFrom, angkatanTo,
     } = req.query;
 
-    const job = await seniorQueue.add("EXPORT_SENIORS", {
+    const job = await anggotaQueue.add("EXPORT_ANGGOTAS", {
       search, approvalStatus,
       pekerjaanUuid, pendidikanUuid, bidangStudiUuid, bidangMinatUuid,
       cabangUuid, angkatanFrom, angkatanTo,
@@ -37,7 +37,7 @@ export const exportSeniors = async (req: Request, res: Response) => {
 export const getExportStatus = async (req: Request, res: Response) => {
   try {
     const { jobId } = req.params;
-    const job = await seniorQueue.getJob(jobId);
+    const job = await anggotaQueue.getJob(jobId);
 
     if (!job) {
       res.status(404).json({ error: "Job not found" });
@@ -67,7 +67,7 @@ export const downloadExport = async (req: Request, res: Response) => {
     const { filename } = req.params;
 
     // Security: only allow filenames matching our pattern
-    if (!/^senior-export-\d+\.xlsx$/.test(filename)) {
+    if (!/^anggota-export-\d+\.xlsx$/.test(filename)) {
       res.status(400).json({ error: "Invalid filename" });
       return;
     }
@@ -78,7 +78,7 @@ export const downloadExport = async (req: Request, res: Response) => {
       return;
     }
 
-    res.download(filepath, `Senior_Data_${new Date().toISOString().slice(0, 10)}.xlsx`, (err) => {
+    res.download(filepath, `Anggota_Data_${new Date().toISOString().slice(0, 10)}.xlsx`, (err) => {
       // Clean up after download
       if (!err) {
         setTimeout(() => {
@@ -99,7 +99,7 @@ export const downloadTemplate = async (_req: Request, res: Response) => {
     const workbook = new ExcelJS.Workbook();
     workbook.creator = "PNPS Admin";
 
-    const ws = workbook.addWorksheet("Template Import Senior");
+    const ws = workbook.addWorksheet("Template Import Anggota");
 
     ws.columns = [
       { header: "Nama Lengkap *", key: "namaLengkap", width: 25 },
@@ -158,7 +158,7 @@ export const downloadTemplate = async (_req: Request, res: Response) => {
     const infoWs = workbook.addWorksheet("Petunjuk");
     infoWs.getColumn(1).width = 60;
     const instructions = [
-      "PETUNJUK PENGISIAN TEMPLATE IMPORT SENIOR",
+      "PETUNJUK PENGISIAN TEMPLATE IMPORT ANGGOTA",
       "",
       "1. Kolom yang bertanda * wajib diisi",
       "2. Nama Lengkap minimal 3 karakter",
@@ -169,7 +169,7 @@ export const downloadTemplate = async (_req: Request, res: Response) => {
       "7. Status Keanggotaan: MEMBER atau NON_MEMBER",
       "8. Hapus baris contoh (baris 2 warna abu-abu) sebelum mengupload",
       "",
-      "Catatan: Data yang sudah ada tidak akan ditimpa, setiap baris akan dibuat sebagai data Senior baru.",
+      "Catatan: Data yang sudah ada tidak akan ditimpa, setiap baris akan dibuat sebagai data Anggota baru.",
     ];
     instructions.forEach((text, i) => {
       const cell = infoWs.getCell(`A${i + 1}`);
@@ -178,7 +178,7 @@ export const downloadTemplate = async (_req: Request, res: Response) => {
     });
 
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    res.setHeader("Content-Disposition", "attachment; filename=Template_Import_Senior.xlsx");
+    res.setHeader("Content-Disposition", "attachment; filename=Template_Import_Anggota.xlsx");
     await workbook.xlsx.write(res);
     res.end();
   } catch (err: any) {
@@ -351,7 +351,7 @@ export const confirmImport = async (req: Request, res: Response) => {
       return;
     }
 
-    const job = await seniorQueue.add("IMPORT_SENIORS", {
+    const job = await anggotaQueue.add("IMPORT_ANGGOTAS", {
       rows,
       scope: req.scope,
     });
@@ -368,7 +368,7 @@ export const confirmImport = async (req: Request, res: Response) => {
 export const getJobStatus = async (req: Request, res: Response) => {
   try {
     const { jobId } = req.params;
-    const job = await seniorQueue.getJob(jobId);
+    const job = await anggotaQueue.getJob(jobId);
 
     if (!job) {
       res.status(404).json({ error: "Job not found" });

@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import * as masterWilayahService from "../services/masterWilayah.service";
 
-export const getDppListHandler = async (req: Request, res: Response, next: NextFunction) => {
+export const getDpdListHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await masterWilayahService.getDppList();
+    const data = await masterWilayahService.getDpdList();
     res.json({
       success: true,
-      message: "Daftar DPP (Provinsi) berhasil diambil",
+      message: "Daftar DPD (Provinsi) berhasil diambil",
       data,
     });
   } catch (error) {
@@ -16,9 +16,9 @@ export const getDppListHandler = async (req: Request, res: Response, next: NextF
 
 export const getDpcListHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { dpp, kode_provinsi } = req.query;
+    const { dpd, kode_provinsi } = req.query;
     const data = await masterWilayahService.getDpcList({
-      dpp: dpp as string,
+      dpd: dpd as string,
       kode_provinsi: kode_provinsi as string,
     });
     res.json({

@@ -12,16 +12,16 @@ export const requireFullApproval = async (
 
   const akun = await prisma.akun.findUnique({
     where: { uuid: req.user.sub },
-    include: { senior: true },
+    include: { anggota: true },
   });
 
-  if (!akun?.senior) {
+  if (!akun?.anggota) {
     return res.status(403).json({
-      message: "Data senior tidak ditemukan",
+      message: "Data anggota tidak ditemukan",
     });
   }
 
-  if (!akun.senior.isApprovedByPCPS || !akun.senior.isApprovedByPNPS) {
+  if (!akun.anggota.isApprovedByPCPS || !akun.anggota.isApprovedByPNPS) {
     return res.status(403).json({
       message: "Belum disetujui oleh PCPS / PNPS",
     });

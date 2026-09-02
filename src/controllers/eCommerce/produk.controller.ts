@@ -12,7 +12,7 @@ const base = createBaseController(
   },
   {
     produkKategori: true,
-    senior: true,
+    anggota: true,
     spesifikasi: {
       include: {
         values: true,
@@ -38,9 +38,9 @@ export const produkController = {
       if (req.user && !req.user.isFromAdmin) {
         const akun = await prisma.akun.findUnique({
           where: { uuid: req.user.sub },
-          select: { seniorUuid: true },
+          select: { anggotaUuid: true },
         });
-        where.seniorUuid = akun?.seniorUuid || "NOT_FOUND";
+        where.anggotaUuid = akun?.anggotaUuid || "NOT_FOUND";
       }
 
       if (statusProduk) {
@@ -59,7 +59,7 @@ export const produkController = {
         where,
         include: {
           produkKategori: true,
-          senior: true,
+          anggota: true,
           spesifikasi: {
             include: {
               values: true,
@@ -82,10 +82,10 @@ export const produkController = {
     }
   },
 
-  // ================= GET BY SENIOR =================
-  getBySenior: async (req: Request, res: Response) => {
+  // ================= GET BY ANGGOTA =================
+  getByAnggota: async (req: Request, res: Response) => {
     try {
-      const { seniorUuid } = req.params;
+      const { anggotaUuid } = req.params;
       const { currentPage, pageSize } = req.query as any;
 
       const page = Number(currentPage) || 1;
@@ -93,7 +93,7 @@ export const produkController = {
       const skip = (page - 1) * size;
 
       const where: any = {
-        seniorUuid,
+        anggotaUuid,
         deleted_at: null,
       };
 
@@ -103,7 +103,7 @@ export const produkController = {
         where,
         include: {
           produkKategori: true,
-          senior: true,
+          anggota: true,
           spesifikasi: {
             include: {
               values: true,
@@ -129,7 +129,7 @@ export const produkController = {
       );
     } catch (error: any) {
       return res.status(500).json({
-        message: "Failed to fetch produk by senior",
+        message: "Failed to fetch produk by anggota",
         error: error.message,
       });
     }
@@ -149,14 +149,14 @@ export const produkController = {
 
       const akun = await prisma.akun.findUnique({
         where: { uuid: req.user.sub },
-        select: { seniorUuid: true },
+        select: { anggotaUuid: true },
       });
-      if (!akun || !akun.seniorUuid) {
-        return res.status(403).json({ message: "Akun ini tidak memiliki toko / seniorUuid" });
+      if (!akun || !akun.anggotaUuid) {
+        return res.status(403).json({ message: "Akun ini tidak memiliki toko / anggotaUuid" });
       }
 
       let where: any = {
-        seniorUuid: akun.seniorUuid,
+        anggotaUuid: akun.anggotaUuid,
         deleted_at: null,
       };
 
@@ -168,7 +168,7 @@ export const produkController = {
       const total = await prisma.produk.count({ where });
       const data = await prisma.produk.findMany({
         where,
-        include: { produkKategori: true, senior: true, spesifikasi: { include: { values: true } } },
+        include: { produkKategori: true, anggota: true, spesifikasi: { include: { values: true } } },
         skip,
         take: size,
         orderBy: { created_at: "desc" },

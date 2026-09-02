@@ -9,7 +9,6 @@ import {
 } from "../config/email";
 
 export interface CreateRegistrasiDTO {
-  nik: string;
   namaLengkap: string;
   tanggalLahir: string | Date;
   noWa: string;
@@ -18,11 +17,10 @@ export interface CreateRegistrasiDTO {
   fileKtpUrl: string;
   buktiBayarUrl: string;
 
-  dpp?: string;
+  dpd?: string;
   dpc?: string;
   kode_provinsi?: string;
   kode_kabupaten?: string;
-  cabangUuid?: string;
   kotaDomisili?: string;
   tingkatPendidikan?: string;
   pendidikanUuid?: string;
@@ -48,8 +46,6 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
   // Validasi tambahan ditiadakan (confirmEmail dihapus)
 
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  const randomNum = Math.floor(1000 + Math.random() * 9000);
-  const noTagihan = `INV-PIKI-${dateStr}-${randomNum}`;
 
   const registrasi = await prisma.$transaction(async (tx) => {
     // 0. Cek apakah email sudah pernah mendaftar
@@ -69,7 +65,6 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
     // 2. Buat Pendaftaran Registrasi
     const newReg = await tx.registrasi.create({
       data: {
-        nik: data.nik,
         namaLengkap: data.namaLengkap,
         tanggalLahir: new Date(data.tanggalLahir),
         noWa: data.noWa,
@@ -77,11 +72,10 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         alamatDomisili: data.alamatDomisili,
         fileKtpUrl: data.fileKtpUrl,
         // akunUuid dihapus karena belum dibuat
-        dpp: data.dpp || null,
+        dpd: data.dpd || null,
         dpc: data.dpc || null,
         kode_provinsi: data.kode_provinsi || null,
         kode_kabupaten: data.kode_kabupaten || null,
-        cabangUuid: data.cabangUuid || null,
         kotaDomisili: data.kotaDomisili || data.dpc || null,
         tingkatPendidikan: data.tingkatPendidikan || null,
         pendidikanUuid: data.pendidikanUuid || null,
@@ -97,10 +91,8 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         tglPersetujuanPdp: new Date(),
 
         // statusVerifikasi: "PENDING_VERIFIKASI_DPC",
-        statusVerifikasi: "PENDING_VERIFIKASI_DPP",
+        statusVerifikasi: "PENDING_VERIFIKASI_DPD",
         statusPembayaran: "PENDING_CONFIRMATION",
-        noTagihan,
-        nominalIuran: 25000,
         // buktiBayarUrl: data.buktiBayarUrl,
         buktiBayarUrl: null, // dihapus sementara karena belum upload
         statusKta: "INACTIVE",
@@ -126,7 +118,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         registrasiId: newReg.id,
         aksi: "SUBMIT_REGISTRASI",
         keterangan:
-          "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+          "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPD (Pusat).",
         actorNama: data.namaLengkap,
       },
     });
@@ -135,27 +127,11 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
   });
 
   // Kirim Notifikasi Email di background tanpa await agar respons API instan
-  sendRegistrasiSubmitEmail(data.email, data.namaLengkap, noTagihan).catch(err => console.error(err));
-
-  // Kirim notifikasi ke Pengurus DPC/DPP (Jika cabang dipilih)
-  if (registrasi.cabangUuid) {
-    prisma.registrasiPengurus.findMany({
-      where: { cabangUuid: registrasi.cabangUuid, statusVerifikasi: "APPROVED" }
-    }).then(pengurusList => {
-      for (const p of pengurusList) {
-        sendNotifikasiPendaftarBaru(
-          p.email,
-          p.namaLengkap,
-          data.namaLengkap,
-          `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`
-        ).catch(err => console.error(err));
-      }
-    }).catch(err => console.error(err));
-  }
+  sendRegistrasiSubmitEmail(data.email, data.namaLengkap, "").catch(err => console.error(err));
 
   // Kirim ke Superadmin selalu (ambil otomatis dari database)
   prisma.akunRole.findMany({
-    where: { role: { namaRole: { in: ["SUPERADMIN", "Superadmin"] } } },
+    where: { role: { namaRole: { in: ["SUPERADMIN", "Superadmin", "Super Admin"] } } },
     include: { akun: true }
   }).then(superadmins => {
     for (const sa of superadmins) {
@@ -175,7 +151,6 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
 
 export const getRegistrasiList = async (params: {
   search?: string;
-  cabangUuid?: string;
   statusVerifikasi?: string;
   statusPembayaran?: string;
   statusKta?: string;
@@ -194,7 +169,6 @@ export const getRegistrasiList = async (params: {
     ];
   }
 
-  if (params.cabangUuid) where.cabangUuid = params.cabangUuid;
   if (params.statusVerifikasi) where.statusVerifikasi = params.statusVerifikasi;
   if (params.statusPembayaran) where.statusPembayaran = params.statusPembayaran;
   if (params.statusKta) where.statusKta = params.statusKta;
@@ -214,14 +188,6 @@ export const getRegistrasiList = async (params: {
       include: {
         akun: {
           select: { uuid: true, email: true, username: true, statusAkun: true },
-        },
-        cabang: {
-          select: {
-            uuid: true,
-            namaCabang: true,
-            kabupatenKota: true,
-            provinsi: true,
-          },
         },
       },
     }),
@@ -247,7 +213,6 @@ export const getRegistrasiById = async (id: string) => {
           },
         },
       },
-      cabang: true,
       logs: { orderBy: { created_at: "desc" } },
     },
   });
@@ -270,7 +235,7 @@ export const updateRegistrasi = async (
 
 export const verifikasiRegistrasi = async (params: {
   id: string;
-  status: "APPROVED_DPC" | "APPROVED_DPP" | "REJECTED";
+  status: "APPROVED_DPC" | "APPROVED_DPD" | "REJECTED";
   verifikatorUuid?: string;
   actorNama?: string;
   catatanVerifikasi?: string;
@@ -279,7 +244,7 @@ export const verifikasiRegistrasi = async (params: {
   if (!reg) throw new Error("Data registrasi tidak ditemukan");
 
   const isApproved =
-    params.status === "APPROVED_DPC" || params.status === "APPROVED_DPP";
+    params.status === "APPROVED_DPC" || params.status === "APPROVED_DPD";
   const langkahNext = isApproved ? 5 : 2; // Langsung ke tahap 5 (KTA Aktif) jika di-approve
 
   const updated = await prisma.$transaction(async (tx) => {
@@ -358,7 +323,7 @@ export const checkAndBypassSla = async (
       const b = await tx.registrasi.update({
         where: { id: reg.id },
         data: {
-          statusVerifikasi: "BYPASSED_TO_DPP",
+          statusVerifikasi: "BYPASSED_TO_DPD",
           isBypassedSla: true,
           tglBypassSla: new Date(),
           langkahSekarang: 3,
@@ -368,9 +333,9 @@ export const checkAndBypassSla = async (
       await tx.registrasiLog.create({
         data: {
           registrasiId: reg.id,
-          aksi: "SLA_AUTO_BYPASS_DPP",
+          aksi: "SLA_AUTO_BYPASS_DPD",
           keterangan:
-            "DPC tidak memproses verifikasi dalam 3 hari kerja. Berkas otomatis diekskalasi (auto-bypass) ke DPP.",
+            "DPC tidak memproses verifikasi dalam 3 hari kerja. Berkas otomatis diekskalasi (auto-bypass) ke DPD.",
           actorNama,
         },
       });
@@ -383,8 +348,8 @@ export const checkAndBypassSla = async (
     sendRegistrasiVerifikasiEmail(
       reg.email,
       reg.namaLengkap,
-      "BYPASSED_TO_DPP",
-      "Berkas Anda diekskalasi otomatis ke DPP karena batas waktu DPC melebihi 3 hari kerja.",
+      "BYPASSED_TO_DPD",
+      "Berkas Anda diekskalasi otomatis ke DPD karena batas waktu DPC melebihi 3 hari kerja.",
     ).catch(err => {
       console.error(`Gagal kirim email bypass ke ${reg.email}:`, err);
     });
@@ -397,7 +362,6 @@ export const prosesPembayaran = async (params: {
   id: string;
   buktiBayarUrl?: string;
   statusPembayaran?: "PAID" | "PENDING_CONFIRMATION" | "FAILED";
-  nominalIuran?: number;
   actorUuid?: string;
   actorNama?: string;
 }) => {
@@ -413,8 +377,6 @@ export const prosesPembayaran = async (params: {
       data: {
         statusPembayaran: statusPay,
         buktiBayarUrl: params.buktiBayarUrl || reg.buktiBayarUrl,
-        nominalIuran: params.nominalIuran ?? reg.nominalIuran,
-        tglPembayaran: new Date(),
         langkahSekarang: langkahNext,
         updated_by: params.actorUuid || null,
       },
@@ -515,10 +477,10 @@ export const aktivasiKta = async (params: {
       });
     }
 
-    // 4. Buat record Senior baru jika belum ada
-    let seniorUuid = reg.seniorUuid;
-    if (!seniorUuid) {
-      const newSenior = await tx.senior.create({
+    // 4. Buat record Anggota baru jika belum ada
+    let anggotaUuid = reg.anggotaUuid;
+    if (!anggotaUuid) {
+      const newAnggota = await tx.anggota.create({
         data: {
           namaLengkap: reg.namaLengkap,
           tanggalLahir: reg.tanggalLahir,
@@ -534,13 +496,13 @@ export const aktivasiKta = async (params: {
           isApprovedByPNPS: true,
         },
       });
-      seniorUuid = newSenior.uuid;
+      anggotaUuid = newAnggota.uuid;
     }
 
-    // 5. Hubungkan seniorUuid ke Akun
+    // 5. Hubungkan anggotaUuid ke Akun
     await tx.akun.update({
       where: { uuid: newAkun.uuid },
-      data: { seniorUuid },
+      data: { anggotaUuid },
     });
 
     // 3. Update status Registrasi
@@ -552,7 +514,7 @@ export const aktivasiKta = async (params: {
         fileKtaUrl,
         tglAktivasiKta: new Date(),
         akunUuid: newAkun.uuid,
-        seniorUuid,
+        anggotaUuid,
         langkahSekarang: 5,
         updated_by: params.actorUuid || null,
       },

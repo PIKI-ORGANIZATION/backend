@@ -1,18 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "../config/prisma";
 
-export const injectSeniorUuid = async (req: Request, res: Response, next: NextFunction) => {
+export const injectAnggotaUuid = async (req: Request, res: Response, next: NextFunction) => {
   if (req.user && !req.user.isFromAdmin) {
     try {
       const akun = await prisma.akun.findUnique({
         where: { uuid: req.user.sub },
-        select: { seniorUuid: true }
+        select: { anggotaUuid: true }
       });
-      if (akun && akun.seniorUuid) {
-        req.body.seniorUuid = akun.seniorUuid;
+      if (akun && akun.anggotaUuid) {
+        req.body.anggotaUuid = akun.anggotaUuid;
       }
     } catch (error) {
-      console.error("Error injecting seniorUuid:", error);
+      console.error("Error injecting anggotaUuid:", error);
     }
   }
   next();

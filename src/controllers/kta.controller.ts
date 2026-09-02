@@ -17,7 +17,7 @@ export class KtaController {
 
       const akun = await prisma.akun.findUnique({
         where: { uuid: user.sub },
-        include: { senior: { include: { cabang: true } } },
+        include: { anggota: { include: { cabang: true } } },
       });
 
       let noKta = "BELUM ADA NIA";
@@ -32,10 +32,10 @@ export class KtaController {
 
       const userData = {
         uuid: user.sub || "preview-uuid",
-        namaLengkap: akun?.senior?.namaLengkap || user.username || "ANGGOTA PIKI",
+        namaLengkap: akun?.anggota?.namaLengkap || user.username || "ANGGOTA PIKI",
         nomorAnggota: noKta,
-        cabang: akun?.senior?.cabang?.namaCabang || user.cabang?.namaCabang || "DPP PIKI",
-        profileImg: akun?.senior?.profileImg || undefined,
+        cabang: akun?.anggota?.cabang?.namaCabang || user.cabang?.namaCabang || "DPD PIKI",
+        profileImg: akun?.anggota?.profileImg || undefined,
       };
 
       const pdfBytes = await KtaService.generateKtaPdf(templateId, userData);
