@@ -29,7 +29,7 @@ async function main() {
   await seedJabatan();
   await seedBidang();
 
-  await seedSeniorPNPS();
+  await seedAnggota();
 
   // 5. Struktur Organisasi
   await seedStrukturOrganisasi();
@@ -43,15 +43,10 @@ async function main() {
   // 8. Kritik & Saran (FAQ + Form Pengaduan)
   await seedKritikSaran();
 
-  // 9. The Grit Institut (Layanan + Mentor + Kelas + Pendaftaran)
-  await seedGritInstitut();
-
-  // 10. E-Commerce
-  await seedEcommerce();
-
   // 11. Master Wilayah & DPP DPC PIKI
   await seedDataMasterWilayah();
-  await seedDppDpc();
+  await seedDpdDpc();
+  await seedDpd();
 
   console.log("✅ Seeding selesai.");
 }
@@ -253,11 +248,11 @@ async function seedAllCabang() {
     });
 
     // 1c. Senior Admin
-    let adminSenior = await prisma.senior.findFirst({
+    let adminSenior = await prisma.anggota.findFirst({
       where: { namaLengkap: `Admin ${c.nama}`, cabangUuid: cabang.uuid },
     });
     if (!adminSenior) {
-      adminSenior = await prisma.senior.create({
+      adminSenior = await prisma.anggota.create({
         data: {
           namaLengkap: `Admin ${c.nama}`,
           namaPanggil: "Admin",
@@ -271,11 +266,11 @@ async function seedAllCabang() {
     }
 
     // 1d. Senior Ketua
-    let ketuaSenior = await prisma.senior.findFirst({
+    let ketuaSenior = await prisma.anggota.findFirst({
       where: { namaLengkap: `Ketua ${c.nama}`, cabangUuid: cabang.uuid },
     });
     if (!ketuaSenior) {
-      ketuaSenior = await prisma.senior.create({
+      ketuaSenior = await prisma.anggota.create({
         data: {
           namaLengkap: `Ketua ${c.nama}`,
           namaPanggil: "Ketua",
@@ -289,11 +284,11 @@ async function seedAllCabang() {
     }
 
     // 1e. Senior Anggota
-    const anggotaExists = await prisma.senior.findFirst({
+    const anggotaExists = await prisma.anggota.findFirst({
       where: { namaLengkap: `Senior ${c.nama}`, cabangUuid: cabang.uuid },
     });
     if (!anggotaExists) {
-      await prisma.senior.create({
+      await prisma.anggota.create({
         data: {
           namaLengkap: `Senior ${c.nama}`,
           namaPanggil: "Senior",
@@ -316,7 +311,7 @@ async function seedAllCabang() {
         email: adminEmail,
         password: passwordHash,
         statusAkun: "ACTIVE",
-        seniorUuid: adminSenior.uuid,
+        anggotaUuid: adminSenior.uuid,
       },
     });
 
@@ -330,7 +325,7 @@ async function seedAllCabang() {
         email: ketuaEmail,
         password: passwordHash,
         statusAkun: "ACTIVE",
-        seniorUuid: ketuaSenior.uuid,
+        anggotaUuid: ketuaSenior.uuid,
       },
     });
 
@@ -1301,7 +1296,7 @@ async function seedStrukturOrganisasi() {
   // INSERT PNPS
   //////////////////////////////////////////////////
   for (const s of strukturPNPS) {
-    const senior = await prisma.senior.findFirst({
+    const senior = await prisma.anggota.findFirst({
       where: { namaLengkap: s.namaLengkap },
     });
 
@@ -1316,7 +1311,7 @@ async function seedStrukturOrganisasi() {
     const exists = await prisma.strukturOrganisasi.findFirst({
       where: {
         periodeUuid: periodePNPS.uuid,
-        seniorUuid: senior.uuid,
+        anggotaUuid: senior.uuid,
       },
     });
 
@@ -1324,7 +1319,7 @@ async function seedStrukturOrganisasi() {
       await prisma.strukturOrganisasi.create({
         data: {
           periodeUuid: periodePNPS.uuid,
-          seniorUuid: senior.uuid,
+          anggotaUuid: senior.uuid,
           jabatanUuid: jabatan.uuid,
           bidangUuid: bidang?.uuid ?? null,
           urutan: s.urutan,
@@ -1337,7 +1332,7 @@ async function seedStrukturOrganisasi() {
   //////////////////////////////////////////////////
   // PCPS (tetap)
   //////////////////////////////////////////////////
-  const seniorJakarta = await prisma.senior.findMany({
+  const seniorJakarta = await prisma.anggota.findMany({
     where: { cabangUuid: cabangJakarta.uuid },
   });
 
@@ -1366,7 +1361,7 @@ async function seedStrukturOrganisasi() {
       await prisma.strukturOrganisasi.create({
         data: {
           periodeUuid: periodePCPS.uuid,
-          seniorUuid: senior.uuid,
+          anggotaUuid: senior.uuid,
           jabatanUuid: jabatan.uuid,
           bidangUuid: bidang?.uuid ?? null,
           urutan: s.urutan,
@@ -1382,7 +1377,7 @@ async function seedStrukturOrganisasi() {
 // ============================================================
 // 4b. SENIOR PNPS (45 PENGURUS RESMI)
 // ============================================================
-async function seedSeniorPNPS() {
+async function seedAnggota() {
   console.log("Seeding 45 Senior PNPS...");
   const admin = await getAdmin();
 
@@ -1454,9 +1449,9 @@ async function seedSeniorPNPS() {
   ];
 
   for (const s of seniorList) {
-    const exists = await prisma.senior.findUnique({ where: { uuid: s.uuid } });
+    const exists = await prisma.anggota.findUnique({ where: { uuid: s.uuid } });
     if (!exists) {
-      await prisma.senior.create({
+      await prisma.anggota.create({
         data: {
           uuid: s.uuid,
           namaLengkap: s.namaLengkap,
@@ -1562,7 +1557,7 @@ async function seedGaleri() {
           statusAlbum: "ACTIVE",
           cabangUuid: cabangPusat?.uuid ?? null,
           newsUtamaUuid: null,
-          kelasUuid: null,
+          
           insert_by: admin.uuid,
           update_by: admin.uuid,
         },
@@ -1929,370 +1924,7 @@ async function seedKritikSaran() {
 // ============================================================
 // 8. THE GRIT INSTITUT
 // ============================================================
-async function seedGritInstitut() {
-  console.log("Seeding The Grit Institut...");
-  const admin = await getAdmin();
-
-  // =========================
-  // TOPIK EDUKASI
-  // =========================
-  const topikMap: Record<string, string> = {};
-  const topikList = [
-    "Leadership Development Program",
-    "Community Development & Social Impact",
-    "Digital Transformation & Entrepreneurship",
-  ];
-
-  for (const nama of topikList) {
-    let topik = await prisma.topikEdukasi.findFirst({
-      where: { namaTopikEdukasi: nama },
-    });
-
-    if (!topik) {
-      topik = await prisma.topikEdukasi.create({
-        data: {
-          namaTopikEdukasi: nama,
-          insert_by: admin.uuid,
-        },
-      });
-    }
-
-    topikMap[nama] = topik.uuid;
-  }
-
-  // =========================
-  // MENTOR
-  // =========================
-  const mentorMap: Record<string, string> = {};
-  const mentorList = [/* tetap sama */];
-
-  for (const m of mentorList) {
-    let mentor = await prisma.mentor.findFirst({
-      where: { namaLengkap: m.namaLengkap },
-    });
-
-    if (!mentor) {
-      mentor = await prisma.mentor.create({
-        data: { ...m, insert_by: admin.uuid },
-      });
-    }
-
-    mentorMap[m.namaLengkap] = mentor.uuid;
-  }
-
-  // =========================
-  // KELAS + NEWS
-  // =========================
-  const kelasList = [
-    {
-      namaKelas: "Workshop Kepemimpinan Transformatif",
-      deskripsiKelas: "Workshop intensif kepemimpinan.",
-      jenisKelas: "WORKSHOP",
-      metodePembelajaran: "OFFLINE",
-      tanggalMulai: new Date(),
-      lokasi: "Jakarta",
-      harga: 500000,
-      maxPeserta: 30,
-      thumbnail: "/grit/kelas/workshop.webp",
-
-      topik: ["Leadership Development Program"],
-      mentor: ["Dr. Agustinus Eko Rahardjo"],
-
-      // 🔥 NEWS BARU
-      news: {
-        judul: "Workshop Kepemimpinan Transformatif Dibuka",
-        konten: "Kegiatan workshop resmi dibuka...",
-        slug: "workshop-kepemimpinan-transformatif",
-        statusNewsUtama: "PUBLISHED",
-      },
-
-      pendaftaran: [
-        { namaPeserta: "Ranto", emailPeserta: "ranto@example.com" },
-      ],
-    },
-  ];
-
-  for (const k of kelasList) {
-    let kelas = await prisma.kelas.findFirst({
-      where: { namaKelas: k.namaKelas },
-    });
-
-    if (!kelas) {
-      kelas = await prisma.kelas.create({
-        data: {
-          namaKelas: k.namaKelas,
-          deskripsiKelas: k.deskripsiKelas,
-          jenisKelas: k.jenisKelas,
-          metodePembelajaran: k.metodePembelajaran,
-          tanggalMulai: k.tanggalMulai,
-          tanggalSelesai: k.tanggalSelesai,
-          lokasi: k.lokasi,
-          linkOnline: k.linkOnline,
-          harga: k.harga ?? 0,
-          maxPeserta: k.maxPeserta,
-          thumbnail: k.thumbnail,
-          statusKelas: k.statusKelas ?? "UPCOMING",
-          insert_by: admin.uuid,
-        },
-      });
-    }
-
-    // =========================
-    // RELASI MENTOR
-    // =========================
-    for (const mentorNama of k.mentor || []) {
-      const mentorUuid = mentorMap[mentorNama];
-      if (!mentorUuid) continue;
-
-      await prisma.kelasMentor.upsert({
-        where: {
-          kelasUuid_mentorUuid: {
-            kelasUuid: kelas.uuid,
-            mentorUuid,
-          },
-        },
-        update: {},
-        create: {
-          kelasUuid: kelas.uuid,
-          mentorUuid,
-          role: "MAIN_MENTOR",
-        },
-      });
-    }
-
-    // =========================
-    // RELASI TOPIK
-    // =========================
-    for (const topikNama of k.topik || []) {
-      const topikUuid = topikMap[topikNama];
-      if (!topikUuid) continue;
-
-      await prisma.kelasTopikEdukasi.upsert({
-        where: {
-          kelasUuid_topikEdukasiUuid: {
-            kelasUuid: kelas.uuid,
-            topikEdukasiUuid: topikUuid,
-          },
-        },
-        update: {},
-        create: {
-          kelasUuid: kelas.uuid,
-          topikEdukasiUuid: topikUuid,
-        },
-      });
-    }
-
-    // =========================
-    // 🔥 NEWS (ONE TO ONE)
-    // =========================
-    if (k.news) {
-      const existingNews = await prisma.newsUtama.findFirst({
-        where: { slug: k.news.slug },
-      });
-
-      if (!existingNews) {
-        await prisma.newsUtama.create({
-          data: {
-            ...k.news,
-            author_akun_uuid: admin.uuid,
-            published_at: new Date(),
-            kelasUuid: kelas.uuid, // 🔥 connect ke kelas
-          },
-        });
-      }
-    }
-
-    // =========================
-    // PENDAFTARAN
-    // =========================
-    for (const pd of k.pendaftaran || []) {
-      await prisma.pendaftaranKelas.upsert({
-        where: {
-          kelasUuid_emailPeserta: {
-            kelasUuid: kelas.uuid,
-            emailPeserta: pd.emailPeserta,
-          },
-        },
-        update: {},
-        create: {
-          kelasUuid: kelas.uuid,
-          namaPeserta: pd.namaPeserta,
-          emailPeserta: pd.emailPeserta,
-        },
-      });
-    }
-
-    console.log(`✅ Kelas: ${k.namaKelas}`);
-  }
-
-  console.log("✅ The Grit Institut seeded");
-}
-
-
-// ============================================================
-// 10. E-COMMERCE
-// ============================================================
-async function seedEcommerce() {
-  console.log("Seeding E-Commerce...");
-
-  // ambil beberapa senior untuk jadi penjual
-  const seniors = await prisma.senior.findMany({
-    take: 3,
-  });
-
-  if (seniors.length === 0) {
-    console.log("❌ Tidak ada senior, skip ecommerce seed");
-    return;
-  }
-
-  // ============================================================
-  // 1. PRODUK KATEGORI
-  // ============================================================
-  const kategoriList = [
-    { namaKategori: "Kaos", tipeProduk: "PRODUK_FISIK" },
-    { namaKategori: "Jaket", tipeProduk: "PRODUK_FISIK" },
-    { namaKategori: "Jasa Desain", tipeProduk: "JASA" },
-  ];
-
-  const kategoriMap: any = {};
-
-  for (const k of kategoriList) {
-    const kategori = await prisma.produkKategori.upsert({
-      where: { namaKategori: k.namaKategori },
-      update: {},
-      create: k,
-    });
-
-    kategoriMap[k.namaKategori] = kategori;
-  }
-
-  console.log("✅ ProdukKategori seeded");
-
-  // ============================================================
-  // 2. PRODUK
-  // ============================================================
-  const produkList = [
-    {
-      namaProduk: "Kaos GMKI Premium",
-      harga: 120000,
-      stok: 50,
-      kategori: "Kaos",
-    },
-    {
-      namaProduk: "Jaket GMKI Exclusive",
-      harga: 250000,
-      stok: 30,
-      kategori: "Jaket",
-    },
-    {
-      namaProduk: "Jasa Desain Logo",
-      harga: 500000,
-      stok: 999,
-      kategori: "Jasa Desain",
-    },
-  ];
-
-  const produkMap: any = {};
-
-  for (let i = 0; i < produkList.length; i++) {
-    const p = produkList[i];
-
-    const produk = await prisma.produk.create({
-      data: {
-        namaProduk: p.namaProduk,
-        harga: p.harga,
-        stok: p.stok,
-        produkKategoriUuid: kategoriMap[p.kategori].uuid,
-        seniorUuid: seniors[i % seniors.length].uuid,
-      },
-    });
-
-    produkMap[p.namaProduk] = produk;
-  }
-
-  console.log("✅ Produk seeded");
-
-  // ============================================================
-  // 3. SPESIFIKASI PRODUK
-  // ============================================================
-  // Kaos -> warna & ukuran
-  const kaos = produkMap["Kaos GMKI Premium"];
-
-  const warna = await prisma.spesifikasiProduk.create({
-    data: {
-      namaSpesifikasi: "Warna",
-      produkUuid: kaos.uuid,
-      values: {
-        create: [
-          { namaValue: "Merah" },
-          { namaValue: "Hitam" },
-          { namaValue: "Putih" },
-        ],
-      },
-    },
-  });
-
-  const ukuran = await prisma.spesifikasiProduk.create({
-    data: {
-      namaSpesifikasi: "Ukuran",
-      produkUuid: kaos.uuid,
-      values: {
-        create: [
-          { namaValue: "S" },
-          { namaValue: "M" },
-          { namaValue: "L" },
-          { namaValue: "XL" },
-        ],
-      },
-    },
-  });
-
-  // Jaket -> ukuran saja
-  const jaket = produkMap["Jaket GMKI Exclusive"];
-
-  await prisma.spesifikasiProduk.create({
-    data: {
-      namaSpesifikasi: "Ukuran",
-      produkUuid: jaket.uuid,
-      values: {
-        create: [
-          { namaValue: "M" },
-          { namaValue: "L" },
-          { namaValue: "XL" },
-        ],
-      },
-    },
-  });
-
-  console.log("✅ SpesifikasiProduk seeded");
-
-  // ============================================================
-  // 4. PENGATURAN PESANAN (OPSIONAL)
-  // ============================================================
-  const existing = await prisma.pengaturanPesanan.findFirst();
-
-  if (!existing) {
-    await prisma.pengaturanPesanan.create({
-      data: {
-        pajakPesanan: {
-          ppn: 0.11,
-        },
-        pajakProdukPesanan: {
-          default: 0,
-        },
-      },
-    });
-  }
-
-  console.log("✅ PengaturanPesanan seeded");
-
-  console.log("🎉 E-Commerce seeding selesai");
-}
-
-// ============================================================
-// 11. MASTER WILAYAH & DPP DPC PIKI
-// ============================================================
-async function seedDppDpc() {
+async function seedDpdDpc() {
   console.log("Seeding DPP DPC...");
   const dppDpcDataPath = path.join(__dirname, "data/dpp_dpc.json");
 
@@ -2301,19 +1933,23 @@ async function seedDppDpc() {
     const list: any[] = JSON.parse(raw);
 
     for (const item of list) {
-      const existing = await prisma.dppDpc.findFirst({
+      const existing = await prisma.dpdDpc.findFirst({
         where: {
-          dpp: { equals: item.dpp, mode: "insensitive" },
+          dpd: { equals: item.dpp, mode: "insensitive" },
           dpc: { equals: item.dpc, mode: "insensitive" },
         },
       });
 
       if (!existing) {
-        await prisma.dppDpc.create({ data: item });
+        const payload = { ...item, dpd: item.dpp };
+        delete payload.dpp;
+        await prisma.dpdDpc.create({ data: payload });
       } else {
-        await prisma.dppDpc.update({
+        const payload = { ...item, dpd: item.dpp };
+        delete payload.dpp;
+        await prisma.dpdDpc.update({
           where: { id: existing.id },
-          data: item,
+          data: payload,
         });
       }
     }
@@ -2362,3 +1998,56 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+async function seedDpd() {
+  console.log("Seeding DPD from Data Master Wilayah...");
+  const provinces = await prisma.dataMasterWilayah.findMany({
+    distinct: ['kode_provinsi'],
+    select: {
+      kode_provinsi: true,
+      nama_provinsi: true
+    }
+  });
+
+  const definitifList = [
+    "SUMATERA UTARA", "SUMATERA BARAT", "LAMPUNG", "RIAU", "KEPULAUAN RIAU", 
+    "BANTEN", "JAWA BARAT", "DAERAH ISTIMEWA YOGYAKARTA", "JAWA TENGAH", "JAWA TIMUR", 
+    "BALI", "NUSA TENGGARA TIMUR", "KALIMANTAN BARAT", "KALIMANTAN TIMUR", 
+    "KALIMANTAN SELATAN", "KALIMANTAN UTARA", "KALIMANTAN TENGAH", 
+    "SULAWESI UTARA", "SULAWESI TENGGARA", "SULAWESI SELATAN", "MALUKU", "MALUKU UTARA"
+  ];
+
+  let dpdCount = 0;
+  for (const prov of provinces) {
+    if (!prov.kode_provinsi || !prov.nama_provinsi) continue;
+    
+    const isDefinitif = definitifList.includes(prov.nama_provinsi.toUpperCase());
+
+    const existingDpd = await prisma.dpd.findFirst({
+      where: { kodeProvinsi: prov.kode_provinsi }
+    });
+
+    if (!existingDpd) {
+      await prisma.dpd.create({
+        data: {
+          kodeProvinsi: prov.kode_provinsi,
+          dpd: prov.nama_provinsi,
+          pengurus: null,
+          noHandphone: null,
+          keterangan: isDefinitif ? "Definitif" : null,
+          penerbitanSk: null
+        }
+      });
+      dpdCount++;
+    } else {
+      await prisma.dpd.update({
+        where: { id: existingDpd.id },
+        data: {
+          dpd: prov.nama_provinsi,
+          keterangan: isDefinitif ? "Definitif" : null,
+        }
+      });
+    }
+  }
+  console.log(`✅ ${dpdCount} DPD records seeded from DataMasterWilayah.`);
+}
