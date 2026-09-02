@@ -3,9 +3,11 @@ import { z } from "zod";
 export const createRegistrasiSchema = z
   .object({
     nik: z
-      .string({ required_error: "NIK wajib diisi" })
+      .string()
       .min(16, "NIK minimal 16 karakter")
-      .max(16, "NIK maksimal 16 karakter"),
+      .max(16, "NIK maksimal 16 karakter")
+      .optional()
+      .or(z.literal("")),
 
     namaLengkap: z
       .string({ required_error: "Nama lengkap wajib diisi" })
