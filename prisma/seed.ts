@@ -317,7 +317,7 @@ async function seedAllCabang() {
     });
 
     // 1g. Akun Ketua
-    const ketuaEmail = c.isPusat ? "user@pnps.id" : `ketua_${c.kotaEmail}@dpp.id`;
+    const ketuaEmail = c.isPusat ? "user@pnps.id" : `ketua_${c.kotaEmail}@pnps.id`;
     const ketuaAkun = await prisma.akun.upsert({
       where: { email: ketuaEmail },
       update: {},
