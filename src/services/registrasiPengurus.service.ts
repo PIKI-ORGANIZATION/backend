@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { uuid } from "uuidv4";
+// import { uuid } from "uuidv4";
 import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
@@ -80,12 +80,12 @@ export const approveRegistrasiPengurus = async (id: string, verifikatorUuid: str
 
     // 2. Assign Role (DPC atau DPD)
     let roleName = registrasi.tingkat === "DPD" ? "DPD" : "DPC";
-    const role = await tx.role.findUnique({ where: { name: roleName } });
+    const role = await tx.role.findUnique({ where: { namaRole: roleName } });
     if (role) {
       await tx.akunRole.create({
         data: {
           akunUuid: akun.uuid,
-          roleId: role.id
+          roleUuid: role.uuid
         }
       });
     }

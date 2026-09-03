@@ -300,7 +300,7 @@ export const sendCheckoutInvoiceEmail = async (
 
   return sendMail(
     to,
-    "Invoice Sementara - PNPS E-Commerce",
+    "Invoice Sementara - DPP E-Commerce",
     createEmailTemplate("Invoice Checkout", `Pesanan ${nomorPesanan} Anda telah berhasil dibuat.`, content)
   );
 };
@@ -312,7 +312,7 @@ export const sendSellerNewOrderEmail = async (
 ) => {
   const content = `
     <p style="margin-bottom: 20px;">Halo <strong>${namaPenjual}</strong>,</p>
-    <p style="margin-bottom: 24px;">Anda baru saja menerima pesanan baru di PNPS E-Commerce!</p>
+    <p style="margin-bottom: 24px;">Anda baru saja menerima pesanan baru di DPP E-Commerce!</p>
     
     <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
       <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #047857; font-weight: 600; margin-bottom: 4px;">Nomor Pesanan</p>
@@ -326,7 +326,7 @@ export const sendSellerNewOrderEmail = async (
 
   return sendMail(
     to,
-    "Pesanan Baru - PNPS E-Commerce",
+    "Pesanan Baru - DPP E-Commerce",
     createEmailTemplate("Pesanan Baru Masuk 🛒", `Pesanan baru dengan nomor ${nomorPesanan} masuk ke toko Anda.`, content)
   );
 };
@@ -383,7 +383,7 @@ export const sendFinalInvoiceEmail = async (
 
   return sendMail(
     to,
-    "Invoice Final Pembayaran - PNPS E-Commerce",
+    "Invoice Final Pembayaran - DPP E-Commerce",
     createEmailTemplate("Invoice Final Pesanan", `Biaya ongkos kirim untuk pesanan ${nomorPesanan} telah ditentukan.`, content)
   );
 };
@@ -414,7 +414,7 @@ export const sendPaymentSuccessEmail = async (
 
   return sendMail(
     to,
-    "Pembayaran Berhasil - PNPS E-Commerce",
+    "Pembayaran Berhasil - DPP E-Commerce",
     createEmailTemplate("Pembayaran Berhasil 🎉", `Pembayaran pesanan ${nomorPesanan} telah diterima.`, content)
   );
 };
@@ -442,7 +442,7 @@ export const sendSellerPaymentNotificationEmail = async (
 
   return sendMail(
     to,
-    "Pembayaran Pesanan Diterima - PNPS E-Commerce",
+    "Pembayaran Pesanan Diterima - DPP E-Commerce",
     createEmailTemplate("Pembayaran Diterima 💰", `Pembayaran untuk pesanan ${nomorPesanan} telah diterima.`, content)
   );
 };
@@ -475,7 +475,7 @@ export const sendShippingEmail = async (
 
   return sendMail(
     to,
-    "Pesanan Dikirim - PNPS E-Commerce",
+    "Pesanan Dikirim - DPP E-Commerce",
     createEmailTemplate("Pesanan Anda Dikirim 🚚", `Pesanan ${nomorPesanan} sedang dalam perjalanan.`, content)
   );
 };
@@ -494,12 +494,12 @@ export const sendOrderCompletedEmail = async (
       <p style="margin: 0; font-size: 18px; font-weight: 700; color: #064e3b; font-family: monospace;">${nomorPesanan}</p>
     </div>
 
-    <p style="margin: 0; font-size: 14px; color: #475569; line-height: 1.6;">Terima kasih banyak telah berbelanja dan mendukung PNPS E-Commerce. Kami berharap Anda puas dengan pesanan Anda dan menantikan kunjungan Anda berikutnya!</p>
+    <p style="margin: 0; font-size: 14px; color: #475569; line-height: 1.6;">Terima kasih banyak telah berbelanja dan mendukung DPP E-Commerce. Kami berharap Anda puas dengan pesanan Anda dan menantikan kunjungan Anda berikutnya!</p>
   `;
 
   return sendMail(
     to,
-    "Pesanan Selesai - PNPS E-Commerce",
+    "Pesanan Selesai - DPP E-Commerce",
     createEmailTemplate("Pesanan Selesai ✅", `Pesanan ${nomorPesanan} Anda telah sukses diselesaikan.`, content)
   );
 };
@@ -527,12 +527,12 @@ export const sendOrderCanceledEmail = async (
       </table>
     </div>
     
-    <p style="margin: 0; font-size: 14px; color: #475569; line-height: 1.6;">Jika Anda sudah melakukan pembayaran, silakan hubungi tim Support PNPS untuk prosedur pengembalian dana (refund).</p>
+    <p style="margin: 0; font-size: 14px; color: #475569; line-height: 1.6;">Jika Anda sudah melakukan pembayaran, silakan hubungi tim Support DPP untuk prosedur pengembalian dana (refund).</p>
   `;
 
   return sendMail(
     to,
-    "Pesanan Dibatalkan - PNPS E-Commerce",
+    "Pesanan Dibatalkan - DPP E-Commerce",
     createEmailTemplate("Pesanan Dibatalkan ❌", `Pesanan ${nomorPesanan} Anda dibatalkan.`, content)
   );
 };
@@ -606,7 +606,7 @@ type AdminOrderEvent = "NEW_ORDER" | "PAYMENT_RECEIVED" | "ORDER_COMPLETED" | "O
 const adminEventConfig: Record<AdminOrderEvent, { color: string; bg: string; title: string; emoji: string; description: string }> = {
   NEW_ORDER: { color: "#3b82f6", bg: "#eff6ff", title: "Pesanan Baru Masuk", emoji: "🛒", description: "Pesanan baru telah berhasil dibuat oleh pembeli." },
   PAYMENT_RECEIVED: { color: "#10b981", bg: "#f0fdf4", title: "Pembayaran Diterima", emoji: "💰", description: "Pembayaran untuk pesanan ini telah diterima dan sukses diverifikasi." },
-  ORDER_COMPLETED: { color: "#059669", bg: "#d1fae5", title: "Transaksi Selesai", emoji: "✅", description: "Transaksi telah selesai. Silakan proses pengiriman dana ke penjual (sudah dikurangi biaya layanan PNPS)." },
+  ORDER_COMPLETED: { color: "#059669", bg: "#d1fae5", title: "Transaksi Selesai", emoji: "✅", description: "Transaksi telah selesai. Silakan proses pengiriman dana ke penjual (sudah dikurangi biaya layanan DPP)." },
   ORDER_CANCELED: { color: "#ef4444", bg: "#fef2f2", title: "Pesanan Dibatalkan", emoji: "❌", description: "Pesanan telah dibatalkan." },
 };
 
@@ -621,7 +621,7 @@ export const sendAdminOrderNotificationEmail = async (
   const config = adminEventConfig[event];
 
   const content = `
-    <p style="margin-bottom: 20px;">Halo <strong>Admin PNPS E-Commerce</strong>,</p>
+    <p style="margin-bottom: 20px;">Halo <strong>Admin DPP E-Commerce</strong>,</p>
     <p style="margin-bottom: 24px;">Sistem mencatat adanya pembaruan penting mengenai transaksi e-commerce.</p>
     
     <div style="background-color: ${config.bg}; border-left: 4px solid ${config.color}; padding: 20px; border-radius: 6px; margin-bottom: 24px;">
@@ -675,14 +675,14 @@ export const sendAutoCancelNoResiEmail = async (
     
     <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 16px;">
       <p style="margin: 0; font-size: 14px; color: #334155; line-height: 1.5;">
-        <strong>Informasi Refund:</strong> Karena Anda telah melakukan pembayaran, dana Anda akan diproses untuk pengembalian (refund) secara utuh sesuai dengan kebijakan dan prosedur operasional PNPS E-Commerce. Silakan hubungi admin jika Anda membutuhkan bantuan lebih lanjut.
+        <strong>Informasi Refund:</strong> Karena Anda telah melakukan pembayaran, dana Anda akan diproses untuk pengembalian (refund) secara utuh sesuai dengan kebijakan dan prosedur operasional DPP E-Commerce. Silakan hubungi admin jika Anda membutuhkan bantuan lebih lanjut.
       </p>
     </div>
   `;
 
   return sendMail(
     to,
-    "Pesanan Dibatalkan Otomatis - PNPS E-Commerce",
+    "Pesanan Dibatalkan Otomatis - DPP E-Commerce",
     createEmailTemplate("Pembatalan Otomatis ⚠️", `Pesanan ${nomorPesanan} dibatalkan karena batas waktu resi habis.`, content)
   );
 };

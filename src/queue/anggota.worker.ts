@@ -27,8 +27,8 @@ const EXPORT_COLUMNS = [
   { header: "Instagram", key: "instagram", width: 18 },
   { header: "Facebook", key: "facebook", width: 18 },
   { header: "Status Keanggotaan", key: "statusKeanggotaan", width: 18 },
-  { header: "Approved PCPS", key: "approvedPCPS", width: 14 },
-  { header: "Approved PNPS", key: "approvedPNPS", width: 14 },
+  { header: "Approved DPC", key: "approvedDPC", width: 14 },
+  { header: "Approved DPP", key: "approvedDPP", width: 14 },
 ];
 
 // Re-usable: build the same Prisma `where` used in getAnggotas
@@ -76,9 +76,9 @@ function buildAnggotaWhere(data: any) {
   }
 
   if (data.approvalStatus === "pending") {
-    andConditions.push({ OR: [{ isApprovedByPCPS: false }, { isApprovedByPNPS: false }] });
+    andConditions.push({ OR: [{ isApprovedByDPC: false }, { isApprovedByDPP: false }] });
   } else if (data.approvalStatus === "approved") {
-    andConditions.push({ isApprovedByPCPS: true, isApprovedByPNPS: true });
+    andConditions.push({ isApprovedByDPC: true, isApprovedByDPP: true });
   }
 
   // Scope
@@ -87,7 +87,7 @@ function buildAnggotaWhere(data: any) {
       andConditions.push({ cabangUuid: data.scope.cabangId });
     }
   } else {
-    andConditions.push({ isApprovedByPCPS: true, isApprovedByPNPS: true });
+    andConditions.push({ isApprovedByDPC: true, isApprovedByDPP: true });
   }
 
   return andConditions.length > 0 ? { AND: andConditions } : {};
@@ -103,7 +103,7 @@ new Worker(
     if (job.name === "EXPORT_ANGGOTAS") {
       await job.updateProgress(5);
 
-      const where = buildAnggotaWhere(job.data);
+      const where: import("@prisma/client").Prisma.AnggotaWhereInput = buildAnggotaWhere(job.data);
 
       const anggotas = await prisma.anggota.findMany({
         where,
@@ -120,7 +120,7 @@ new Worker(
       await job.updateProgress(40);
 
       const workbook = new ExcelJS.Workbook();
-      workbook.creator = "PNPS Admin";
+      workbook.creator = "DPP Admin";
       workbook.created = new Date();
 
       const ws = workbook.addWorksheet("Anggota");
@@ -156,8 +156,8 @@ new Worker(
           instagram: s.instagram || "",
           facebook: s.facebook || "",
           statusKeanggotaan: s.statusKeanggotaan,
-          approvedPCPS: s.isApprovedByPCPS ? "Ya" : "Tidak",
-          approvedPNPS: s.isApprovedByPNPS ? "Ya" : "Tidak",
+          approvedDPC: s.isApprovedByDPC ? "Ya" : "Tidak",
+          approvedDPP: s.isApprovedByDPP ? "Ya" : "Tidak",
         });
       });
 

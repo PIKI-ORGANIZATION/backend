@@ -5,10 +5,10 @@ import { ApiResponse } from '../utils/apiResponse';
 export const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Fetch all home page related data
-    const heroSetting = await prisma.appSetting.findUnique({ where: { key: 'home_hero' } });
-    const programs = await prisma.program.findMany();
-    const history = await prisma.history.findMany({ orderBy: { order: 'asc' } });
-    const team = await prisma.teamMember.findMany({ orderBy: { order: 'asc' } });
+    const heroSetting = await prisma.pageSetting.findUnique({ where: { key: 'home_hero' } });
+    const programs = await prisma.programKerja.findMany();
+    const history: any[] = []; // await prisma.history.findMany({ orderBy: { order: 'asc' } });
+    const team: any[] = []; // await prisma.teamMember.findMany({ orderBy: { order: 'asc' } });
     
     // Construct response matching homeData.ts structure approximately
     // Or return flexible structure
@@ -28,7 +28,7 @@ export const getHomeData = async (req: Request, res: Response, next: NextFunctio
 
 export const getPrograms = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const programs = await prisma.program.findMany();
+    const programs = await prisma.programKerja.findMany();
     res.json(ApiResponse.success(programs));
   } catch (error) {
     next(error);
@@ -37,7 +37,7 @@ export const getPrograms = async (req: Request, res: Response, next: NextFunctio
 
 export const getHistory = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const history = await prisma.history.findMany();
+    const history: any[] = []; // await prisma.history.findMany();
     res.json(ApiResponse.success(history));
   } catch (error) {
     next(error);
@@ -46,7 +46,7 @@ export const getHistory = async (req: Request, res: Response, next: NextFunction
 
 export const getTeam = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const team = await prisma.teamMember.findMany();
+    const team: any[] = []; // await prisma.teamMember.findMany();
     res.json(ApiResponse.success(team));
   } catch (error) {
     next(error);
@@ -57,8 +57,8 @@ export const getBotPreview = async (req: Request, res: Response) => {
   try {
     const rawUrl = req.query.url as string || '/';
     
-    let title = "PNPS GMKI";
-    let description = "Website Resmi Pengurus Nasional Perkumpulan Anggota (PNPS) GMKI.";
+    let title = "DPP GMKI";
+    let description = "Website Resmi Pengurus Nasional Perkumpulan Anggota (DPP) GMKI.";
 
     // Paksa HTTPS di production agar WhatsApp mau men-download gambar
     const host = req.headers['x-forwarded-host'] || req.get('host') || 'anggotagmki.com';
@@ -94,7 +94,7 @@ export const getBotPreview = async (req: Request, res: Response) => {
       } else if (rawUrl.includes('/grit-institute/')) {
         const id = rawUrl.split('/grit-institute/')[1]?.split('/')[0];
         if (id) {
-          const kelas = await prisma.kelas.findUnique({ where: { uuid: id } });
+          const kelas: any = null; // await prisma.kelas.findUnique({ where: { uuid: id } });
           if (kelas) {
             title = kelas.namaKelas;
             const plainKonten = kelas.deskripsiKelas ? kelas.deskripsiKelas.replace(/<[^>]+>/g, "").substring(0, 160) : "";
@@ -123,7 +123,7 @@ export const getBotPreview = async (req: Request, res: Response) => {
       <meta charset="UTF-8">
       <title>${safeTitle}</title>
       <meta name="description" content="${safeDesc}">
-      <meta property="og:site_name" content="PNPS GMKI">
+      <meta property="og:site_name" content="DPP GMKI">
       <meta property="og:type" content="article">
       <meta property="og:url" content="${fullUrl}">
       <meta property="og:title" content="${safeTitle}">

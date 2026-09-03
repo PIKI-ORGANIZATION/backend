@@ -208,7 +208,7 @@ export const getRegistrasiById = async (id: string) => {
           statusAkun: true,
           roles: {
             include: {
-              role: { select: { uuid: true, nama: true } },
+              role: { select: { uuid: true, namaRole: true } },
             },
           },
         },
@@ -492,9 +492,9 @@ export const aktivasiKta = async (params: {
           pekerjaanUuid: reg.pekerjaanUuid || null,
           bidangMinatUuid: reg.bidangMinatUuid || null,
           pesanKesan: reg.motivasiBergabung || null,
-          isApprovedByPCPS: true,
-          isApprovedByPNPS: true,
-        },
+          isApprovedByDPC: true,
+          isApprovedByDPP: true,
+        } as any,
       });
       anggotaUuid = newAnggota.uuid;
     }

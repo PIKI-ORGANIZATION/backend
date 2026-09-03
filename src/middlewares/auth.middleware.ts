@@ -12,8 +12,8 @@ export interface JwtUser extends JwtPayload {
   cabang?: string | null;
   cabangId?: string | null;
   isCabang?: boolean;
-  isApprovedByPCPS?: boolean;
-  isApprovedByPNPS?: boolean;
+  isApprovedByDPC?: boolean;
+  isApprovedByDPP?: boolean;
   isFromAdmin?: boolean;
 }
 

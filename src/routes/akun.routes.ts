@@ -20,7 +20,7 @@ router.get("/", optionalAuthenticate, scope, authorize("AKUN_READ"), getAkuns);
 router.get("/:uuid", authenticate, authorize("AKUN_READ"), getAkunById);
 router.get("/identifier/:identifier", authenticate, authorize("AKUN_READ"), getAkunByIdentifier);
 
-// untuk admin atau super admin PNPS bisa create 1 atau beberapa akun baru dengan role USER,
+// untuk admin atau super admin DPP bisa create 1 atau beberapa akun baru dengan role USER,
 // misal untuk anggota baru yang belum punya akun, atau untuk admin lain 
 // yang butuh akses ke dashboard admin. Jadi endpoint ini tidak untuk self register, tapi untuk create akun oleh admin. 
 // Untuk self register tetap di auth.controller.ts dengan endpoint /register tanpa perlu authenticate jsonwebtoken, 

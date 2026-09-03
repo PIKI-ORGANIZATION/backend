@@ -29,7 +29,7 @@ export const getAdminFeePercent = async (): Promise<number> => {
  * Get admin email recipients from page settings.
  * Key: "eco-admin-email" (stored as a JSON array)
  * Supports both:
- *   - Direct email strings: ["admin@pnps.id", "john@example.com"]
+ *   - Direct email strings: ["admin@dpp.id", "john@example.com"]
  *   - Anggota UUIDs: ["uuid-1", "uuid-2"] → resolved to their Akun emails
  * Returns an array of email strings.
  */

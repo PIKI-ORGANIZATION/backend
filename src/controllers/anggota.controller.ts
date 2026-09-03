@@ -19,8 +19,8 @@ export const getAnggotas = async (req: Request, res: Response) => {
   try {
     const {
       search,
-      isApprovedByPCPS,
-      isApprovedByPNPS,
+      isApprovedByDPC,
+      isApprovedByDPP,
       approvalStatus,
       currentPage,
       pageSize,
@@ -33,8 +33,8 @@ export const getAnggotas = async (req: Request, res: Response) => {
       angkatanTo,
     } = req.query as {
       search?: string;
-      isApprovedByPCPS?: string;
-      isApprovedByPNPS?: string;
+      isApprovedByDPC?: string;
+      isApprovedByDPP?: string;
       approvalStatus?: string;
       currentPage?: string;
       pageSize?: string;
@@ -149,23 +149,23 @@ export const getAnggotas = async (req: Request, res: Response) => {
     if (approvalStatus === "pending") {
       andConditions.push({
         OR: [
-          { isApprovedByPCPS: false },
-          { isApprovedByPNPS: false },
+          { isApprovedByDPC: false },
+          { isApprovedByDPP: false },
         ]
       });
     } else if (approvalStatus === "approved") {
       andConditions.push({
-        isApprovedByPCPS: true,
-        isApprovedByPNPS: true,
+        isApprovedByDPC: true,
+        isApprovedByDPP: true,
       });
     }
 
-    if (isApprovedByPCPS !== undefined) {
-      andConditions.push({ isApprovedByPCPS: isApprovedByPCPS === "true" });
+    if (isApprovedByDPC !== undefined) {
+      andConditions.push({ isApprovedByDPC: isApprovedByDPC === "true" });
     }
 
-    if (isApprovedByPNPS !== undefined) {
-      andConditions.push({ isApprovedByPNPS: isApprovedByPNPS === "true" });
+    if (isApprovedByDPP !== undefined) {
+      andConditions.push({ isApprovedByDPP: isApprovedByDPP === "true" });
     }
 
     ////////////////////////////////////////////////////
@@ -175,8 +175,8 @@ export const getAnggotas = async (req: Request, res: Response) => {
     if (!scope?.isAdmin) {
       // PUBLIC
       andConditions.push({
-        isApprovedByPCPS: true,
-        isApprovedByPNPS: true,
+        isApprovedByDPC: true,
+        isApprovedByDPP: true,
       });
     } else {
       // 🛠 ADMIN
@@ -209,7 +209,7 @@ export const getAnggotas = async (req: Request, res: Response) => {
               statusAkun: true,
             },
           },
-          strukturPNPS: {
+          strukturDPP: {
             select: {
               uuid: true,
               atasanUuid: true,
@@ -261,7 +261,7 @@ export const getAnggotas = async (req: Request, res: Response) => {
 
 export const getAnggotaSearch = async (req: Request, res: Response) => {
   try {
-    const { search, isApprovedByPCPS, isApprovedByPNPS } = req.query;
+    const { search, isApprovedByDPC, isApprovedByDPP } = req.query;
 
     const filters: any[] = [];
 
@@ -288,15 +288,15 @@ export const getAnggotaSearch = async (req: Request, res: Response) => {
     });
     }
 
-    if (isApprovedByPCPS !== undefined) {
+    if (isApprovedByDPC !== undefined) {
     filters.push({
-        isApprovedByPCPS: isApprovedByPCPS === "true",
+        isApprovedByDPC: isApprovedByDPC === "true",
     });
     }
 
-    if (isApprovedByPNPS !== undefined) {
+    if (isApprovedByDPP !== undefined) {
     filters.push({
-        isApprovedByPNPS: isApprovedByPNPS === "true",
+        isApprovedByDPP: isApprovedByDPP === "true",
     });
     }
 
@@ -308,7 +308,7 @@ export const getAnggotaSearch = async (req: Request, res: Response) => {
     include: {
         akun: true,
         cabang: true,
-        strukturPNPS: {
+        strukturDPP: {
           select: {
               uuid: true,
               atasanUuid: true,
@@ -395,9 +395,9 @@ export const getAnggotaById = async (req: Request, res: Response) => {
             username: true,
           },
         },
-        approverPCPS: { select: { uuid: true, namaLengkap: true, strukturPNPS: true } },
-        approverPNPS: { select: { uuid: true, namaLengkap: true, strukturPNPS: true } },
-        strukturPNPS: {
+        approverDPC: { select: { uuid: true, namaLengkap: true, strukturDPP: true } },
+        approverDPP: { select: { uuid: true, namaLengkap: true, strukturDPP: true } },
+        strukturDPP: {
           select: {
               uuid: true,
               atasanUuid: true,
@@ -478,7 +478,7 @@ export const updateAnggota = async (req: Request, res: Response) => {
 };
 
 ////////////////////////////////////////////////////
-// APPROVAL PCPS
+// APPROVAL DPC
 ////////////////////////////////////////////////////
 export const approve = async (req: Request, res: Response) => {
   try {
@@ -501,7 +501,7 @@ export const approve = async (req: Request, res: Response) => {
       });
     }
 
-    const isPCPS = approver.anggota.cabang.isCabang === true;
+    const isDPC = approver.anggota.cabang.isCabang === true;
 
     // SECURITY CHECK: Target Anggota
     const targetAnggota = await prisma.anggota.findUnique({
@@ -513,9 +513,9 @@ export const approve = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Data anggota tidak ditemukan" });
     }
 
-    if (isPCPS && targetAnggota.cabangUuid !== approver.anggota.cabang.uuid) {
+    if (isDPC && targetAnggota.cabangUuid !== approver.anggota.cabang.uuid) {
       return res.status(403).json({
-        message: "Akses ditolak: PCPS hanya dapat menyetujui anggota dari cabangnya sendiri",
+        message: "Akses ditolak: DPC hanya dapat menyetujui anggota dari cabangnya sendiri",
       });
     }
 
@@ -525,21 +525,21 @@ export const approve = async (req: Request, res: Response) => {
       update_by: user.sub,
     };
 
-    if (isPCPS) {
-      updateData.isApprovedByPCPS = true;
-      updateData.approvedByPCPSUuid = approver.anggotaUuid;
-      updateData.approvedAtPCPS = now;
+    if (isDPC) {
+      updateData.isApprovedByDPC = true;
+      updateData.approvedByDPCUuid = approver.anggotaUuid;
+      updateData.approvedAtDPC = now;
     } else {
-      // Pusat (PNPS)
-      updateData.isApprovedByPNPS = true;
-      updateData.approvedByPNPSUuid = approver.anggotaUuid;
-      updateData.approvedAtPNPS = now;
+      // Pusat (DPP)
+      updateData.isApprovedByDPP = true;
+      updateData.approvedByDPPUuid = approver.anggotaUuid;
+      updateData.approvedAtDPP = now;
       
-      // Auto-approve PCPS level if the anggota belongs to PNPS Pusat (not a cabang)
+      // Auto-approve DPC level if the anggota belongs to DPP Pusat (not a cabang)
       if (targetAnggota.cabang?.isCabang === false) {
-        updateData.isApprovedByPCPS = true;
-        updateData.approvedByPCPSUuid = approver.anggotaUuid;
-        updateData.approvedAtPCPS = now;
+        updateData.isApprovedByDPC = true;
+        updateData.approvedByDPCUuid = approver.anggotaUuid;
+        updateData.approvedAtDPC = now;
       }
 
       updateData.statusKeanggotaan = "MEMBER";
@@ -549,13 +549,13 @@ export const approve = async (req: Request, res: Response) => {
       where: { uuid: uuid as string },
       data: updateData,
       include: {
-        approverPCPS: { select: { namaLengkap: true } },
-        approverPNPS: { select: { namaLengkap: true } },
+        approverDPC: { select: { namaLengkap: true } },
+        approverDPP: { select: { namaLengkap: true } },
       },
     });
 
     res.json({
-      message: `Approved by ${isPCPS ? "PCPS" : "PNPS"}`,
+      message: `Approved by ${isDPC ? "DPC" : "DPP"}`,
       data: updated,
     });
   } catch {
