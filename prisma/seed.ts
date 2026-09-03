@@ -59,7 +59,7 @@ async function getAdmin() {
   return prisma.akun.findUniqueOrThrow({ where: { email: "admin-dpp@piki.org" } });
 }
 async function getUser() {
-  return prisma.akun.findUniqueOrThrow({ where: { email: "user@dpp.id" } });
+  return prisma.akun.findUniqueOrThrow({ where: { email: "user@pnps.id" } });
 }
 
 // ============================================================
@@ -317,7 +317,7 @@ async function seedAllCabang() {
     });
 
     // 1g. Akun Ketua
-    const ketuaEmail = c.isPusat ? "user@dpp.id" : `ketua_${c.kotaEmail}@dpp.id`;
+    const ketuaEmail = c.isPusat ? "user@pnps.id" : `ketua_${c.kotaEmail}@dpp.id`;
     const ketuaAkun = await prisma.akun.upsert({
       where: { email: ketuaEmail },
       update: {},
