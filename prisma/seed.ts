@@ -33,16 +33,16 @@ async function main() {
   await seedAnggota();
 
   // 5. Struktur Organisasi
-  await seedStrukturOrganisasi();
+  // await seedStrukturOrganisasi();
 
   // 6. Program Kerja + Agenda + Arsip
-  await seedProgram();
+  // await seedProgram();
 
   // 7. Galeri (Album Foto + Video)
-  await seedGaleri();
+  // await seedGaleri();
 
   // 8. Kritik & Saran (FAQ + Form Pengaduan)
-  await seedKritikSaran();
+  // await seedKritikSaran();
 
   // 11. Master Wilayah & DPP DPC PIKI
   await seedDataMasterWilayah();
