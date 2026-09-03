@@ -12,22 +12,22 @@ export const getDashboardStats = async (req: Request, res: Response) => {
 
     if (!scope?.isAdmin) {
       // Public / Member level scope (if they ever hit this endpoint)
-      anggotaWhere.isApprovedByPCPS = true;
-      anggotaWhere.isApprovedByPNPS = true;
+      anggotaWhere.isApprovedByDPC = true;
+      anggotaWhere.isApprovedByDPP = true;
       
-      pendingWhere.isApprovedByPCPS = false; // dummy for public
+      pendingWhere.isApprovedByDPC = false; // dummy for public
     } else {
       if (!scope.isSuperAdmin) {
         // ADMIN_CABANG
         anggotaWhere.cabangUuid = scope.cabangId;
         newsWhere.cabangUuid = scope.cabangId;
         
-        pendingWhere.isApprovedByPCPS = false;
+        pendingWhere.isApprovedByDPC = false;
         pendingWhere.cabangUuid = scope.cabangId;
       } else {
-        // SUPER_ADMIN (PNPS)
-        // All branches for counts, but pending approvals for PNPS means approved by PNPS = false
-        pendingWhere.isApprovedByPNPS = false;
+        // SUPER_ADMIN (DPP)
+        // All branches for counts, but pending approvals for DPP means approved by DPP = false
+        pendingWhere.isApprovedByDPP = false;
       }
     }
 
@@ -35,7 +35,7 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       await Promise.all([
         prisma.anggota.count({ where: anggotaWhere }),
         prisma.newsUtama.count({ where: newsWhere }),
-        prisma.kelas.count(), // global
+        Promise.resolve(0), // prisma.kelas.count(), // global
         prisma.anggota.count({ where: pendingWhere }),
       ]);
 

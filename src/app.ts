@@ -65,7 +65,7 @@ import dpdDpcRoutes from './routes/dpdDpc.routes';
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('PNPS Backend API Running');
+  res.send('DPP Backend API Running');
 });
 
 app.use('/api/v1/roles', roleRoutes);

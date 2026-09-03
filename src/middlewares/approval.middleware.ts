@@ -21,9 +21,9 @@ export const requireFullApproval = async (
     });
   }
 
-  if (!akun.anggota.isApprovedByPCPS || !akun.anggota.isApprovedByPNPS) {
+  if (!akun.anggota.isApprovedByDPC || !akun.anggota.isApprovedByDPP) {
     return res.status(403).json({
-      message: "Belum disetujui oleh PCPS / PNPS",
+      message: "Belum disetujui oleh DPC / DPP",
     });
   }
 

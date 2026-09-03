@@ -36,7 +36,7 @@ export const exportAnggotas = async (req: Request, res: Response) => {
 ////////////////////////////////////////////////////
 export const getExportStatus = async (req: Request, res: Response) => {
   try {
-    const { jobId } = req.params;
+    const { jobId } = req.params as { jobId: string };
     const job = await anggotaQueue.getJob(jobId);
 
     if (!job) {
@@ -64,7 +64,7 @@ export const getExportStatus = async (req: Request, res: Response) => {
 ////////////////////////////////////////////////////
 export const downloadExport = async (req: Request, res: Response) => {
   try {
-    const { filename } = req.params;
+    const { filename } = req.params as { filename: string };
 
     // Security: only allow filenames matching our pattern
     if (!/^anggota-export-\d+\.xlsx$/.test(filename)) {
@@ -97,7 +97,7 @@ export const downloadExport = async (req: Request, res: Response) => {
 export const downloadTemplate = async (_req: Request, res: Response) => {
   try {
     const workbook = new ExcelJS.Workbook();
-    workbook.creator = "PNPS Admin";
+    workbook.creator = "DPP Admin";
 
     const ws = workbook.addWorksheet("Template Import Anggota");
 
@@ -142,7 +142,7 @@ export const downloadTemplate = async (_req: Request, res: Response) => {
       bidangMinat: "Artificial Intelligence",
       provinsi: "DKI Jakarta",
       kotaDomisili: "Jakarta Pusat",
-      cabang: "PCPS Jakarta",
+      cabang: "DPC Jakarta",
       noWa: "081234567890",
       instagram: "@johndoe",
       facebook: "John Doe",
@@ -197,7 +197,7 @@ export const parseHeaders = async (req: Request, res: Response) => {
     }
 
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(req.file.buffer);
+    await workbook.xlsx.load(req.file.buffer as any);
 
     const ws = workbook.getWorksheet(1);
     if (!ws) {
@@ -231,7 +231,7 @@ export const previewImport = async (req: Request, res: Response) => {
     }
 
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(req.file.buffer);
+    await workbook.xlsx.load(req.file.buffer as any);
 
     const ws = workbook.getWorksheet(1);
     if (!ws) {
@@ -368,7 +368,7 @@ export const confirmImport = async (req: Request, res: Response) => {
 export const getJobStatus = async (req: Request, res: Response) => {
   try {
     const { jobId } = req.params;
-    const job = await anggotaQueue.getJob(jobId);
+    const job = await anggotaQueue.getJob(jobId as string);
 
     if (!job) {
       res.status(404).json({ error: "Job not found" });

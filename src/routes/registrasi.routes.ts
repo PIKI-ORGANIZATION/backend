@@ -14,6 +14,7 @@ import {
 } from "../controllers/registrasi.controller";
 
 import { authenticate } from "../middlewares/auth.middleware";
+import { authorize } from "../middlewares/authorize.middleware";
 
 import { validate } from "../middlewares/validate.middleware";
 import { createRegistrasiSchema } from "../validators/registrasi.schema";
@@ -40,13 +41,13 @@ router.get("/:id", authenticate, getRegistrasiByIdHandler);
 router.put("/:id", authenticate, updateRegistrasiHandler);
 
 // 6. Verifikasi DPC / DPD (Tahap 2 & 3)
-router.patch("/:id/verifikasi", authenticate, verifikasiRegistrasiHandler);
+router.patch("/:id/verifikasi", authenticate, authorize("REGISTRASI_APPROVE"), verifikasiRegistrasiHandler);
 
 // 7. Process / Konfirmasi Pembayaran Iuran (Tahap 4)
-router.patch("/:id/pembayaran", authenticate, prosesPembayaranHandler);
+router.patch("/:id/pembayaran", authenticate, authorize("REGISTRASI_APPROVE"), prosesPembayaranHandler);
 
 // 8. Penerbitan & Aktivasi KTA Digital (Tahap 5)
-router.patch("/:id/aktivasi-kta", authenticate, aktivasiKtaHandler);
+router.patch("/:id/aktivasi-kta", authenticate, authorize("REGISTRASI_APPROVE"), aktivasiKtaHandler);
 
 // 9. Hapus Data Registrasi
 router.delete("/:id", authenticate, deleteRegistrasiHandler);

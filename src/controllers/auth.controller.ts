@@ -67,16 +67,17 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 
-  // ── Gate 2: Belum di-approve PCPS & PNPS (jika memiliki data Anggota) ──
-  if (akun.anggota && (!akun.anggota.isApprovedByPCPS || !akun.anggota.isApprovedByPNPS)) {
-    const pcps = akun.anggota.isApprovedByPCPS ? "✓" : "Pending";
-    const pnps = akun.anggota.isApprovedByPNPS ? "✓" : "Pending";
+  // ── Gate 2: Belum di-approve DPC & DPP (jika memiliki data Anggota) ──
+  const anggotaAny = akun.anggota as any;
+  if (akun.anggota && (!anggotaAny.isApprovedByDPC || !anggotaAny.isApprovedByDPP)) {
+    const dpc = anggotaAny.isApprovedByDPC ? "✓" : "Pending";
+    const dpp = anggotaAny.isApprovedByDPP ? "✓" : "Pending";
     return res.status(403).json({
-      message: `Akun Anda menunggu approval. Status: PCPS ${pcps}, PNPS ${pnps}.`,
+      message: `Akun Anda menunggu approval. Status: DPC ${dpc}, DPP ${dpp}.`,
       code: "APPROVAL_PENDING",
       approval: {
-        pcps: akun.anggota.isApprovedByPCPS,
-        pnps: akun.anggota.isApprovedByPNPS,
+        dpc: anggotaAny.isApprovedByDPC,
+        dpp: anggotaAny.isApprovedByDPP,
       },
     });
   }
@@ -101,8 +102,8 @@ export const login = async (req: Request, res: Response) => {
       cabangId: akun.anggota?.cabangUuid ?? null,
       cabang: akun.anggota?.cabang?.namaCabang ?? null,
       isCabang: akun.anggota?.cabang?.isCabang ?? null,
-      isApprovedByPCPS: akun.anggota?.isApprovedByPCPS ?? false,
-      isApprovedByPNPS: akun.anggota?.isApprovedByPNPS ?? false,
+      isApprovedByDPC: anggotaAny?.isApprovedByDPC ?? false,
+      isApprovedByDPP: anggotaAny?.isApprovedByDPP ?? false,
       isFromAdmin: true,
     };
   } else {
@@ -116,8 +117,8 @@ export const login = async (req: Request, res: Response) => {
       cabangId: akun.anggota?.cabangUuid ?? null,
       cabang: akun.anggota?.cabang?.namaCabang ?? null,
       isCabang: akun.anggota?.cabang?.isCabang ?? null,
-      isApprovedByPCPS: akun.anggota?.isApprovedByPCPS ?? false,
-      isApprovedByPNPS: akun.anggota?.isApprovedByPNPS ?? false,
+      isApprovedByDPC: anggotaAny?.isApprovedByDPC ?? false,
+      isApprovedByDPP: anggotaAny?.isApprovedByDPP ?? false,
       isFromAdmin: false,
     };
   }
@@ -129,7 +130,7 @@ export const login = async (req: Request, res: Response) => {
   const token = jwt.sign(tokenPayload, process.env.JWT_SECRET!, {
     algorithm: "HS256",
     expiresIn: process.env.JWT_EXPIRES_IN || "1h",
-  });
+  } as any);
 
   return res.json({
     tokenType: "Bearer",
@@ -219,9 +220,9 @@ export const register = async (req: Request, res: Response) => {
           instagram,
           facebook,
           cabangUuid,
-          isApprovedByPCPS: false,
-          isApprovedByPNPS: false,
-        },
+          isApprovedByDPC: false,
+          isApprovedByDPP: false,
+        } as any,
       });
 
       // 2️ Create Akun linked to Anggota
@@ -314,7 +315,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
     });
 
     return res.status(200).json({
-      message: "Email berhasil diverifikasi! Silakan tunggu approval dari PCPS dan PNPS.",
+      message: "Email berhasil diverifikasi! Silakan tunggu approval dari DPC dan DPP.",
     });
   } catch (error: any) {
     console.error("Verify email error:", error);
