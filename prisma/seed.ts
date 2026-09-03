@@ -55,7 +55,7 @@ async function main() {
 // HELPERS
 // ============================================================
 async function getAdmin() {
-  return prisma.akun.findUniqueOrThrow({ where: { email: "admin@pnps.id" } });
+  return prisma.akun.findUniqueOrThrow({ where: { email: "admin-dpp@piki.org" } });
 }
 async function getUser() {
   return prisma.akun.findUniqueOrThrow({ where: { email: "user@pnps.id" } });
@@ -302,7 +302,7 @@ async function seedAllCabang() {
     }
 
     // 1f. Akun Admin
-    const adminEmail = c.isPusat ? "admin@pnps.id" : `admin_${c.kotaEmail}@pnps.id`;
+    const adminEmail = c.isPusat ? "admin-dpp@piki.org" : `admin_${c.kotaEmail}@pnps.id`;
     const adminAkun = await prisma.akun.upsert({
       where: { email: adminEmail },
       update: {},
@@ -528,7 +528,7 @@ async function assignRolesToAkun() {
   const ketuaCabangRole = await prisma.role.findUniqueOrThrow({ where: { namaRole: "KETUA_CABANG" } });
   const userRole        = await prisma.role.findUniqueOrThrow({ where: { namaRole: "USER" } });
 
-  const adminPusat = await prisma.akun.findUnique({ where: { email: "admin@pnps.id" } });
+  const adminPusat = await prisma.akun.findUnique({ where: { email: "admin-dpp@piki.org" } });
   const userPusat  = await prisma.akun.findUnique({ where: { email: "user@pnps.id" } });
 
   if (adminPusat) await upsertAkunRole(adminPusat.uuid, superAdminRole.uuid, adminPusat.uuid);
