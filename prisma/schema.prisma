@@ -180,7 +180,7 @@ model StrukturOrganisasi {
   uuid          String              @id @default(uuid()) @db.Uuid
   atasanUuid    String?             @db.Uuid
   periodeUuid   String              @db.Uuid
-  anggotaUuid   String              @db.Uuid
+  anggotaUuid   String?             @db.Uuid
   jabatanUuid   String              @db.Uuid
   bidangUuid    String?             @db.Uuid
   urutan        Int                 @default(0)
@@ -189,7 +189,7 @@ model StrukturOrganisasi {
   insert_by     String?             @db.Uuid
   update_at     DateTime            @updatedAt
   update_by     String?             @db.Uuid
-  anggota       Anggota             @relation("StrukturAnggota", fields: [anggotaUuid], references: [uuid])
+  anggota       Anggota?            @relation("StrukturAnggota", fields: [anggotaUuid], references: [uuid])
   bidang        Bidang?             @relation(fields: [bidangUuid], references: [uuid])
   jabatan       Jabatan             @relation(fields: [jabatanUuid], references: [uuid])
   periode       PeriodeKepengurusan @relation(fields: [periodeUuid], references: [uuid])
