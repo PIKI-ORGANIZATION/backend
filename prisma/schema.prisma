@@ -72,6 +72,11 @@ model Anggota {
   instagram         String?
   facebook          String?
   statusKeanggotaan String               @default("NON_MEMBER")
+  noKta             String?              @unique
+  statusKta         String               @default("INACTIVE")
+  fileKtaUrl        String?
+  tglAktivasiKta    DateTime?
+  fileKtpUrl        String?
   isApprovedByDPC   Boolean              @default(false)
   isApprovedByDPP   Boolean              @default(false)
   approvedByDPCUuid String?              @db.Uuid
@@ -580,10 +585,6 @@ model Registrasi {
   tglBypassSla          DateTime?
   statusPembayaran      String          @default("UNPAID")
   buktiBayarUrl         String?
-  statusKta             String          @default("INACTIVE")
-  noKta                 String?         @unique
-  fileKtaUrl            String?
-  tglAktivasiKta        DateTime?
   akunUuid              String?         @unique @db.Uuid
   anggotaUuid           String?         @unique @db.Uuid
   langkahSekarang       Int             @default(1)

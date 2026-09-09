@@ -729,3 +729,87 @@ export const updateAnggotaByToken = async (req: Request, res: Response) => {
     });
   }
 };
+
+////////////////////////////////////////////////////
+// PUBLIC: GET PROFILE DETAIL (TANPA AKUN)
+////////////////////////////////////////////////////
+export const getPublicProfileDetail = async (req: Request, res: Response) => {
+  try {
+    const { uuid } = req.params;
+
+    if (!uuid) {
+      return res.status(400).json({ success: false, message: "UUID wajib diisi" });
+    }
+
+    // 1. Cari profil Anggota berdasarkan UUID saja
+    const anggota = await prisma.anggota.findUnique({
+      where: {
+        uuid: uuid
+      },
+      include: {
+        cabang: true,
+        pendidikan: true,
+        pekerjaan: true,
+        bidangStudi: true,
+        bidangMinat: true,
+        akun: { select: { email: true } }
+      }
+    });
+
+    if (!anggota) {
+      return res.status(404).json({ success: false, message: "Data Anggota tidak ditemukan" });
+    }
+
+    // 2. Cari riwayat pendaftaran terakhir (Registrasi)
+    let registrasi = null;
+    if (anggota.akun?.email) {
+      registrasi = await prisma.registrasi.findFirst({
+        where: { email: anggota.akun.email },
+        orderBy: { created_at: "desc" },
+        select: {
+          id: true,
+          statusVerifikasi: true,
+          statusPembayaran: true,
+          langkahSekarang: true,
+          dpd: true,
+          dpc: true,
+          tglPersetujuanPdp: true
+        }
+      });
+    } else {
+      registrasi = await prisma.registrasi.findFirst({
+        where: { anggotaUuid: anggota.uuid },
+        orderBy: { created_at: "desc" },
+        select: {
+          id: true,
+          statusVerifikasi: true,
+          statusPembayaran: true,
+          langkahSekarang: true,
+          dpd: true,
+          dpc: true,
+          tglPersetujuanPdp: true
+        }
+      });
+    }
+
+    // 3. Format Response (Hilangkan object akun agar sesuai request)
+    const email = anggota.akun?.email || null;
+    const { akun, ...anggotaData } = anggota;
+
+    const responseData = {
+      ...anggotaData,
+      email, // Sisipkan email di root object
+      registrasi: registrasi || null
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "Berhasil mendapatkan detail profil publik",
+      data: responseData
+    });
+
+  } catch (error: any) {
+    console.error("Get Public Profile error:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

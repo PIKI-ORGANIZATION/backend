@@ -49,6 +49,9 @@ async function main() {
   await seedDpdDpc();
   await seedDpd();
 
+  // 12. Load Production Data from JSON (Exported from DB)
+  await seedProductionDataFromJSON();
+
   console.log("✅ Seeding selesai.");
 }
 
@@ -1993,6 +1996,63 @@ async function seedDataMasterWilayah() {
 // ============================================================
 // ENTRY POINT
 // ============================================================
+// ============================================================
+// 12. LOAD PRODUCTION DATA FROM JSON
+// ============================================================
+async function seedProductionDataFromJSON() {
+  console.log("Memulai proses sinkronisasi dari file JSON (Production Data)...");
+
+  const dataDir = path.join(__dirname, "data");
+
+  const loadJson = (filename: string) => {
+    const filePath = path.join(dataDir, filename);
+    if (!fs.existsSync(filePath)) return [];
+    return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  };
+
+  // 1. Anggota
+  const anggota = loadJson("anggota.json");
+  if (anggota.length > 0) {
+    await prisma.anggota.createMany({ data: anggota, skipDuplicates: true });
+    console.log(`✅ Seeded ${anggota.length} Anggota dari Production`);
+  }
+
+  // 2. Akun
+  const akun = loadJson("akun.json");
+  if (akun.length > 0) {
+    await prisma.akun.createMany({ data: akun, skipDuplicates: true });
+    console.log(`✅ Seeded ${akun.length} Akun dari Production`);
+  }
+
+  // 3. AkunRole
+  const akunRole = loadJson("akunRole.json");
+  if (akunRole.length > 0) {
+    await prisma.akunRole.createMany({ data: akunRole, skipDuplicates: true });
+    console.log(`✅ Seeded ${akunRole.length} AkunRole dari Production`);
+  }
+
+  // 4. PermissionRole
+  const permissionRole = loadJson("permissionRole.json");
+  if (permissionRole.length > 0) {
+    await prisma.permissionRole.createMany({ data: permissionRole, skipDuplicates: true });
+    console.log(`✅ Seeded ${permissionRole.length} PermissionRole dari Production`);
+  }
+
+  // 5. Registrasi
+  const registrasi = loadJson("registrasi.json");
+  if (registrasi.length > 0) {
+    await prisma.registrasi.createMany({ data: registrasi, skipDuplicates: true });
+    console.log(`✅ Seeded ${registrasi.length} Registrasi dari Production`);
+  }
+
+  // 6. RegistrasiLog
+  const registrasiLog = loadJson("registrasiLog.json");
+  if (registrasiLog.length > 0) {
+    await prisma.registrasiLog.createMany({ data: registrasiLog, skipDuplicates: true });
+    console.log(`✅ Seeded ${registrasiLog.length} RegistrasiLog dari Production`);
+  }
+}
+
 main()
   .catch((e) => {
     console.error("❌ Seed error:", e);

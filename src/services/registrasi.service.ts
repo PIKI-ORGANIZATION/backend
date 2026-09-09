@@ -494,9 +494,27 @@ export const aktivasiKta = async (params: {
           pesanKesan: reg.motivasiBergabung || null,
           isApprovedByDPC: true,
           isApprovedByDPP: true,
+          statusKeanggotaan: "MEMBER",
+          noKta,
+          statusKta: "ACTIVE",
+          fileKtaUrl,
+          tglAktivasiKta: new Date(),
+          fileKtpUrl: reg.fileKtpUrl,
         } as any,
       });
       anggotaUuid = newAnggota.uuid;
+    } else {
+      await tx.anggota.update({
+        where: { uuid: anggotaUuid },
+        data: {
+          statusKeanggotaan: "MEMBER",
+          noKta,
+          statusKta: "ACTIVE",
+          fileKtaUrl,
+          tglAktivasiKta: new Date(),
+          fileKtpUrl: reg.fileKtpUrl,
+        }
+      });
     }
 
     // 5. Hubungkan anggotaUuid ke Akun
@@ -505,14 +523,10 @@ export const aktivasiKta = async (params: {
       data: { anggotaUuid },
     });
 
-    // 3. Update status Registrasi
+    // 6. Update status Registrasi
     const res = await tx.registrasi.update({
       where: { id: params.id },
       data: {
-        statusKta: "ACTIVE",
-        noKta,
-        fileKtaUrl,
-        tglAktivasiKta: new Date(),
         akunUuid: newAkun.uuid,
         anggotaUuid,
         langkahSekarang: 5,

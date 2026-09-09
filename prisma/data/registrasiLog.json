@@ -1,0 +1,785 @@
+[
+  {
+    "id": "d9240210-66fa-4efd-a29f-3b02195cfe1d",
+    "registrasiId": "a017c0bf-fe6d-49b7-b9ca-57c3e3a2b733",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Azarya Kairossutan Sacri Pusaka Dami",
+    "created_at": "2026-08-27T20:50:19.108Z"
+  },
+  {
+    "id": "ad5cb1bb-db07-42a4-b737-96b26a411a8d",
+    "registrasiId": "a017c0bf-fe6d-49b7-b9ca-57c3e3a2b733",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-27T21:05:21.301Z"
+  },
+  {
+    "id": "fae52123-1cd5-40fb-9ea2-fb0a4d86724e",
+    "registrasiId": "a017c0bf-fe6d-49b7-b9ca-57c3e3a2b733",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 53.14.0001.311022. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-27T21:05:21.375Z"
+  },
+  {
+    "id": "6406e844-53f0-4d6d-a39c-1f484d9a5b1c",
+    "registrasiId": "fa66a505-0854-4bf8-82cd-5afae8416693",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Tes Kedua",
+    "created_at": "2026-08-27T21:20:04.986Z"
+  },
+  {
+    "id": "44d4936f-3d03-405b-9295-ec8133308408",
+    "registrasiId": "fa66a505-0854-4bf8-82cd-5afae8416693",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-27T21:21:15.845Z"
+  },
+  {
+    "id": "37f4d6f6-ff25-4e1a-8fe2-d249052148e8",
+    "registrasiId": "fa66a505-0854-4bf8-82cd-5afae8416693",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0002.311022. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-27T21:21:15.915Z"
+  },
+  {
+    "id": "e18d8fa7-56dc-4e46-925a-9a3e8d65f3ea",
+    "registrasiId": "73d34b2e-116b-4e5f-bbae-8c25e6a544d4",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Paulus Lubis",
+    "created_at": "2026-08-28T01:43:43.713Z"
+  },
+  {
+    "id": "f947ab85-c80a-4619-aad4-da32fcbacf26",
+    "registrasiId": "73d34b2e-116b-4e5f-bbae-8c25e6a544d4",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T03:07:25.056Z"
+  },
+  {
+    "id": "99d1fdfc-4896-408b-9210-30ef42920207",
+    "registrasiId": "73d34b2e-116b-4e5f-bbae-8c25e6a544d4",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0003.220989. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T03:07:25.139Z"
+  },
+  {
+    "id": "3d6af0ae-af8b-4d3f-bfad-26b74a51ff26",
+    "registrasiId": "6cbf8137-5dc5-45b0-9dfb-183de116d10a",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "CCC",
+    "created_at": "2026-08-28T03:47:07.151Z"
+  },
+  {
+    "id": "f8e92867-1429-4503-acd4-6f9426e55fd0",
+    "registrasiId": "603694c2-dcab-413b-a3ac-ffc0df70c3c2",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Hansto Ruben Gusti Oscar",
+    "created_at": "2026-08-28T05:53:28.636Z"
+  },
+  {
+    "id": "b75c9e6e-7e1d-4df2-881b-4f4a3dfda16f",
+    "registrasiId": "b3c5cd4f-0483-4a4c-affb-97e92f962e88",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Timotius Lubis",
+    "created_at": "2026-08-28T06:28:02.921Z"
+  },
+  {
+    "id": "f47836da-e712-42a4-8bf3-66e533f836d1",
+    "registrasiId": "b3c5cd4f-0483-4a4c-affb-97e92f962e88",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T06:28:40.947Z"
+  },
+  {
+    "id": "6e20817a-b114-400d-a95a-27decd270302",
+    "registrasiId": "b3c5cd4f-0483-4a4c-affb-97e92f962e88",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 12.00.0004.010990. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T06:28:41.016Z"
+  },
+  {
+    "id": "3e0fd2f3-5b73-4a2a-9252-26115cc389a3",
+    "registrasiId": "603694c2-dcab-413b-a3ac-ffc0df70c3c2",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T06:44:23.494Z"
+  },
+  {
+    "id": "66c237a5-583b-40ea-b357-5e35cf8ad23a",
+    "registrasiId": "603694c2-dcab-413b-a3ac-ffc0df70c3c2",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0005.140896. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T06:44:23.562Z"
+  },
+  {
+    "id": "69aabf4a-b7cd-4721-9e8e-97ca2c4ddedc",
+    "registrasiId": "c8923d08-6382-4e94-bc09-fb0364fd1170",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Reinhart Abdiel Hermanus",
+    "created_at": "2026-08-28T06:56:38.346Z"
+  },
+  {
+    "id": "75ceedad-8b80-433d-b667-a44e05a17961",
+    "registrasiId": "c8923d08-6382-4e94-bc09-fb0364fd1170",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T06:57:19.769Z"
+  },
+  {
+    "id": "28cf7701-1a0e-449b-9d5f-a2c9cc1d327f",
+    "registrasiId": "c8923d08-6382-4e94-bc09-fb0364fd1170",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0006.120193. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T06:57:19.837Z"
+  },
+  {
+    "id": "8af26500-7db8-4e86-8ba9-707698f1823f",
+    "registrasiId": "abccd0c5-e37e-4ec5-96e8-428ec0391dc2",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Bonardo Simanjuntak ",
+    "created_at": "2026-08-28T06:58:30.238Z"
+  },
+  {
+    "id": "e1422bbd-7a7f-4be4-86a3-ced0228d740d",
+    "registrasiId": "abccd0c5-e37e-4ec5-96e8-428ec0391dc2",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T07:00:46.082Z"
+  },
+  {
+    "id": "34dfa2f0-557b-4bea-a162-a9d52fff523d",
+    "registrasiId": "abccd0c5-e37e-4ec5-96e8-428ec0391dc2",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0007.281081. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T07:00:46.148Z"
+  },
+  {
+    "id": "df6aee20-fa7c-47ef-9426-bd8ef7c342d8",
+    "registrasiId": "d97cbb9d-2648-4943-bc44-c18f827313a3",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Yukenriusman Hulu",
+    "created_at": "2026-08-28T07:03:56.519Z"
+  },
+  {
+    "id": "9f656922-d097-425f-a77b-5bf4f5159f72",
+    "registrasiId": "d97cbb9d-2648-4943-bc44-c18f827313a3",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T07:04:10.606Z"
+  },
+  {
+    "id": "290d3187-7351-4504-8745-9420f4a72558",
+    "registrasiId": "d97cbb9d-2648-4943-bc44-c18f827313a3",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0008.080801. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T07:04:10.672Z"
+  },
+  {
+    "id": "dbd02c29-b577-4ec3-8fab-41894b5451c7",
+    "registrasiId": "f9c1efd3-47a3-4d81-b509-ced22efa2a4e",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Jon Mangatas Budiarto Sirait",
+    "created_at": "2026-08-28T07:07:50.804Z"
+  },
+  {
+    "id": "577872f0-d1e9-4a99-b22e-6bdd8d29af34",
+    "registrasiId": "f9c1efd3-47a3-4d81-b509-ced22efa2a4e",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T07:10:21.640Z"
+  },
+  {
+    "id": "6125c330-c672-40db-afbf-72864bed3fa5",
+    "registrasiId": "f9c1efd3-47a3-4d81-b509-ced22efa2a4e",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0009.030295. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T07:10:21.712Z"
+  },
+  {
+    "id": "c909fad6-10e9-4768-8ccb-2ae38943f02b",
+    "registrasiId": "6323ac77-08c0-425c-97a0-78968cc9c56d",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Novelin Silalahi",
+    "created_at": "2026-08-28T08:06:19.395Z"
+  },
+  {
+    "id": "820edf3f-ed6d-4b09-b849-54b505188d6c",
+    "registrasiId": "62d75f09-621f-4d5f-ac23-91e677a6d992",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Meilina siregar SH., MIR",
+    "created_at": "2026-08-28T08:10:23.653Z"
+  },
+  {
+    "id": "dff04291-0ac6-47a5-8f05-6fa29170bde5",
+    "registrasiId": "6323ac77-08c0-425c-97a0-78968cc9c56d",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T08:19:04.072Z"
+  },
+  {
+    "id": "acdb15da-da97-406d-aeb5-d4eb8477a580",
+    "registrasiId": "6323ac77-08c0-425c-97a0-78968cc9c56d",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0010.051194. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T08:19:04.142Z"
+  },
+  {
+    "id": "546f9c5b-7662-43b9-8f77-feda2a54e480",
+    "registrasiId": "62d75f09-621f-4d5f-ac23-91e677a6d992",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T08:19:05.879Z"
+  },
+  {
+    "id": "5a2769da-e8c9-48ed-8483-0cb1e4cc430d",
+    "registrasiId": "62d75f09-621f-4d5f-ac23-91e677a6d992",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0011.060581. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T08:19:05.945Z"
+  },
+  {
+    "id": "20d284df-e929-429f-9b0c-d5dda464dc47",
+    "registrasiId": "cc2c2266-678d-463e-91cc-f7d18428fa77",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Nathaniel O. L. Mangunsong",
+    "created_at": "2026-08-28T08:33:01.056Z"
+  },
+  {
+    "id": "a044f53c-b014-4071-9e0c-c51d6a996aae",
+    "registrasiId": "cc2c2266-678d-463e-91cc-f7d18428fa77",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T08:55:08.832Z"
+  },
+  {
+    "id": "3949724c-c699-476a-a19c-f850f46414b9",
+    "registrasiId": "cc2c2266-678d-463e-91cc-f7d18428fa77",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0012.101181. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T08:55:08.901Z"
+  },
+  {
+    "id": "e3ca4276-0dec-4df0-a95a-2770748c4a9b",
+    "registrasiId": "67ddfe64-19e9-4755-ac56-d69984716544",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Rinto Langitan",
+    "created_at": "2026-08-28T09:25:48.533Z"
+  },
+  {
+    "id": "5de3f29a-c6a5-4fc2-ad2b-93f579d1056e",
+    "registrasiId": "30a406d7-207f-44b9-bdb7-ed1f9271911e",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Tumpahan Manik",
+    "created_at": "2026-08-28T09:29:37.646Z"
+  },
+  {
+    "id": "46a1998d-1045-468a-acea-a34d7c6e4123",
+    "registrasiId": "4df8e840-6bc4-4cdf-b462-b95f4a0ab13a",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Christian Parmingotan Situmorang",
+    "created_at": "2026-08-28T09:30:38.083Z"
+  },
+  {
+    "id": "491c679f-66e4-4669-a44d-4309b819803f",
+    "registrasiId": "ea37ae58-b92e-47bd-a3b8-8eecdb927bd8",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Jacob Darwan",
+    "created_at": "2026-08-28T09:32:01.720Z"
+  },
+  {
+    "id": "e8930b26-d309-4446-9ff4-87c8322f78ba",
+    "registrasiId": "ba2e07b0-3f95-4546-a84d-9b5d96dbf7c2",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "dr. Zeffry",
+    "created_at": "2026-08-28T09:33:29.917Z"
+  },
+  {
+    "id": "a3227418-a2d5-47f8-a57e-68eaf041cc60",
+    "registrasiId": "0c2ebf88-d1be-49c2-9418-2430247862a0",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Anita Sitamggang",
+    "created_at": "2026-08-28T09:36:11.142Z"
+  },
+  {
+    "id": "5260e1e6-eb1a-4ad7-98eb-5a95db1afeb5",
+    "registrasiId": "666a225e-dcfe-42bd-9d59-695835f5a6d0",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Surati Ripkah",
+    "created_at": "2026-08-28T09:37:23.458Z"
+  },
+  {
+    "id": "cfaf94eb-c874-4cd6-af24-848f7e191177",
+    "registrasiId": "5c86f5dd-be1d-4d59-8675-9ea92c038efd",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Amanda Anastasia Setiadi",
+    "created_at": "2026-08-28T09:51:49.616Z"
+  },
+  {
+    "id": "b581080e-5d58-4150-9a1d-127a6ac4a109",
+    "registrasiId": "bf3c9c8e-1a41-4bd2-bfb2-9da43af16186",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Lulu Setiawati",
+    "created_at": "2026-08-28T10:14:20.936Z"
+  },
+  {
+    "id": "1017357a-8ac6-4ad7-9ba3-193e59f61d33",
+    "registrasiId": "67ddfe64-19e9-4755-ac56-d69984716544",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:39.971Z"
+  },
+  {
+    "id": "f806fde7-d6d7-4d1d-87e1-e4da0353c2d8",
+    "registrasiId": "67ddfe64-19e9-4755-ac56-d69984716544",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0013.140982. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:40.037Z"
+  },
+  {
+    "id": "d087b14c-e330-4555-aef0-0662a2a622aa",
+    "registrasiId": "4df8e840-6bc4-4cdf-b462-b95f4a0ab13a",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:41.572Z"
+  },
+  {
+    "id": "b3b22d02-2999-4b0a-b1cd-3b694f2bacba",
+    "registrasiId": "4df8e840-6bc4-4cdf-b462-b95f4a0ab13a",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0014.091277. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:41.641Z"
+  },
+  {
+    "id": "e66458fb-e66e-4494-a316-7ff1b225a416",
+    "registrasiId": "30a406d7-207f-44b9-bdb7-ed1f9271911e",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:42.805Z"
+  },
+  {
+    "id": "40e7abf6-5ccf-492a-b989-81033ef425b8",
+    "registrasiId": "30a406d7-207f-44b9-bdb7-ed1f9271911e",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0015.290665. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:42.869Z"
+  },
+  {
+    "id": "fed7b7e7-6594-412f-baf8-9d267be7fe55",
+    "registrasiId": "ba2e07b0-3f95-4546-a84d-9b5d96dbf7c2",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:43.965Z"
+  },
+  {
+    "id": "e6d59552-274d-4276-810d-c811e10af4d2",
+    "registrasiId": "ba2e07b0-3f95-4546-a84d-9b5d96dbf7c2",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0016.090470. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:44.032Z"
+  },
+  {
+    "id": "a8a2f4b0-2e77-4ec4-9fbe-c8d62794a57d",
+    "registrasiId": "ea37ae58-b92e-47bd-a3b8-8eecdb927bd8",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:45.248Z"
+  },
+  {
+    "id": "121466c3-5d19-4c3f-9d2a-8843cbb46657",
+    "registrasiId": "ea37ae58-b92e-47bd-a3b8-8eecdb927bd8",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 73.71.0017.141064. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:45.317Z"
+  },
+  {
+    "id": "5ee87617-18ca-4f22-a3f2-538354fd68ff",
+    "registrasiId": "666a225e-dcfe-42bd-9d59-695835f5a6d0",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:46.423Z"
+  },
+  {
+    "id": "8d59b9a8-3cc1-4629-a6f3-8c24632e457b",
+    "registrasiId": "666a225e-dcfe-42bd-9d59-695835f5a6d0",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 36.00.0018.200580. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:46.487Z"
+  },
+  {
+    "id": "9c9f3e72-8973-4895-8144-fa0cf6fef80d",
+    "registrasiId": "bf3c9c8e-1a41-4bd2-bfb2-9da43af16186",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:47.985Z"
+  },
+  {
+    "id": "10e42166-5831-4524-b754-45ed35549df9",
+    "registrasiId": "bf3c9c8e-1a41-4bd2-bfb2-9da43af16186",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 36.00.0019.230873. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:48.053Z"
+  },
+  {
+    "id": "afbe404a-ef1c-4d90-b3b6-32202d56456b",
+    "registrasiId": "0c2ebf88-d1be-49c2-9418-2430247862a0",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:49.877Z"
+  },
+  {
+    "id": "47b34f0b-e2a4-44e6-bcf2-4b81a2fc3c71",
+    "registrasiId": "0c2ebf88-d1be-49c2-9418-2430247862a0",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 36.00.0020.281073. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:49.944Z"
+  },
+  {
+    "id": "a568a3db-ec52-4c7b-8561-0e9a0cc050d8",
+    "registrasiId": "5c86f5dd-be1d-4d59-8675-9ea92c038efd",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:52.181Z"
+  },
+  {
+    "id": "5474a744-1454-4d46-ab71-fd2c9f645c1d",
+    "registrasiId": "5c86f5dd-be1d-4d59-8675-9ea92c038efd",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0021.190889. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T12:39:52.245Z"
+  },
+  {
+    "id": "cec48d4b-7642-471a-a386-559b3c03b648",
+    "registrasiId": "43e732ed-24ee-4b5a-b98f-e4bbe89c6022",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Ceria Cikenta Tarigan",
+    "created_at": "2026-08-28T14:09:54.472Z"
+  },
+  {
+    "id": "9f79874c-98bc-4e1a-ab64-323964247e32",
+    "registrasiId": "9797f0e1-f960-4294-a7fc-bb119f6610ff",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Imanuel Hendrawan",
+    "created_at": "2026-08-28T16:59:26.262Z"
+  },
+  {
+    "id": "b32a0001-c04f-435f-99e8-cf040d69fb2c",
+    "registrasiId": "9797f0e1-f960-4294-a7fc-bb119f6610ff",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T17:23:16.149Z"
+  },
+  {
+    "id": "60d3e961-018e-4331-99d4-f1632eec6a3a",
+    "registrasiId": "9797f0e1-f960-4294-a7fc-bb119f6610ff",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0022.010193. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T17:23:16.220Z"
+  },
+  {
+    "id": "6c57bca2-07d1-4838-b1af-7a5673583752",
+    "registrasiId": "43e732ed-24ee-4b5a-b98f-e4bbe89c6022",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T17:25:15.930Z"
+  },
+  {
+    "id": "de5919fa-7d90-4c05-a8b9-5d50257c7ee3",
+    "registrasiId": "43e732ed-24ee-4b5a-b98f-e4bbe89c6022",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0023.300398. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-28T17:25:15.999Z"
+  },
+  {
+    "id": "e51d52da-664c-44e8-9064-e06dbf00982e",
+    "registrasiId": "854d7165-123f-4844-b86f-0de105d71f18",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Ricky Herbet Sigalingging",
+    "created_at": "2026-08-31T04:31:56.612Z"
+  },
+  {
+    "id": "6f4b4f03-953e-4c57-8e75-2b036b214c35",
+    "registrasiId": "854d7165-123f-4844-b86f-0de105d71f18",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-31T12:56:17.324Z"
+  },
+  {
+    "id": "e9ddbf05-f4ec-492b-8473-d19d9f71d688",
+    "registrasiId": "854d7165-123f-4844-b86f-0de105d71f18",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0024.290489. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-31T12:56:17.408Z"
+  },
+  {
+    "id": "88bfa3c4-303b-4735-b8e5-0dc58f51eb6c",
+    "registrasiId": "4c7f469b-ece2-45e0-952e-bb49c72004d7",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Togar",
+    "created_at": "2026-08-31T13:02:51.400Z"
+  },
+  {
+    "id": "c2550b04-2cf4-4b9a-b283-279276bc5324",
+    "registrasiId": "4c7f469b-ece2-45e0-952e-bb49c72004d7",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-31T13:03:19.392Z"
+  },
+  {
+    "id": "78c96190-dd59-4630-bd13-0c40201df9a7",
+    "registrasiId": "4c7f469b-ece2-45e0-952e-bb49c72004d7",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 64.72.0025.180593. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-08-31T13:03:19.464Z"
+  },
+  {
+    "id": "69f0b222-2e0b-40b9-b433-02e2e67eab40",
+    "registrasiId": "94275f2f-fee5-4dac-9ca7-3980d0e8e2a8",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Deliana Purba",
+    "created_at": "2026-09-02T14:39:25.427Z"
+  },
+  {
+    "id": "7eecf19e-21c1-4753-9aa9-0a32b8dd410e",
+    "registrasiId": "3c1ae951-afe5-40ed-9901-9f6803e53967",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Ir.Bernadif P",
+    "created_at": "2026-09-02T14:45:51.895Z"
+  },
+  {
+    "id": "556829a1-b35b-4aca-9b01-648efb64c5e4",
+    "registrasiId": "38dc3691-cc08-4139-81a0-59b5960bfd6a",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPP (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Halomoan Manro Putra Siburian",
+    "created_at": "2026-09-02T14:51:56.951Z"
+  },
+  {
+    "id": "b656952c-fc66-43eb-91ff-d23539bc05f3",
+    "registrasiId": "38dc3691-cc08-4139-81a0-59b5960bfd6a",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-09-02T14:54:37.592Z"
+  },
+  {
+    "id": "4cc245bb-c5f4-4dce-81b8-3a24889117b4",
+    "registrasiId": "38dc3691-cc08-4139-81a0-59b5960bfd6a",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 34.04.0026.021280. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-09-02T14:54:37.677Z"
+  },
+  {
+    "id": "45731511-3ee2-4150-96bd-d92f06e2f1c3",
+    "registrasiId": "3c1ae951-afe5-40ed-9901-9f6803e53967",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-09-02T14:54:39.529Z"
+  },
+  {
+    "id": "ac0b49f3-75ed-4c49-b077-cf1dcdd78106",
+    "registrasiId": "3c1ae951-afe5-40ed-9901-9f6803e53967",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0027.191068. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-09-02T14:54:39.603Z"
+  },
+  {
+    "id": "3cd6fb36-7eeb-4a77-ace3-fbe7399d1caa",
+    "registrasiId": "94275f2f-fee5-4dac-9ca7-3980d0e8e2a8",
+    "aksi": "VERIFIKASI_APPROVED_DPP",
+    "keterangan": "Verifikasi pendaftaran diproses dengan status APPROVED_DPP. Catatan: -",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-09-02T14:54:40.342Z"
+  },
+  {
+    "id": "929e90b7-8f30-4e50-9de5-050ca63d87d2",
+    "registrasiId": "94275f2f-fee5-4dac-9ca7-3980d0e8e2a8",
+    "aksi": "AKTIVASI_KTA",
+    "keterangan": "KTA Digital diterbitkan dengan Nomor: 00.00.0028.240882. Status Keanggotaan Aktif Resmi.",
+    "actorUuid": null,
+    "actorNama": "SUPER_ADMIN",
+    "created_at": "2026-09-02T14:54:40.407Z"
+  },
+  {
+    "id": "af6c0699-e6ab-4bfc-bc9f-59eec15b3cfe",
+    "registrasiId": "6b79e70e-d8dc-4f74-9dcf-4c941641687d",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPD (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Renova Ida Siahaan",
+    "created_at": "2026-09-05T06:31:02.905Z"
+  },
+  {
+    "id": "80ee6c2a-d7d1-4e2a-8c44-6452dc60b02b",
+    "registrasiId": "548d9d2a-7903-430f-9040-9fc5fcfeb78c",
+    "aksi": "SUBMIT_REGISTRASI",
+    "keterangan": "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPD (Pusat).",
+    "actorUuid": null,
+    "actorNama": "Daniel daulat",
+    "created_at": "2026-09-05T10:45:02.365Z"
+  }
+]

@@ -9,6 +9,7 @@ import {
   generatePublicLink,
   getAnggotaByToken,
   updateAnggotaByToken,
+  getPublicProfileDetail,
 } from "../controllers/anggota.controller";
 
 import {
@@ -69,6 +70,14 @@ router.get(
 router.post(
   "/public/update-by-token",
   updateAnggotaByToken
+);
+
+////////////////////////////////////////////////////
+// PUBLIC: GET PROFILE DETAIL BY UUID (no auth)
+////////////////////////////////////////////////////
+router.get(
+  "/public/profile/:uuid",
+  getPublicProfileDetail
 );
 
 ////////////////////////////////////////////////////

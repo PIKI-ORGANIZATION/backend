@@ -21,13 +21,8 @@ export class KtaController {
       });
 
       let noKta = "BELUM ADA NIA";
-      if (akun?.email) {
-        const registrasi = await prisma.registrasi.findFirst({
-          where: { email: akun.email, statusKta: "ACTIVE" },
-        });
-        if (registrasi?.noKta) {
-          noKta = registrasi.noKta;
-        }
+      if (akun?.anggota?.noKta && akun?.anggota?.statusKta === "ACTIVE") {
+        noKta = akun.anggota.noKta;
       }
 
       const userData = {

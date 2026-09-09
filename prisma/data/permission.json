@@ -1,0 +1,682 @@
+[
+  {
+    "uuid": "91cab801-e020-4fdb-9c81-a42607cb1aa5",
+    "namaPermission": "AKUN_READ",
+    "deskripsi": "Melihat data akun",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.735Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.735Z",
+    "update_by": null
+  },
+  {
+    "uuid": "5ca02510-86d1-43ec-9c99-3ded1fba88d1",
+    "namaPermission": "AKUN_CREATE",
+    "deskripsi": "Membuat akun baru",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.738Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.738Z",
+    "update_by": null
+  },
+  {
+    "uuid": "849742d2-acff-4f72-ab1e-abfc7245f0ab",
+    "namaPermission": "AKUN_UPDATE",
+    "deskripsi": "Mengubah data akun",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.741Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.741Z",
+    "update_by": null
+  },
+  {
+    "uuid": "28ad33bd-8f10-488c-a724-29bead3ca30c",
+    "namaPermission": "AKUN_DELETE",
+    "deskripsi": "Menghapus akun",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.742Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.742Z",
+    "update_by": null
+  },
+  {
+    "uuid": "4fd8368b-dab0-49bf-8053-6da866891ac0",
+    "namaPermission": "ROLE_READ",
+    "deskripsi": "Melihat role",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.744Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.744Z",
+    "update_by": null
+  },
+  {
+    "uuid": "47e160ae-eab9-4ef2-bb32-aa84ff5e9926",
+    "namaPermission": "ROLE_CREATE",
+    "deskripsi": "Membuat role baru",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.745Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.745Z",
+    "update_by": null
+  },
+  {
+    "uuid": "c19dea92-5da8-451a-aee5-16471234d3f5",
+    "namaPermission": "ROLE_UPDATE",
+    "deskripsi": "Mengubah role",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.747Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.747Z",
+    "update_by": null
+  },
+  {
+    "uuid": "e6cdbbc2-59d1-4592-ae41-42e79da386fa",
+    "namaPermission": "ROLE_DELETE",
+    "deskripsi": "Menghapus role",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.749Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.749Z",
+    "update_by": null
+  },
+  {
+    "uuid": "345335a6-3fa0-4c7d-a48c-ab562a95f4d4",
+    "namaPermission": "SENIOR_READ",
+    "deskripsi": "Melihat data senior",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.751Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.751Z",
+    "update_by": null
+  },
+  {
+    "uuid": "038e9aaa-2256-4c13-aaea-379e672de11a",
+    "namaPermission": "SENIOR_CREATE",
+    "deskripsi": "Membuat data senior",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.753Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.753Z",
+    "update_by": null
+  },
+  {
+    "uuid": "67282e50-2cd7-4806-81a3-f64d36818014",
+    "namaPermission": "SENIOR_UPDATE",
+    "deskripsi": "Mengubah data senior",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.754Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.754Z",
+    "update_by": null
+  },
+  {
+    "uuid": "85d11f45-f499-4fdc-8e8d-39ea2b3ff30d",
+    "namaPermission": "SENIOR_DELETE",
+    "deskripsi": "Menghapus data senior",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.756Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.756Z",
+    "update_by": null
+  },
+  {
+    "uuid": "02f5e058-36a4-418f-8d3c-8acee23c83ca",
+    "namaPermission": "SENIOR_APPROVE",
+    "deskripsi": "Menyetujui data senior",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.758Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.758Z",
+    "update_by": null
+  },
+  {
+    "uuid": "5657def5-8548-476c-95f8-76be60c29d77",
+    "namaPermission": "CABANG_READ",
+    "deskripsi": "Melihat data cabang",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.759Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.759Z",
+    "update_by": null
+  },
+  {
+    "uuid": "66e7f391-e9dd-4d34-98d2-285bbe59a8e5",
+    "namaPermission": "CABANG_CREATE",
+    "deskripsi": "Membuat cabang baru",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.761Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.761Z",
+    "update_by": null
+  },
+  {
+    "uuid": "4555ceca-7511-4931-842d-3cc54030ab17",
+    "namaPermission": "CABANG_UPDATE",
+    "deskripsi": "Mengubah data cabang",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.763Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.763Z",
+    "update_by": null
+  },
+  {
+    "uuid": "13050f67-ffda-45c7-b1f1-9d5b613c4d5e",
+    "namaPermission": "CABANG_DELETE",
+    "deskripsi": "Menghapus cabang",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.764Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.764Z",
+    "update_by": null
+  },
+  {
+    "uuid": "f5ad3178-82cf-476d-b9fc-0ffd87c6fcfb",
+    "namaPermission": "NEWS_UTAMA_READ",
+    "deskripsi": "Melihat artikel",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.766Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.766Z",
+    "update_by": null
+  },
+  {
+    "uuid": "82931f8f-e3e8-46b0-9844-41d43072d9cd",
+    "namaPermission": "NEWS_UTAMA_CREATE",
+    "deskripsi": "Membuat artikel",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.769Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.769Z",
+    "update_by": null
+  },
+  {
+    "uuid": "95248c60-f776-4403-94dd-d73b443ade69",
+    "namaPermission": "NEWS_UTAMA_UPDATE",
+    "deskripsi": "Mengubah artikel",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.771Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.771Z",
+    "update_by": null
+  },
+  {
+    "uuid": "26b94c65-ee7b-4a66-b58f-30561148f891",
+    "namaPermission": "NEWS_UTAMA_PUBLISH",
+    "deskripsi": "Mempublikasikan artikel",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.773Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.773Z",
+    "update_by": null
+  },
+  {
+    "uuid": "b6df1432-381d-4dfb-abb5-8fa15ce51985",
+    "namaPermission": "NEWS_UTAMA_ARCHIVE",
+    "deskripsi": "Mengarsipkan artikel",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.774Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.774Z",
+    "update_by": null
+  },
+  {
+    "uuid": "c74febeb-0056-4347-a2ed-31f342e02b63",
+    "namaPermission": "NEWS_UTAMA_DELETE",
+    "deskripsi": "Menghapus artikel",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.776Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.776Z",
+    "update_by": null
+  },
+  {
+    "uuid": "84f8a465-52d2-4de3-aa20-ee26e2342986",
+    "namaPermission": "NEWS_TAG_READ",
+    "deskripsi": "Melihat tag berita",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.777Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.777Z",
+    "update_by": null
+  },
+  {
+    "uuid": "837efb15-328b-4693-8f62-0f1f013da34d",
+    "namaPermission": "NEWS_TAG_CREATE",
+    "deskripsi": "Membuat tag berita",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.779Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.779Z",
+    "update_by": null
+  },
+  {
+    "uuid": "7116ee19-39c5-4e88-bb71-2bc5e083328a",
+    "namaPermission": "NEWS_TAG_UPDATE",
+    "deskripsi": "Mengubah tag berita",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.780Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.780Z",
+    "update_by": null
+  },
+  {
+    "uuid": "ed4d5c0a-efd7-48a8-bfc2-628d93f2fd64",
+    "namaPermission": "NEWS_TAG_DELETE",
+    "deskripsi": "Menghapus tag berita",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.782Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.782Z",
+    "update_by": null
+  },
+  {
+    "uuid": "f56e9608-abba-4d3e-b20a-7bf5e9c2bb84",
+    "namaPermission": "NEWS_KATEGORI_READ",
+    "deskripsi": "Melihat kategori berita",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.783Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.783Z",
+    "update_by": null
+  },
+  {
+    "uuid": "bb8417e7-f1e4-438d-8c3c-5a1c2f927dda",
+    "namaPermission": "NEWS_KATEGORI_CREATE",
+    "deskripsi": "Membuat kategori berita",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.784Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.784Z",
+    "update_by": null
+  },
+  {
+    "uuid": "e9e98f29-27c8-41e5-98ab-e6a69466b486",
+    "namaPermission": "NEWS_KATEGORI_UPDATE",
+    "deskripsi": "Mengubah kategori berita",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.786Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.786Z",
+    "update_by": null
+  },
+  {
+    "uuid": "62677556-c01a-4483-abbe-86782b57f7af",
+    "namaPermission": "NEWS_KATEGORI_DELETE",
+    "deskripsi": "Menghapus kategori berita",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.787Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.787Z",
+    "update_by": null
+  },
+  {
+    "uuid": "134275af-ab32-400c-93b2-376cba0bda72",
+    "namaPermission": "STRUKTUR_READ",
+    "deskripsi": "Melihat struktur organisasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.789Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.789Z",
+    "update_by": null
+  },
+  {
+    "uuid": "d724b220-2a0a-4bec-8f20-8882d4a65480",
+    "namaPermission": "STRUKTUR_CREATE",
+    "deskripsi": "Membuat struktur organisasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.790Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.790Z",
+    "update_by": null
+  },
+  {
+    "uuid": "ebbd9543-182f-4616-ad50-839d0eb2c6d2",
+    "namaPermission": "STRUKTUR_UPDATE",
+    "deskripsi": "Mengubah struktur organisasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.792Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.792Z",
+    "update_by": null
+  },
+  {
+    "uuid": "85099780-0dd2-420a-93cc-e58d0ed010f5",
+    "namaPermission": "STRUKTUR_DELETE",
+    "deskripsi": "Menghapus struktur organisasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.793Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.793Z",
+    "update_by": null
+  },
+  {
+    "uuid": "757da7bf-bd65-4409-9e05-71435237d088",
+    "namaPermission": "PROGRAM_READ",
+    "deskripsi": "Melihat program kerja",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.795Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.795Z",
+    "update_by": null
+  },
+  {
+    "uuid": "2a2e8c9d-11d4-4982-91bf-6e9341a41a3e",
+    "namaPermission": "PROGRAM_CREATE",
+    "deskripsi": "Membuat program kerja",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.798Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.798Z",
+    "update_by": null
+  },
+  {
+    "uuid": "4fe24b83-cec1-45cc-b00c-70d17d55d450",
+    "namaPermission": "PROGRAM_UPDATE",
+    "deskripsi": "Mengubah program kerja",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.799Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.799Z",
+    "update_by": null
+  },
+  {
+    "uuid": "35d8c93f-711e-4a90-8097-622cf53594dd",
+    "namaPermission": "PROGRAM_DELETE",
+    "deskripsi": "Menghapus program kerja",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.801Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.801Z",
+    "update_by": null
+  },
+  {
+    "uuid": "35f8f46f-eba9-40b9-8604-eaa320feefaf",
+    "namaPermission": "AGENDA_READ",
+    "deskripsi": "Melihat agenda kegiatan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.802Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.802Z",
+    "update_by": null
+  },
+  {
+    "uuid": "3f9d0410-f05d-4695-966a-3983936acd3b",
+    "namaPermission": "AGENDA_CREATE",
+    "deskripsi": "Membuat agenda kegiatan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.804Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.804Z",
+    "update_by": null
+  },
+  {
+    "uuid": "cb3fa4c6-b2bc-4885-abff-d4fc58631a9c",
+    "namaPermission": "AGENDA_UPDATE",
+    "deskripsi": "Mengubah agenda kegiatan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.805Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.805Z",
+    "update_by": null
+  },
+  {
+    "uuid": "fe7e545f-1ca3-4d8a-884a-2d324dcba1c0",
+    "namaPermission": "AGENDA_DELETE",
+    "deskripsi": "Menghapus agenda kegiatan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.807Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.807Z",
+    "update_by": null
+  },
+  {
+    "uuid": "b973f114-5d61-4094-bf70-802b3962aea0",
+    "namaPermission": "ARSIP_READ",
+    "deskripsi": "Melihat arsip kegiatan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.808Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.808Z",
+    "update_by": null
+  },
+  {
+    "uuid": "8fdb95bf-bed3-4231-bf31-366b13e63ba3",
+    "namaPermission": "ARSIP_CREATE",
+    "deskripsi": "Membuat arsip kegiatan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.810Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.810Z",
+    "update_by": null
+  },
+  {
+    "uuid": "57d932d3-c5bd-4f5f-b382-024636a3bbf1",
+    "namaPermission": "ARSIP_UPDATE",
+    "deskripsi": "Mengubah arsip kegiatan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.813Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.813Z",
+    "update_by": null
+  },
+  {
+    "uuid": "3d16dc18-ec66-49e9-82a3-67696b60090e",
+    "namaPermission": "ARSIP_DELETE",
+    "deskripsi": "Menghapus arsip kegiatan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.816Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.816Z",
+    "update_by": null
+  },
+  {
+    "uuid": "6f5b8c5a-89ae-4d3b-86d5-28c0cc8f895a",
+    "namaPermission": "GALERI_READ",
+    "deskripsi": "Melihat galeri",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.817Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.817Z",
+    "update_by": null
+  },
+  {
+    "uuid": "eedf97c2-4a31-4fe2-931a-0580bb4814c7",
+    "namaPermission": "GALERI_CREATE",
+    "deskripsi": "Membuat galeri",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.819Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.819Z",
+    "update_by": null
+  },
+  {
+    "uuid": "93a55616-d5da-4150-9277-9080fbae2949",
+    "namaPermission": "GALERI_UPDATE",
+    "deskripsi": "Mengubah galeri",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.820Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.820Z",
+    "update_by": null
+  },
+  {
+    "uuid": "dd57eba3-575d-4b9f-861d-05b9ca0f0769",
+    "namaPermission": "GALERI_DELETE",
+    "deskripsi": "Menghapus galeri",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.821Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.821Z",
+    "update_by": null
+  },
+  {
+    "uuid": "59764547-7d50-43f1-8943-de0fff189837",
+    "namaPermission": "FAQ_READ",
+    "deskripsi": "Melihat FAQ",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.823Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.823Z",
+    "update_by": null
+  },
+  {
+    "uuid": "7749ee58-de53-4926-bc8b-94d79c367a8a",
+    "namaPermission": "FAQ_UPDATE",
+    "deskripsi": "Mengubah FAQ",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.824Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.824Z",
+    "update_by": null
+  },
+  {
+    "uuid": "1d7133d1-ec91-4fcb-9168-f1d217ca4837",
+    "namaPermission": "FAQ_ARCHIVE",
+    "deskripsi": "Mengarsipkan FAQ",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.826Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.826Z",
+    "update_by": null
+  },
+  {
+    "uuid": "9f2a809b-7628-400f-82bf-4ece2e024b50",
+    "namaPermission": "FAQ_MANAGE",
+    "deskripsi": "Mengelola FAQ",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.828Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.828Z",
+    "update_by": null
+  },
+  {
+    "uuid": "a3f78c57-6635-4b01-b1cc-e8e314f8f65f",
+    "namaPermission": "PENGADUAN_READ",
+    "deskripsi": "Melihat pengaduan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.832Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.832Z",
+    "update_by": null
+  },
+  {
+    "uuid": "1fd18224-4287-460e-b479-25b7aee27e0a",
+    "namaPermission": "PENGADUAN_RESPOND",
+    "deskripsi": "Merespons pengaduan",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.833Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.833Z",
+    "update_by": null
+  },
+  {
+    "uuid": "c668737c-26e6-4049-88c2-9f5c10b99d22",
+    "namaPermission": "GRIT_LAYANAN_MANAGE",
+    "deskripsi": "Mengelola layanan edukasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.836Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.836Z",
+    "update_by": null
+  },
+  {
+    "uuid": "d08b692f-7796-4b7c-9d3b-beaadf1d6144",
+    "namaPermission": "GRIT_MENTOR_MANAGE",
+    "deskripsi": "Mengelola mentor",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.838Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.838Z",
+    "update_by": null
+  },
+  {
+    "uuid": "da254692-1a41-4e25-a55e-36a125a6ea63",
+    "namaPermission": "GRIT_KELAS_MANAGE",
+    "deskripsi": "Mengelola kelas",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.839Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.839Z",
+    "update_by": null
+  },
+  {
+    "uuid": "440b8e9d-e8b2-436f-8336-57b35eab0101",
+    "namaPermission": "GRIT_PENDAFTARAN_READ",
+    "deskripsi": "Melihat pendaftaran kelas",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.842Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.842Z",
+    "update_by": null
+  },
+  {
+    "uuid": "2af0c90e-fbe7-49c7-908f-caeee55914fc",
+    "namaPermission": "APP_SETTING_MANAGE",
+    "deskripsi": "Mengelola pengaturan aplikasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.843Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.843Z",
+    "update_by": null
+  },
+  {
+    "uuid": "d25a45f4-284b-4576-bdfd-1aff63bc83a0",
+    "namaPermission": "REGISTRASI_READ",
+    "deskripsi": "Melihat pendaftaran registrasi anggota",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.847Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.847Z",
+    "update_by": null
+  },
+  {
+    "uuid": "93f9518a-521a-4e1d-a98a-aac9d0f15b25",
+    "namaPermission": "REGISTRASI_CREATE",
+    "deskripsi": "Membuat pendaftaran registrasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.848Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.848Z",
+    "update_by": null
+  },
+  {
+    "uuid": "b771b87a-1c93-40dc-9c1f-49873de59e43",
+    "namaPermission": "REGISTRASI_UPDATE",
+    "deskripsi": "Mengubah data pendaftaran registrasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.850Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.850Z",
+    "update_by": null
+  },
+  {
+    "uuid": "8fee96c9-75c3-4274-a7fb-74790433753b",
+    "namaPermission": "REGISTRASI_APPROVE",
+    "deskripsi": "Verifikasi berkas & aktivasi KTA pendaftaran",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.851Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.851Z",
+    "update_by": null
+  },
+  {
+    "uuid": "5c4274cd-b6fa-4301-9d16-594c386c4b9d",
+    "namaPermission": "REGISTRASI_DELETE",
+    "deskripsi": "Menghapus data pendaftaran registrasi",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.853Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.853Z",
+    "update_by": null
+  },
+  {
+    "uuid": "feb3d3b9-ced4-442d-baea-e4a945e87b59",
+    "namaPermission": "MANAGE_ALL_CABANG",
+    "deskripsi": "Akses penuh ke semua fitur cabang",
+    "statusPermission": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.854Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.854Z",
+    "update_by": null
+  }
+]

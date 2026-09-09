@@ -521,11 +521,18 @@ export const getMe = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Akun tidak ditemukan" });
     }
 
-    // Ambil data registrasi untuk mendapatkan Nomor Anggota KTA
-    const registrasi = await prisma.registrasi.findFirst({
-      where: { email: akun.email, statusKta: "ACTIVE" },
-      select: { noKta: true },
-    });
+    // Ambil data registrasi untuk mendapatkan wilayah DPD dan DPC pendaftaran
+    let dpd = null;
+    let dpc = null;
+    if (akun.email) {
+      const registrasi = await prisma.registrasi.findFirst({
+        where: { email: akun.email },
+        select: { dpd: true, dpc: true },
+        orderBy: { created_at: "desc" }
+      });
+      dpd = registrasi?.dpd || null;
+      dpc = registrasi?.dpc || null;
+    }
 
     // Format response to include user data AND anggota profile mapped
     const profileResponse = {
@@ -552,7 +559,9 @@ export const getMe = async (req: Request, res: Response) => {
       pesanKesan: akun.anggota?.pesanKesan,
       angkatan: akun.anggota?.angkatan,
       cabang: akun.anggota?.cabang,
-      noKta: registrasi?.noKta || null, // <- tambahkan ini agar UI bisa membaca NIA dari db
+      noKta: akun.anggota?.noKta || null, // <- NIA diambil langsung dari profil Anggota
+      dpd,
+      dpc,
     };
 
     return res.status(200).json({

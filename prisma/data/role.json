@@ -1,0 +1,42 @@
+[
+  {
+    "uuid": "717d9ac3-3b1c-4655-870b-8022be20a33c",
+    "namaRole": "SUPER_ADMIN",
+    "deskripsi": "Akses penuh sistem",
+    "statusRole": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.726Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.726Z",
+    "update_by": null
+  },
+  {
+    "uuid": "24145cc5-92ea-4e8f-a9cb-d8a8c95afbf0",
+    "namaRole": "ADMIN_CABANG",
+    "deskripsi": "Admin per cabang",
+    "statusRole": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.729Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.729Z",
+    "update_by": null
+  },
+  {
+    "uuid": "a7e8f479-f79f-4722-8611-86ecd8b179de",
+    "namaRole": "KETUA_CABANG",
+    "deskripsi": "Ketua cabang",
+    "statusRole": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.731Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.731Z",
+    "update_by": null
+  },
+  {
+    "uuid": "12fe10bf-1b78-4615-b7fa-dac232c54bd5",
+    "namaRole": "USER",
+    "deskripsi": "User standar / anggota",
+    "statusRole": "ACTIVE",
+    "insert_at": "2026-08-27T20:49:00.733Z",
+    "insert_by": null,
+    "update_at": "2026-08-27T20:49:00.733Z",
+    "update_by": null
+  }
+]
