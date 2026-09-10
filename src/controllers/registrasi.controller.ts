@@ -8,7 +8,7 @@ export const createRegistrasiHandler = async (req: Request, res: Response, next:
     const registrasi = await registrasiService.createRegistrasi(data);
     res.status(201).json({
       success: true,
-      message: "Pendaftaran Tahap 1 berhasil di-submit. Berkas masuk antrean verifikasi DPC.",
+      message: "Pendaftaran Tahap 1 berhasil di-submit. Berkas masuk antrean verifikasi DPP.",
       data: registrasi,
     });
   } catch (error) {

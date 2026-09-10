@@ -26,10 +26,10 @@ export class KtaController {
       }
 
       const userData = {
-        uuid: user.sub || "preview-uuid",
+        uuid: akun?.anggota?.uuid || user.sub || "preview-uuid",
         namaLengkap: akun?.anggota?.namaLengkap || user.username || "ANGGOTA PIKI",
         nomorAnggota: noKta,
-        cabang: akun?.anggota?.cabang?.namaCabang || user.cabang?.namaCabang || "DPD PIKI",
+        cabang: akun?.anggota?.cabang?.namaCabang || akun?.anggota?.kotaDomisili || user.cabang?.namaCabang || "DPD PIKI",
         profileImg: akun?.anggota?.profileImg || undefined,
       };
 

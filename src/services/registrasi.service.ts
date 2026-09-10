@@ -91,7 +91,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         tglPersetujuanPdp: new Date(),
 
         // statusVerifikasi: "PENDING_VERIFIKASI_DPC",
-        statusVerifikasi: "PENDING_VERIFIKASI_DPD",
+        statusVerifikasi: "PENDING_VERIFIKASI_DPP",
         statusPembayaran: "PENDING_CONFIRMATION",
         buktiBayarUrl: data.buktiBayarUrl || null,
         langkahSekarang: 1,
@@ -238,7 +238,7 @@ export const updateRegistrasi = async (
 
 export const verifikasiRegistrasi = async (params: {
   id: string;
-  status: "APPROVED_DPC" | "APPROVED_DPD" | "REJECTED";
+  status: "APPROVED_DPC" | "APPROVED_DPD" | "APPROVED_DPP" | "REJECTED";
   verifikatorUuid?: string;
   actorNama?: string;
   catatanVerifikasi?: string;
@@ -247,7 +247,7 @@ export const verifikasiRegistrasi = async (params: {
   if (!reg) throw new Error("Data registrasi tidak ditemukan");
 
   const isApproved =
-    params.status === "APPROVED_DPC" || params.status === "APPROVED_DPD";
+    params.status === "APPROVED_DPC" || params.status === "APPROVED_DPD" || params.status === "APPROVED_DPP";
   const langkahNext = isApproved ? 5 : 2; // Langsung ke tahap 5 (KTA Aktif) jika di-approve
 
   const updated = await prisma.$transaction(async (tx) => {

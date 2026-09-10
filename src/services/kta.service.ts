@@ -67,7 +67,8 @@ export class KtaService {
       const helveticaRegular = await doc.embedFont(StandardFonts.Helvetica);
 
       // Generate QR Code
-      const qrUrl = `https://portal.piki.id/verify/${userData.uuid}`;
+      const frontendUrl = process.env.FRONTEND_URL || "https://dpp-piki.org";
+      const qrUrl = `${frontendUrl}/anggota/${userData.uuid}`;
       const qrDataUrl = await QRCode.toDataURL(qrUrl, {
         margin: 1,
         width: 300,
