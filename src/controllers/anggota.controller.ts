@@ -435,7 +435,34 @@ export const getAnggotaById = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Anggota not found" });
     }
 
-    res.json(anggota);
+    // Ambil detail Registrasi dan Log-nya secara terpisah
+    let registrasi = null;
+    if (anggota.akun?.email) {
+      registrasi = await prisma.registrasi.findFirst({
+        where: { email: anggota.akun.email },
+        orderBy: { created_at: "desc" },
+        include: {
+          logs: {
+            orderBy: { created_at: "desc" }
+          }
+        }
+      });
+    } else {
+      registrasi = await prisma.registrasi.findFirst({
+        where: { anggotaUuid: anggota.uuid },
+        orderBy: { created_at: "desc" },
+        include: {
+          logs: {
+            orderBy: { created_at: "desc" }
+          }
+        }
+      });
+    }
+
+    res.json({
+      ...anggota,
+      registrasi
+    });
   } catch {
     res.status(500).json({ message: "Failed to fetch anggota" });
   }
@@ -744,14 +771,14 @@ export const getPublicProfileDetail = async (req: Request, res: Response) => {
     // 1. Cari profil Anggota berdasarkan UUID saja
     const anggota = await prisma.anggota.findUnique({
       where: {
-        uuid: uuid
+        uuid: uuid as string
       },
       include: {
         cabang: true,
-        pendidikan: true,
-        pekerjaan: true,
-        bidangStudi: true,
-        bidangMinat: true,
+        pendidikanRef: true,
+        pekerjaanRef: true,
+        bidangStudiRef: true,
+        bidangMinatRef: true,
         akun: { select: { email: true } }
       }
     });

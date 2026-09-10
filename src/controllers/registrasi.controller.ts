@@ -37,15 +37,19 @@ export const scanKtpHandler = async (req: Request, res: Response, next: NextFunc
 
 export const getRegistrasiListHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { search, statusVerifikasi, statusPembayaran, statusKta, langkahSekarang, skip, take } = req.query;
+    const { search, statusVerifikasi, statusPembayaran, langkahSekarang, skip, take } = req.query;
+    const scope = req.scope;
+
     const result = await registrasiService.getRegistrasiList({
       search: search as string,
       statusVerifikasi: statusVerifikasi as string,
       statusPembayaran: statusPembayaran as string,
-      statusKta: statusKta as string,
       langkahSekarang: langkahSekarang ? Number(langkahSekarang) : undefined,
       skip: skip ? Number(skip) : undefined,
       take: take ? Number(take) : undefined,
+      isAdmin: scope?.isAdmin,
+      isSuperAdmin: scope?.isSuperAdmin,
+      cabangId: scope?.cabangId,
     });
     res.json({
       success: true,
@@ -63,7 +67,7 @@ export const getRegistrasiListHandler = async (req: Request, res: Response, next
 
 export const getRegistrasiByIdHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const registrasi = await registrasiService.getRegistrasiById(id);
     if (!registrasi) {
       return res.status(404).json({ success: false, message: "Data registrasi tidak ditemukan" });
@@ -76,7 +80,7 @@ export const getRegistrasiByIdHandler = async (req: Request, res: Response, next
 
 export const updateRegistrasiHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const updated = await registrasiService.updateRegistrasi(id, req.body);
     res.json({ success: true, message: "Data registrasi berhasil diperbarui", data: updated });
   } catch (error) {
@@ -86,10 +90,10 @@ export const updateRegistrasiHandler = async (req: Request, res: Response, next:
 
 export const verifikasiRegistrasiHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { status, verifikatorUuid, actorNama, catatanVerifikasi } = req.body;
     const result = await registrasiService.verifikasiRegistrasi({
-      id,
+      id: id,
       status: status || "APPROVED_DPC",
       verifikatorUuid,
       actorNama,
@@ -121,10 +125,10 @@ export const checkSlaHandler = async (req: Request, res: Response, next: NextFun
 
 export const prosesPembayaranHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { buktiBayarUrl, statusPembayaran, actorUuid, actorNama } = req.body;
     const result = await registrasiService.prosesPembayaran({
-      id,
+      id: id,
       buktiBayarUrl,
       statusPembayaran,
       actorUuid,
@@ -142,17 +146,17 @@ export const prosesPembayaranHandler = async (req: Request, res: Response, next:
 
 export const aktivasiKtaHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { actorUuid, actorNama, customNoKta } = req.body;
     const result = await registrasiService.aktivasiKta({
-      id,
+      id: id,
       actorUuid,
       actorNama,
       customNoKta,
     });
     res.json({
       success: true,
-      message: `KTA Digital berhasil diterbitkan (${result.noKta}) dan status keanggotaan aktif resmi.`,
+      message: `KTA Digital berhasil diterbitkan dan status keanggotaan aktif resmi.`,
       data: result,
     });
   } catch (error) {
@@ -162,7 +166,7 @@ export const aktivasiKtaHandler = async (req: Request, res: Response, next: Next
 
 export const deleteRegistrasiHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await registrasiService.deleteRegistrasi(id);
     res.json({ success: true, message: "Data registrasi berhasil dihapus" });
   } catch (error) {

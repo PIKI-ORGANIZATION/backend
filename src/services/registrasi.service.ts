@@ -15,7 +15,7 @@ export interface CreateRegistrasiDTO {
   email: string;
   alamatDomisili: string;
   fileKtpUrl: string;
-  buktiBayarUrl: string;
+  buktiBayarUrl?: string;
 
   dpd?: string;
   dpc?: string;
@@ -93,9 +93,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         // statusVerifikasi: "PENDING_VERIFIKASI_DPC",
         statusVerifikasi: "PENDING_VERIFIKASI_DPD",
         statusPembayaran: "PENDING_CONFIRMATION",
-        // buktiBayarUrl: data.buktiBayarUrl,
-        buktiBayarUrl: null, // dihapus sementara karena belum upload
-        statusKta: "INACTIVE",
+        buktiBayarUrl: data.buktiBayarUrl || null,
         langkahSekarang: 1,
 
         created_by: data.created_by || null,
@@ -153,10 +151,12 @@ export const getRegistrasiList = async (params: {
   search?: string;
   statusVerifikasi?: string;
   statusPembayaran?: string;
-  statusKta?: string;
   langkahSekarang?: number;
   skip?: number;
   take?: number;
+  isAdmin?: boolean;
+  isSuperAdmin?: boolean;
+  cabangId?: string | null;
 }) => {
   const where: any = {};
 
@@ -165,18 +165,21 @@ export const getRegistrasiList = async (params: {
       { namaLengkap: { contains: params.search, mode: "insensitive" } },
       { email: { contains: params.search, mode: "insensitive" } },
       { noWa: { contains: params.search, mode: "insensitive" } },
-      { noKta: { contains: params.search, mode: "insensitive" } },
     ];
   }
 
   if (params.statusVerifikasi) where.statusVerifikasi = params.statusVerifikasi;
   if (params.statusPembayaran) where.statusPembayaran = params.statusPembayaran;
-  if (params.statusKta) where.statusKta = params.statusKta;
   if (params.langkahSekarang)
     where.langkahSekarang = Number(params.langkahSekarang);
 
   const take = params.take ? Number(params.take) : 10;
   const skip = params.skip ? Number(params.skip) : 0;
+
+  // ROLE BASED (SCOPE)
+  if (!params.isSuperAdmin && params.cabangId) {
+    where.cabangUuid = params.cabangId;
+  }
 
   const [total, data] = await Promise.all([
     prisma.registrasi.count({ where }),
@@ -418,8 +421,8 @@ export const aktivasiKta = async (params: {
   const yy = String(dob.getFullYear()).slice(-2);
   const ddmmyy = `${dd}${mm}${yy}`;
 
-  // Ambil nomor urut KTA (berdasarkan total KTA aktif + 1)
-  const totalKtaActive = await prisma.registrasi.count({
+  // Ambil nomor urut KTA (berdasarkan total KTA aktif di tabel Anggota + 1)
+  const totalKtaActive = await prisma.anggota.count({
     where: { statusKta: "ACTIVE" }
   });
   const uuuu = String(totalKtaActive + 1).padStart(4, "0");

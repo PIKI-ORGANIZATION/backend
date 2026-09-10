@@ -170,7 +170,8 @@ router.post(
 ////////////////////////////////////////////////////
 router.get(
   "/",
-  optionalAuthenticate,
+  authenticate,
+  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
   scope,
   getAnggotas
 );

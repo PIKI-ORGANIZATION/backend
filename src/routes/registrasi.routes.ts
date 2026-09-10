@@ -18,6 +18,7 @@ import { authorize } from "../middlewares/authorize.middleware";
 
 import { validate } from "../middlewares/validate.middleware";
 import { createRegistrasiSchema } from "../validators/registrasi.schema";
+import { scope } from "../middlewares/scope.middleware";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -29,16 +30,16 @@ router.post("/scan-ktp", upload.single("ktp"), scanKtpHandler);
 router.post("/", validate(createRegistrasiSchema), createRegistrasiHandler);
 
 // 2. Ambil Daftar Registrasi (dengan filter status/search/pagination)
-router.get("/", authenticate, getRegistrasiListHandler);
+router.get("/", authenticate, authorize("REGISTRASI_READ", "REGISTRASI_APPROVE"), scope, getRegistrasiListHandler);
 
 // 3. Trigger Manual Pengecekan SLA Auto-Bypass 3 Hari Kerja ke DPD
 router.post("/check-sla", authenticate, checkSlaHandler);
 
 // 4. Detail Registrasi berdasarkan ID/UUID
-router.get("/:id", authenticate, getRegistrasiByIdHandler);
+router.get("/:id", authenticate, authorize("REGISTRASI_READ", "REGISTRASI_APPROVE"), getRegistrasiByIdHandler);
 
 // 5. Update/Edit Data Registrasi
-router.put("/:id", authenticate, updateRegistrasiHandler);
+router.put("/:id", authenticate, authorize("REGISTRASI_APPROVE"), updateRegistrasiHandler);
 
 // 6. Verifikasi DPC / DPD (Tahap 2 & 3)
 router.patch("/:id/verifikasi", authenticate, authorize("REGISTRASI_APPROVE"), verifikasiRegistrasiHandler);
@@ -50,6 +51,6 @@ router.patch("/:id/pembayaran", authenticate, authorize("REGISTRASI_APPROVE"), p
 router.patch("/:id/aktivasi-kta", authenticate, authorize("REGISTRASI_APPROVE"), aktivasiKtaHandler);
 
 // 9. Hapus Data Registrasi
-router.delete("/:id", authenticate, deleteRegistrasiHandler);
+router.delete("/:id", authenticate, authorize("REGISTRASI_APPROVE"), deleteRegistrasiHandler);
 
 export default router;

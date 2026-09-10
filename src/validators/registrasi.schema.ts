@@ -3,37 +3,35 @@ import { z } from "zod";
 export const createRegistrasiSchema = z
   .object({
     namaLengkap: z
-      .string({ required_error: "Nama lengkap wajib diisi" })
+      .string("Nama lengkap wajib diisi")
       .min(2, "Nama lengkap minimal 2 karakter"),
 
     tanggalLahir: z
-      .string({ required_error: "Tanggal lahir wajib diisi" })
+      .string("Tanggal lahir wajib diisi")
       .min(1, "Tanggal lahir wajib diisi"),
 
     noWa: z
-      .string({ required_error: "Nomor WhatsApp wajib diisi" })
+      .string("Nomor WhatsApp wajib diisi")
       .min(8, "Nomor WhatsApp minimal 8 digit")
       .max(20, "Nomor WhatsApp maksimal 20 digit")
       .regex(/^[0-9+]+$/, "Nomor WhatsApp harus berupa angka (contoh: 081234567890)"),
 
     email: z
-      .string({ required_error: "Email wajib diisi" })
+      .string("Email wajib diisi")
       .email("Format email tidak valid (contoh: user@gmail.com)"),
 
     confirmEmail: z
-      .string({ required_error: "Konfirmasi email wajib diisi" })
+      .string("Konfirmasi email wajib diisi")
       .email("Format konfirmasi email tidak valid"),
 
-    // buktiBayarUrl: z
-    //   .string({ required_error: "Bukti transfer wajib diisi" })
-    //   .min(1, "Upload bukti transfer wajib diisi"),
+    buktiBayarUrl: z.string().optional(),
 
     alamatDomisili: z
-      .string({ required_error: "Alamat domisili wajib diisi" })
+      .string("Alamat domisili wajib diisi")
       .min(3, "Alamat domisili wajib diisi"),
 
     fileKtpUrl: z
-      .string({ required_error: "Upload KTP wajib diisi" })
+      .string("Upload KTP wajib diisi")
       .min(1, "Upload KTP wajib diisi"),
 
     dpd: z.string().optional(),
@@ -50,15 +48,15 @@ export const createRegistrasiSchema = z
     motivasiBergabung: z.string().optional(),
 
     setujuKebenaranData: z
-      .boolean({ required_error: "Persetujuan kebenaran data wajib diisi" })
+      .boolean("Persetujuan kebenaran data wajib diisi")
       .refine((val) => val === true, "Anda harus menyetujui pernyataan kebenaran data"),
 
     setujuPengelolaanData: z
-      .boolean({ required_error: "Persetujuan pengelolaan data UU PDP wajib diisi" })
+      .boolean("Persetujuan pengelolaan data UU PDP wajib diisi")
       .refine((val) => val === true, "Anda harus menyetujui pengelolaan data pribadi (UU PDP)"),
 
     setujuKerahasiaanData: z
-      .boolean({ required_error: "Persetujuan kerahasiaan data wajib diisi" })
+      .boolean("Persetujuan kerahasiaan data wajib diisi")
       .refine((val) => val === true, "Anda harus menyetujui jaminan kerahasiaan data"),
   })
   .refine((data) => data.email.toLowerCase() === data.confirmEmail.toLowerCase(), {
