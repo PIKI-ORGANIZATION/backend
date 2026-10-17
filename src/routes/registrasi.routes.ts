@@ -1,5 +1,5 @@
 import { Router } from "express";
-import multer from "multer";
+// import multer from "multer"; // OCR dinonaktifkan - multer tidak lagi dipakai di route ini
 import {
   createRegistrasiHandler,
   getRegistrasiListHandler,
@@ -10,7 +10,7 @@ import {
   prosesPembayaranHandler,
   aktivasiKtaHandler,
   deleteRegistrasiHandler,
-  scanKtpHandler,
+  // scanKtpHandler, // OCR dinonaktifkan
 } from "../controllers/registrasi.controller";
 
 import { authenticate } from "../middlewares/auth.middleware";
@@ -21,36 +21,72 @@ import { createRegistrasiSchema } from "../validators/registrasi.schema";
 import { scope } from "../middlewares/scope.middleware";
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+// const upload = multer({ storage: multer.memoryStorage() }); // OCR dinonaktifkan
 
-// 0. Scan KTP OCR (Tahap paling awal sebelum mengisi form)
-router.post("/scan-ktp", upload.single("ktp"), scanKtpHandler);
+// 0. Scan KTP OCR (Dinonaktifkan - fitur OCR tidak lagi diperlukan)
+// router.post("/scan-ktp", upload.single("ktp"), scanKtpHandler);
 
 // 1. Submit Pendaftaran Tahap 1 (Identitas, Kualifikasi, PDP, Pembuatan Akun)
 router.post("/", validate(createRegistrasiSchema), createRegistrasiHandler);
 
 // 2. Ambil Daftar Registrasi (dengan filter status/search/pagination)
-router.get("/", authenticate, authorize("REGISTRASI_READ", "REGISTRASI_APPROVE"), scope, getRegistrasiListHandler);
+router.get(
+  "/",
+  authenticate,
+  authorize("REGISTRASI_READ", "REGISTRASI_APPROVE"),
+  scope,
+  getRegistrasiListHandler
+);
 
 // 3. Trigger Manual Pengecekan SLA Auto-Bypass 3 Hari Kerja ke DPD
 router.post("/check-sla", authenticate, checkSlaHandler);
 
 // 4. Detail Registrasi berdasarkan ID/UUID
-router.get("/:id", authenticate, authorize("REGISTRASI_READ", "REGISTRASI_APPROVE"), getRegistrasiByIdHandler);
+router.get(
+  "/:id",
+  authenticate,
+  authorize("REGISTRASI_READ", "REGISTRASI_APPROVE"),
+  getRegistrasiByIdHandler
+);
 
 // 5. Update/Edit Data Registrasi
-router.put("/:id", authenticate, authorize("REGISTRASI_APPROVE"), updateRegistrasiHandler);
+router.put(
+  "/:id",
+  authenticate,
+  authorize("REGISTRASI_APPROVE"),
+  updateRegistrasiHandler
+);
 
 // 6. Verifikasi DPC / DPD (Tahap 2 & 3)
-router.patch("/:id/verifikasi", authenticate, authorize("REGISTRASI_APPROVE"), verifikasiRegistrasiHandler);
+router.patch(
+  "/:id/verifikasi",
+  authenticate,
+  authorize("REGISTRASI_APPROVE"),
+  verifikasiRegistrasiHandler
+);
 
 // 7. Process / Konfirmasi Pembayaran Iuran (Tahap 4)
-router.patch("/:id/pembayaran", authenticate, authorize("REGISTRASI_APPROVE"), prosesPembayaranHandler);
+router.patch(
+  "/:id/pembayaran",
+  authenticate,
+  authorize("REGISTRASI_APPROVE"),
+  prosesPembayaranHandler
+);
 
 // 8. Penerbitan & Aktivasi KTA Digital (Tahap 5)
-router.patch("/:id/aktivasi-kta", authenticate, authorize("REGISTRASI_APPROVE"), aktivasiKtaHandler);
+router.patch(
+  "/:id/aktivasi-kta",
+  authenticate,
+  authorize("REGISTRASI_APPROVE"),
+  aktivasiKtaHandler
+);
 
 // 9. Hapus Data Registrasi
-router.delete("/:id", authenticate, authorize("REGISTRASI_APPROVE"), deleteRegistrasiHandler);
+router.delete(
+  "/:id",
+  authenticate,
+  authorize("REGISTRASI_APPROVE"),
+  deleteRegistrasiHandler
+);
 
 export default router;

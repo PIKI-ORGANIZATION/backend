@@ -25,6 +25,7 @@ const baseNewsUtamaSchema = z.object({
     .optional(),
 
   durasi_baca: z.number().min(1).optional(),
+  cabangUuid: uuidSchema.nullable().optional(),
 
   // DYNAMIC GALERI
   albumList: z.array(z.object({
@@ -65,6 +66,7 @@ export const updateNewsUtamaSchema = z.object({
   kategori: z.array(uuidSchema).optional(),
 
   durasi_baca: z.number().min(1).optional(),
+  cabangUuid: uuidSchema.nullable().optional(),
 
   albumList: z.array(z.object({
     uuid: z.string().uuid().optional(), // For identifying existing updates

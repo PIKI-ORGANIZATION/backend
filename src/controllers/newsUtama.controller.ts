@@ -14,6 +14,7 @@ export const getNewsUtama = async (req: Request, res: Response) => {
       kategori,
       tag,
       statusNewsUtama,
+      cabangUuid,
     } = req.query as {
       search?: string;
       currentPage?: string;
@@ -22,6 +23,7 @@ export const getNewsUtama = async (req: Request, res: Response) => {
       kategori?: string;
       tag?: string;
       statusNewsUtama?: string;
+      cabangUuid?: string;
     };
 
     const scope = req.scope;
@@ -41,7 +43,7 @@ export const getNewsUtama = async (req: Request, res: Response) => {
       ];
     }
 
-    // 🏷️ FILTER
+    // 🏷️ FILTER KATEGORI & TAG
     if (kategori) {
       whereCondition.kategori = {
         some: { kategori: { uuid: kategori } },
@@ -57,19 +59,33 @@ export const getNewsUtama = async (req: Request, res: Response) => {
     const includeAll = fixed?.toLowerCase() === "all";
 
     // =====================================================
-    // LOGIC UTAMA (ROLE BASED)
+    // LOGIC UTAMA (ROLE BASED & CABANG SCOPING)
     // =====================================================
+    const isManageAllCabang = req.user?.permissions?.includes("MANAGE_ALL_CABANG");
+    const isSuperAdmin = scope?.isSuperAdmin || isManageAllCabang;
 
     if (!scope?.isAdmin) {
-      // USER PUBLIC
+      // 1. USER PUBLIC
       whereCondition.statusNewsUtama = "PUBLISHED";
-    } else {
-      // 🛠 ADMIN
-      const isManageAllCabang = req.user?.permissions?.includes("MANAGE_ALL_CABANG");
 
-      if (!scope.isSuperAdmin && !isManageAllCabang) {
-        // ADMIN CABANG
-        whereCondition.cabangUuid = scope.cabangId;
+      // Public boleh memfilter berdasarkan cabang tertentu jika diminta
+      if (cabangUuid) {
+        whereCondition.cabangUuid = cabangUuid;
+      }
+    } else {
+      // 2. 🛠 ADMIN
+      if (!isSuperAdmin) {
+        // ADMIN CABANG (DPD/DPC):
+        // Terkunci mutlak hanya pada cabangnya sendiri.
+        // Tidak bisa melihat berita DPP Pusat maupun cabang lain.
+        whereCondition.cabangUuid = scope?.cabangId;
+      } else {
+        // SUPERADMIN (DPP PUSAT):
+        // Dapat melihat seluruh berita (Pusat + Seluruh Cabang).
+        // Jika diberikan query param cabangUuid, filter sesuai cabang tersebut.
+        if (cabangUuid) {
+          whereCondition.cabangUuid = cabangUuid;
+        }
       }
 
       // Status filter: explicit query param > fixed=all (show all) > default PUBLISHED
@@ -474,6 +490,21 @@ export const createNewsUtama = async (
         }
 
         // =================================================
+        // CABANG DETERMINATION
+        // =================================================
+        const isManageAllCabang = req.user?.permissions?.includes("MANAGE_ALL_CABANG");
+        const isSuperAdmin = scope?.isSuperAdmin || isManageAllCabang;
+
+        let finalCabangUuid: string | null = null;
+        if (!isSuperAdmin) {
+          // ADMIN CABANG: Terkunci otomatis ke cabangnya sendiri (tidak bisa memilih pusat atau cabang lain)
+          finalCabangUuid = scope?.cabangId || null;
+        } else {
+          // SUPERADMIN (DPP PUSAT): Boleh memilih cabang target dari body, atau default ke cabang DPP Pusat milik user
+          finalCabangUuid = req.body.cabangUuid !== undefined ? req.body.cabangUuid : (scope?.cabangId || null);
+        }
+
+        // =================================================
         // CREATE NEWS
         // =================================================
 
@@ -495,7 +526,7 @@ export const createNewsUtama = async (
               // =========================================
               // CABANG
               // =========================================
-              cabangUuid: scope?.cabangId || null,
+              cabangUuid: finalCabangUuid,
 
               durasi_baca:
                 req.body.durasi_baca ??
@@ -715,6 +746,16 @@ export const updateNewsUtama = async (req: Request, res: Response) => {
         throw new Error("News not found");
       }
 
+      // SCOPE GUARD: Admin Cabang hanya boleh update berita cabangnya sendiri
+      const isManageAllCabang = req.user?.permissions?.includes("MANAGE_ALL_CABANG");
+      const isSuperAdmin = req.scope?.isSuperAdmin || isManageAllCabang;
+
+      if (!isSuperAdmin) {
+        if (!req.scope?.cabangId || existingNews.cabangUuid !== req.scope.cabangId) {
+          throw new Error("FORBIDDEN: Anda tidak memiliki izin mengelola berita cabang lain atau berita pusat");
+        }
+      }
+
       const isPublishingNow =
         existingNews.statusNewsUtama !== "PUBLISHED" &&
         statusNewsUtama === "PUBLISHED";
@@ -752,6 +793,7 @@ export const updateNewsUtama = async (req: Request, res: Response) => {
           ...(slug && { slug }),
           ...(url_thumbnail_img !== undefined && { url_thumbnail_img }),
           ...(statusNewsUtama && { statusNewsUtama }),
+          ...(isSuperAdmin && req.body.cabangUuid !== undefined && { cabangUuid: req.body.cabangUuid }),
 
           update_by: userUuid,
 
@@ -918,6 +960,16 @@ export const updateNewsUtama = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error(error);
 
+    if (error.message?.startsWith("FORBIDDEN")) {
+      return res.status(403).json(ApiResponse.error(error.message));
+    }
+    if (error.message === "News not found") {
+      return res.status(404).json(ApiResponse.error(error.message));
+    }
+    if (error.message === "Slug already exists") {
+      return res.status(400).json(ApiResponse.error(error.message));
+    }
+
     return res.status(500).json({
       message: "Failed to update news utama",
       error: error.message,
@@ -928,11 +980,32 @@ export const updateNewsUtama = async (req: Request, res: Response) => {
 export const archiveNewsUtama = async (req: Request, res: Response) => {
   try {
     const uuid = req.params.uuid as string;
+    const scope = req.scope;
+    const isManageAllCabang = req.user?.permissions?.includes("MANAGE_ALL_CABANG");
+    const isSuperAdmin = scope?.isSuperAdmin || isManageAllCabang;
+
+    const existingNews = await prisma.newsUtama.findUnique({
+      where: { uuid },
+    });
+
+    if (!existingNews) {
+      return res.status(404).json(ApiResponse.error("News utama not found"));
+    }
+
+    // SCOPE GUARD: Admin Cabang hanya boleh mengarsipkan berita cabangnya sendiri
+    if (!isSuperAdmin) {
+      if (!scope?.cabangId || existingNews.cabangUuid !== scope.cabangId) {
+        return res.status(403).json(
+          ApiResponse.error("Akses ditolak: Anda tidak memiliki izin mengarsipkan berita cabang lain atau berita pusat")
+        );
+      }
+    }
 
     await prisma.newsUtama.update({
       where: { uuid },
       data: {
         statusNewsUtama: "ARCHIVED",
+        update_by: req.user?.sub,
       },
     });
 
@@ -944,7 +1017,7 @@ export const archiveNewsUtama = async (req: Request, res: Response) => {
         message: "News utama successfully archived",
       })
     );
-  } catch (error) {
-    res.status(500).json({ error: "Failed to archive news utama" });
+  } catch (error: any) {
+    res.status(500).json(ApiResponse.error("Failed to archive news utama", error.message));
   }
 };

@@ -36,9 +36,9 @@ router.get('/tags/:tag', getNewsUtamaByTag);
 router.get('/kategori/:kategori', getNewsUtamaByKategori);
 router.get('/slug/:slug', getNewsUtamaBySlug);
 
-router.post('/', optionalAuthenticate, scope, authorize("NEWS_UTAMA_CREATE", "MANAGE_ALL_CABANG"), validate(createNewsUtamaBulkSchema), createNewsUtama);
-router.post('/:uuid/update', authenticate, authorize("NEWS_UTAMA_UPDATE", "MANAGE_ALL_CABANG"), validate(updateNewsUtamaSchema), updateNewsUtama);
-router.post('/:uuid/archive', authenticate, authorize("NEWS_UTAMA_ARCHIVE", "MANAGE_ALL_CABANG"), archiveNewsUtama);
+router.post('/', authenticate, scope, authorize("NEWS_UTAMA_CREATE", "MANAGE_ALL_CABANG"), validate(createNewsUtamaBulkSchema), createNewsUtama);
+router.post('/:uuid/update', authenticate, scope, authorize("NEWS_UTAMA_UPDATE", "MANAGE_ALL_CABANG"), validate(updateNewsUtamaSchema), updateNewsUtama);
+router.post('/:uuid/archive', authenticate, scope, authorize("NEWS_UTAMA_ARCHIVE", "MANAGE_ALL_CABANG"), archiveNewsUtama);
 
 // router.get('/categories', cache(3600), getCategories);
 // router.get('/tags', cache(3600), getTags);
