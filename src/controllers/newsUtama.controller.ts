@@ -15,6 +15,7 @@ export const getNewsUtama = async (req: Request, res: Response) => {
       tag,
       statusNewsUtama,
       cabangUuid,
+      sort,
     } = req.query as {
       search?: string;
       currentPage?: string;
@@ -24,6 +25,7 @@ export const getNewsUtama = async (req: Request, res: Response) => {
       tag?: string;
       statusNewsUtama?: string;
       cabangUuid?: string;
+      sort?: string;
     };
 
     const scope = req.scope;
@@ -112,7 +114,7 @@ export const getNewsUtama = async (req: Request, res: Response) => {
             email: true,
           },
         },
-        cabang: { select: { namaCabang: true } }, publisher: {
+        cabang: { select: { uuid: true, namaCabang: true, isCabang: true, wilayah: true, provinsi: true, kabupatenKota: true } }, publisher: {
           select: {
             uuid: true,
             username: true,
@@ -128,9 +130,10 @@ export const getNewsUtama = async (req: Request, res: Response) => {
           include: { mediaList: true },
         },
       },
-      orderBy: {
-        insert_at: "desc",
-      },
+      orderBy:
+        sort?.toLowerCase() === "populer"
+          ? [{ jumlah_dibaca: "desc" }, { insert_at: "desc" }]
+          : { insert_at: "desc" },
       skip,
       take: size,
     });
@@ -171,7 +174,7 @@ export const getNewsUtamaById = async (req: Request, res: Response) => {
       where: { uuid },
       include: {
         author: true,
-        cabang: { select: { namaCabang: true } },
+        cabang: { select: { uuid: true, namaCabang: true, isCabang: true, wilayah: true, provinsi: true, kabupatenKota: true } },
         publisher: true,
         tags: { include: { tag: true } },
         kategori: { include: { kategori: true } },
@@ -204,7 +207,7 @@ export const getNewsUtamaByCabang = async (req: Request, res: Response) => {
       where: { cabangUuid: uuid, statusNewsUtama: "PUBLISHED" },
       include: {
         author: true,
-        cabang: { select: { namaCabang: true } },
+        cabang: { select: { uuid: true, namaCabang: true, isCabang: true, wilayah: true, provinsi: true, kabupatenKota: true } },
         publisher: true,
         tags: { include: { tag: true } },
         kategori: { include: { kategori: true } },
@@ -243,7 +246,7 @@ export const getNewsUtamaAdminByCabang = async (req: Request, res: Response) => 
       where: whereCondition,
       include: {
         author: true,
-        cabang: { select: { namaCabang: true } },
+        cabang: { select: { uuid: true, namaCabang: true, isCabang: true, wilayah: true, provinsi: true, kabupatenKota: true } },
         publisher: true,
         tags: { include: { tag: true } },
         kategori: { include: { kategori: true } },
@@ -273,7 +276,7 @@ export const getNewsUtamaBySlug = async (req: Request, res: Response) => {
       where: { slug },
       include: {
         author: true,
-        cabang: { select: { namaCabang: true } },
+        cabang: { select: { uuid: true, namaCabang: true, isCabang: true, wilayah: true, provinsi: true, kabupatenKota: true } },
         publisher: true,
         tags: { include: { tag: true } },
         kategori: { include: { kategori: true } },
@@ -394,7 +397,7 @@ export const getNewsUtamaSearch = async (req: Request, res: Response) => {
       },
       include: {
         author: true,
-        cabang: { select: { namaCabang: true } },
+        cabang: { select: { uuid: true, namaCabang: true, isCabang: true, wilayah: true, provinsi: true, kabupatenKota: true } },
         publisher: true,
         tags: { include: { tag: true } },
         kategori: { include: { kategori: true } },

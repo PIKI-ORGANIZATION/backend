@@ -24,6 +24,7 @@ const baseNewsUtamaSchema = z.object({
     .min(1, "Minimal 1 kategori")
     .optional(),
 
+  statusNewsUtama: newsStatusEnum.optional(),
   durasi_baca: z.number().min(1).optional(),
   cabangUuid: uuidSchema.nullable().optional(),
 

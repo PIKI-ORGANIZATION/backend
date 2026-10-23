@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import fs from "fs";
 import path from "path";
+import { seedNewsPiki } from "./seedNewsPiki";
 
 const prisma = new PrismaClient({
   log: ["info", "warn", "error"],
@@ -25,6 +26,7 @@ async function main() {
 
   // 3. News
   await seedNews();
+  await seedNewsPiki(prisma);
 
   // 4. Jabatan & Bidang
   await seedJabatan();
@@ -741,12 +743,12 @@ async function assignRolesToAkun() {
   for (const c of CABANG_LIST) {
     if (c.isPusat) continue;
     const adminCabang = await prisma.akun.findUnique({
-      where: { email: `admin_${c.kotaEmail}@dpp.id` },
+      where: { email: `admin_${c.kotaEmail}@pnps.id` },
     });
     if (adminCabang)
       await upsertAkunRole(adminCabang.uuid, adminCabangRole.uuid, insertBy);
     const ketuaCabang = await prisma.akun.findUnique({
-      where: { email: `ketua_${c.kotaEmail}@dpp.id` },
+      where: { email: `ketua_${c.kotaEmail}@pnps.id` },
     });
     if (ketuaCabang)
       await upsertAkunRole(ketuaCabang.uuid, ketuaCabangRole.uuid, insertBy);
@@ -2788,7 +2790,11 @@ async function seedProductionDataFromJSON() {
   }
 }
 
-main()
+const runner = process.argv.includes("--only-news")
+  ? () => seedNewsPiki(prisma)
+  : main;
+
+runner()
   .catch((e) => {
     console.error("❌ Seed error:", e);
     process.exit(1);
