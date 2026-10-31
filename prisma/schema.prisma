@@ -75,7 +75,7 @@ model Anggota {
   facebook          String?
   statusKeanggotaan String               @default("NON_MEMBER")
   noKta             String?              @unique
-  statusKta         String               @default("INACTIVE")
+  statusKta         String?              @default("INACTIVE")
   fileKtaUrl        String?
   tglAktivasiKta    DateTime?
   fileKtpUrl        String?
