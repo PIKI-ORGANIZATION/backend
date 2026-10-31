@@ -672,23 +672,8 @@ async function assignPermissionsToRole() {
       "GRIT_PENDAFTARAN_READ",
       "REGISTRASI_APPROVE",
     ],
-    USER: [
-      "AKUN_READ",
-      "SENIOR_READ",
-      "CABANG_READ",
-      "NEWS_UTAMA_READ",
-      "NEWS_UTAMA_CREATE",
-      "NEWS_UTAMA_UPDATE",
-      "NEWS_UTAMA_ARCHIVE",
-      "NEWS_TAG_READ",
-      "NEWS_KATEGORI_READ",
-      "STRUKTUR_READ",
-      "PROGRAM_READ",
-      "AGENDA_READ",
-      "ARSIP_READ",
-      "GALERI_READ",
-      "FAQ_READ",
-    ],
+    // Anggota hanya akses data diri & KTA (/auth/me, /auth/profile, /kta/download) yang cukup login, tanpa permission
+    USER: [],
   };
 
   for (const [roleName, permNames] of Object.entries(rolePermissions)) {
