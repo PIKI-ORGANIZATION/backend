@@ -1,17 +1,26 @@
 import { z } from "zod";
 
-export const dpdDpcSchema = z.object({
-  dpd: z.string().optional(),
-  dpc: z.string().optional(),
-  kode_provinsi: z.string().optional(),
-  kode_kabupaten: z.string().optional(),
-  pengurus: z.string().optional().nullable(),
-  no_handphone: z.string().optional().nullable(),
-  keterangan: z.string().optional().nullable(),
-  penerbitan_sk: z.string().optional().nullable(),
+// Field yang boleh diubah oleh DPC sendiri (nama DPC/DPD & kode provinsi selalu diambil dari data_master_wilayah)
+const dataDpcSchema = z.object({
+  pengurus: z.string().trim().max(255).optional().nullable(),
+  no_handphone: z.string().trim().max(100).optional().nullable(),
+  keterangan: z.string().trim().max(255).optional().nullable(),
+  penerbitan_sk: z.string().trim().max(50).optional().nullable(),
 });
 
-export const updateDpdDpcSchema = dpdDpcSchema.partial();
+export const createDpdDpcSchema = dataDpcSchema.extend({
+  kode_kabupaten: z.string().trim().min(1, "kode_kabupaten wajib diisi"),
+});
 
-export type DpdDpcInput = z.infer<typeof dpdDpcSchema>;
+// Update oleh DPP: boleh ganti kode kabupaten
+export const updateDpdDpcSchema = dataDpcSchema.extend({
+  kode_kabupaten: z.string().trim().min(1).optional(),
+});
+
+// Update oleh DPC sendiri: kode wilayah tidak boleh diubah
+export const updateDpdDpcSelfSchema = dataDpcSchema.strict();
+
+export const dpdDpcIdParamSchema = z.coerce.number().int().positive("ID DPC tidak valid");
+
+export type CreateDpdDpcInput = z.infer<typeof createDpdDpcSchema>;
 export type UpdateDpdDpcInput = z.infer<typeof updateDpdDpcSchema>;

@@ -69,6 +69,13 @@ const baseCabangSchema = z.object({
   // KETUA CABANG
   ////////////////////////////////////////////////////
   ketuaUuid: z.string().uuid().nullable().optional(),
+
+  ////////////////////////////////////////////////////
+  // TAUTAN WILAYAH (isi salah satu: dpdId = cabang DPD, dpcId = cabang DPC)
+  ////////////////////////////////////////////////////
+  dpdId: z.string().uuid().nullable().optional(),
+
+  dpcId: z.coerce.number().int().positive().nullable().optional(),
 });
 
 ////////////////////////////////////////////////////

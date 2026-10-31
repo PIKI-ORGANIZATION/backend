@@ -29,6 +29,7 @@ export const login = async (req: Request, res: Response) => {
       OR: [{ email: identifier }, { username: identifier }],
     },
     include: {
+      cabang: true,
       anggota: {
         include: {
           cabang: true,
@@ -90,6 +91,20 @@ export const login = async (req: Request, res: Response) => {
 
   const uniquePermissions = [...new Set(permissions)];
 
+  // Cabang langsung di Akun (admin DPD/DPC) diprioritaskan, fallback ke cabang Anggota.
+  // tingkat/dpdId/dpcId hanya dari tautan Akun, agar anggota biasa tidak mewarisi akses DPD/DPC.
+  const cabang = akun.cabang ?? akun.anggota?.cabang ?? null;
+  const dpdId = akun.cabang?.dpdId ?? null;
+  const dpcId = akun.cabang?.dpcId ?? null;
+  const cabangScope = {
+    cabangId: cabang?.uuid ?? null,
+    cabang: cabang?.namaCabang ?? null,
+    isCabang: cabang?.isCabang ?? null,
+    tingkat: dpdId ? "DPD" : dpcId ? "DPC" : null,
+    dpdId,
+    dpcId,
+  };
+
   let payload = {};
 
   if (isFromAdmin || isFromAdmin === "true") {
@@ -99,9 +114,7 @@ export const login = async (req: Request, res: Response) => {
       username: akun.username,
       roles: akun.roles.map(r => r.role.namaRole),
       permissions: uniquePermissions,
-      cabangId: akun.anggota?.cabangUuid ?? null,
-      cabang: akun.anggota?.cabang?.namaCabang ?? null,
-      isCabang: akun.anggota?.cabang?.isCabang ?? null,
+      ...cabangScope,
       isApprovedByDPC: anggotaAny?.isApprovedByDPC ?? false,
       isApprovedByDPP: anggotaAny?.isApprovedByDPP ?? false,
       isFromAdmin: true,
@@ -114,9 +127,7 @@ export const login = async (req: Request, res: Response) => {
       username: akun.username,
       roles: akun.roles.map(r => r.role.namaRole),
       permissions: uniquePermissions,
-      cabangId: akun.anggota?.cabangUuid ?? null,
-      cabang: akun.anggota?.cabang?.namaCabang ?? null,
-      isCabang: akun.anggota?.cabang?.isCabang ?? null,
+      ...cabangScope,
       isApprovedByDPC: anggotaAny?.isApprovedByDPC ?? false,
       isApprovedByDPP: anggotaAny?.isApprovedByDPP ?? false,
       isFromAdmin: false,

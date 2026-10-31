@@ -12,6 +12,9 @@ export interface JwtUser extends JwtPayload {
   cabang?: string | null;
   cabangId?: string | null;
   isCabang?: boolean;
+  tingkat?: "DPD" | "DPC" | null; // diturunkan dari Cabang.dpdId / Cabang.dpcId
+  dpdId?: string | null;
+  dpcId?: number | null;
   isApprovedByDPC?: boolean;
   isApprovedByDPP?: boolean;
   isFromAdmin?: boolean;

@@ -4,6 +4,9 @@ export interface RequestScope {
   isAdmin: boolean;
   isSuperAdmin: boolean;
   cabangId: string | null;
+  tingkat: "DPD" | "DPC" | null;
+  dpdId: string | null;
+  dpcId: number | null;
 }
 
 declare global {
@@ -30,6 +33,9 @@ export const scope = (
     isAdmin,
     isSuperAdmin,
     cabangId: user?.cabangId ?? null,
+    tingkat: user?.tingkat ?? null,
+    dpdId: user?.dpdId ?? null,
+    dpcId: user?.dpcId ?? null,
   };
 
   next();

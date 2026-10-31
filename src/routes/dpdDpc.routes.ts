@@ -1,21 +1,22 @@
 import { Router } from "express";
 import * as dpdDpcController from "../controllers/dpdDpc.controller";
 import { authenticate } from "../middlewares/auth.middleware";
-import { authorize } from "../middlewares/rbac.middleware";
+import { authorize } from "../middlewares/authorize.middleware";
+import { scope } from "../middlewares/scope.middleware";
 
 const router = Router();
 
-// Endpoint Public/Authenticated
+// Semua endpoint wajib login. Hak lihat/ubah per hierarki (DPP/DPD/DPC) dicek di service.
+router.use(authenticate, scope);
+
 router.get("/", dpdDpcController.getDpdDpcListHandler);
 router.get("/:id", dpdDpcController.getDpdDpcByIdHandler);
 
-// Endpoint Protected (CMS)
-router.use(authenticate);
-// Contoh authorize, sesuaikan nama permission-nya jika perlu
-// router.use(authorize("MANAGE_DPD_DPC")); 
+// Hanya DPP
+router.post("/", authorize("MANAGE_ALL_CABANG"), dpdDpcController.createDpdDpcHandler);
+router.delete("/:id", authorize("MANAGE_ALL_CABANG"), dpdDpcController.deleteDpdDpcHandler); // soft delete
 
-router.post("/", dpdDpcController.createDpdDpcHandler);
-router.patch("/:id", dpdDpcController.updateDpdDpcHandler);
-router.delete("/:id", dpdDpcController.deleteDpdDpcHandler);
+// DPP: semua DPC, DPC: dirinya sendiri
+router.patch("/:id", authorize("MANAGE_ALL_CABANG", "CABANG_UPDATE"), dpdDpcController.updateDpdDpcHandler);
 
 export default router;

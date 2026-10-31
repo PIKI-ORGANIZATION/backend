@@ -22,12 +22,14 @@ model Akun {
   lastLogin           DateTime?
   ipLogin             String?
   anggotaUuid         String?             @unique @db.Uuid
+  cabangUuid          String?             @db.Uuid
   insert_at           DateTime            @default(now())
   insert_by           String?             @db.Uuid
   update_at           DateTime            @updatedAt
   update_by           String?             @db.Uuid
   agendaInsert        AgendaKegiatan[]    @relation("AgendaInsertBy")
   anggota             Anggota?            @relation(fields: [anggotaUuid], references: [uuid])
+  cabang              Cabang?             @relation("AkunCabang", fields: [cabangUuid], references: [uuid], onDelete: SetNull)
   createdBy           Akun?               @relation("AkunInsertBy", fields: [insert_by], references: [uuid])
   created             Akun[]              @relation("AkunInsertBy")
   updatedBy           Akun?               @relation("AkunUpdateBy", fields: [update_by], references: [uuid])
@@ -128,6 +130,8 @@ model Cabang {
   endTimeCountdown       DateTime?
   keteranganCountdown    String?
   ketuaUuid              String?               @unique @db.Uuid
+  dpdId                  String?               @unique @db.Uuid
+  dpcId                  Int?                  @unique
   insert_at              DateTime              @default(now())
   insert_by              String?               @db.Uuid
   update_at              DateTime              @updatedAt
@@ -135,6 +139,9 @@ model Cabang {
   AlbumGaleriList        AlbumGaleri[]
   anggotaList            Anggota[]
   ketua                  Akun?                 @relation("Ketua", fields: [ketuaUuid], references: [uuid])
+  dpdRef                 Dpd?                  @relation(fields: [dpdId], references: [id])
+  dpcRef                 DpdDpc?               @relation(fields: [dpcId], references: [id])
+  akunList               Akun[]                @relation("AkunCabang")
   misi                   MisiCabang[]
   newsList               NewsUtama[]
   periodeList            PeriodeKepengurusan[]
@@ -638,13 +645,18 @@ model DpdDpc {
   dpd            String?   @db.VarChar(255)
   dpc            String?   @db.VarChar(255)
   kode_provinsi  String?   @db.VarChar(20)
-  kode_kabupaten String?   @db.VarChar(20)
+  kode_kabupaten String?   @unique @db.VarChar(20)
   pengurus       String?   @db.VarChar(255)
   no_handphone   String?   @db.VarChar(100)
   keterangan     String?   @db.VarChar(255)
   penerbitan_sk  String?   @db.VarChar(50)
   created_at     DateTime? @default(now())
   updated_at     DateTime? @default(now()) @updatedAt
+  created_by     String?   @db.Uuid
+  updated_by     String?   @db.Uuid
+  deleted_at     DateTime?
+  deleted_by     String?   @db.Uuid
+  cabang         Cabang?
 
   @@map("dpd_dpc")
 }
@@ -681,7 +693,7 @@ model RegistrasiPengurus {
 /// ///////////////////////////////////////////////
 model Dpd {
   id           String    @id @default(uuid()) @db.Uuid
-  kodeProvinsi String?   @db.VarChar(20)
+  kodeProvinsi String?   @unique @db.VarChar(20)
   dpd          String?   @db.VarChar(255)
   pengurus     String?   @db.VarChar(255)
   noHandphone  String?   @db.VarChar(100)
@@ -691,6 +703,9 @@ model Dpd {
   updatedAt    DateTime? @default(now()) @updatedAt
   createdBy    String?   @db.Uuid
   updatedBy    String?   @db.Uuid
+  deletedAt    DateTime?
+  deletedBy    String?   @db.Uuid
+  cabang       Cabang?
 
   @@map("dpd")
 }

@@ -250,6 +250,47 @@ export const getCabangById = async (req: Request, res: Response) => {
   }
 };
 
+////////////////////////////////////////////////////
+// VALIDASI TAUTAN CABANG -> DPD / DPC
+////////////////////////////////////////////////////
+type TautanWilayah = {
+  dpdId?: string | null;
+  dpcId?: number | null;
+};
+
+// Cabang ditautkan ke DPD (dpdId) atau DPC (dpcId), tidak boleh keduanya
+const cekTautanWilayah = async (
+  data: TautanWilayah,
+  cabangUuid?: string
+): Promise<{ status: number; message: string } | null> => {
+  const dpdId = data.dpdId ?? null;
+  const dpcId = data.dpcId ?? null;
+
+  if (dpdId && dpcId) {
+    return { status: 400, message: "Cabang hanya boleh ditautkan ke salah satu: dpdId atau dpcId" };
+  }
+
+  const bukanCabangIni = cabangUuid ? { NOT: { uuid: cabangUuid } } : {};
+
+  if (dpdId) {
+    const dpd = await prisma.dpd.findFirst({ where: { id: dpdId, deletedAt: null } });
+    if (!dpd) return { status: 404, message: "DPD tidak ditemukan" };
+
+    const dipakai = await prisma.cabang.findFirst({ where: { dpdId, ...bukanCabangIni } });
+    if (dipakai) return { status: 409, message: `DPD ini sudah ditautkan ke cabang "${dipakai.namaCabang}"` };
+  }
+
+  if (dpcId) {
+    const dpc = await prisma.dpdDpc.findFirst({ where: { id: dpcId, deleted_at: null } });
+    if (!dpc) return { status: 404, message: "DPC tidak ditemukan" };
+
+    const dipakai = await prisma.cabang.findFirst({ where: { dpcId, ...bukanCabangIni } });
+    if (dipakai) return { status: 409, message: `DPC ini sudah ditautkan ke cabang "${dipakai.namaCabang}"` };
+  }
+
+  return null;
+};
+
 export const createCabang = async (req: Request, res: Response) => {
   try {
     const user = req.user!;
@@ -262,6 +303,18 @@ export const createCabang = async (req: Request, res: Response) => {
       return res.status(400).json({
         message: "Data cabang tidak boleh kosong",
       });
+    }
+
+    for (const item of payload) {
+      // createCabangSchema tidak mengembalikan hasil coerce, jadi dpcId dinormalisasi di sini
+      if (item.dpcId !== undefined && item.dpcId !== null) {
+        item.dpcId = Number(item.dpcId);
+      }
+
+      const errTautan = await cekTautanWilayah(item);
+      if (errTautan) {
+        return res.status(errTautan.status).json({ message: errTautan.message });
+      }
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -314,6 +367,28 @@ export const updateCabang = async (req: Request, res: Response) => {
     const user = req.user!;
 
     const { misi, ...otherData } = req.body;
+
+    if ("dpdId" in otherData || "dpcId" in otherData) {
+      const existing = await prisma.cabang.findUnique({
+        where: { uuid: String(uuid) },
+        select: { dpdId: true, dpcId: true },
+      });
+
+      if (!existing) {
+        return res.status(404).json({ message: "Cabang tidak ditemukan" });
+      }
+
+      const errTautan = await cekTautanWilayah(
+        {
+          dpdId: "dpdId" in otherData ? otherData.dpdId : existing.dpdId,
+          dpcId: "dpcId" in otherData ? otherData.dpcId : existing.dpcId,
+        },
+        String(uuid)
+      );
+      if (errTautan) {
+        return res.status(errTautan.status).json({ message: errTautan.message });
+      }
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       const cabang = await tx.cabang.update({

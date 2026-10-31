@@ -192,12 +192,19 @@ export const getAkunByIdentifier = async (
 ////////////////////////////////////////////////////
   export const createAkun = async (req: Request, res: Response) => {
     try {
-      const { email, username, password, anggotaUuid, roleUuids } = req.body;
-  
-      if (!email || !username || !password || !anggotaUuid) {
+      const { email, username, password, anggotaUuid, cabangUuid, roleUuids } = req.body;
+
+      if (!email || !username || !password || (!anggotaUuid && !cabangUuid)) {
         return res.status(400).json({
-          message: "email, username, password dan anggotaUuid wajib diisi",
+          message: "email, username, password dan anggotaUuid/cabangUuid wajib diisi",
         });
+      }
+
+      if (cabangUuid) {
+        const cabang = await prisma.cabang.findUnique({ where: { uuid: cabangUuid } });
+        if (!cabang) {
+          return res.status(404).json({ message: "Cabang tidak ditemukan" });
+        }
       }
   
       const existing = await prisma.akun.findFirst({
@@ -221,6 +228,7 @@ export const getAkunByIdentifier = async (
             username,
             password: hashedPassword,
             anggotaUuid,
+            cabangUuid,
           },
         });
   
@@ -266,17 +274,26 @@ export const getAkunByIdentifier = async (
   export const updateAkun = async (req: Request, res: Response) => {
     try {
       const uuid = String(req.params.uuid);
-      const { email, username, password, statusAkun, roleUuids } = req.body;
-  
+      const { email, username, password, statusAkun, cabangUuid, roleUuids } = req.body;
+
+      if (cabangUuid) {
+        const cabang = await prisma.cabang.findUnique({ where: { uuid: cabangUuid } });
+        if (!cabang) {
+          return res.status(404).json({ message: "Cabang tidak ditemukan" });
+        }
+      }
+
       let hashedPassword: string | undefined;
       if (password) {
         hashedPassword = await bcrypt.hash(password, 10);
       }
-  
+
+      // cabangUuid: null = lepas tautan cabang, undefined = tidak diubah
       const data: any = {
         email,
         username,
         statusAkun,
+        cabangUuid,
       };
   
       if (hashedPassword) {

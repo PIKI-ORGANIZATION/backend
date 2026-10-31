@@ -9,6 +9,7 @@ export const getDpdList = async () => {
     by: ["dpd", "kode_provinsi"],
     where: {
       dpd: { not: null },
+      deleted_at: null,
     },
     orderBy: {
       dpd: "asc",
@@ -27,6 +28,7 @@ export const getDpdList = async () => {
 export const getDpcList = async (params: { dpd?: string; kode_provinsi?: string }) => {
   const where: any = {
     dpc: { not: null },
+    deleted_at: null,
   };
 
   if (params.dpd) {
