@@ -48,7 +48,6 @@ model Akun {
   newsPublisher       NewsUtama[]         @relation("NewsPublisher")
   programInsert       ProgramKerja[]      @relation("ProgramInsertBy")
   registrasiList      Registrasi?
-  registrasiPengurus  RegistrasiPengurus?
 }
 
 /// ///////////////////////////////////////////////
@@ -147,7 +146,6 @@ model Cabang {
   periodeList            PeriodeKepengurusan[]
   sejarahCabang          SejarahCabang[]
   registrasiList         Registrasi[]
-  registrasiPengurusList RegistrasiPengurus[]
 }
 
 model MisiCabang {
@@ -659,34 +657,6 @@ model DpdDpc {
   cabang         Cabang?
 
   @@map("dpd_dpc")
-}
-
-/// ///////////////////////////////////////////////
-/// ///////////////////////////////////////////////
-model RegistrasiPengurus {
-  id                String    @id @default(uuid()) @db.Uuid
-  namaLengkap       String
-  noWa              String
-  email             String
-  tingkat           String
-  jabatan           String
-  kode_provinsi     String?
-  kode_kabupaten    String?
-  cabangUuid        String?   @db.Uuid
-  skKepengurusanUrl String
-  statusVerifikasi  String    @default("PENDING_VERIFIKASI")
-  verifikatorUuid   String?   @db.Uuid
-  catatanVerifikasi String?
-  tglVerifikasi     DateTime?
-  akunUuid          String?   @unique @db.Uuid
-  created_at        DateTime  @default(now())
-  created_by        String?   @db.Uuid
-  updated_at        DateTime  @updatedAt
-  updated_by        String?   @db.Uuid
-  akun              Akun?     @relation(fields: [akunUuid], references: [uuid])
-  cabang            Cabang?   @relation(fields: [cabangUuid], references: [uuid])
-
-  @@map("registrasi_pengurus")
 }
 
 /// ///////////////////////////////////////////////
