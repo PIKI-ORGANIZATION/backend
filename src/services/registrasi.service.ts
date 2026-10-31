@@ -36,6 +36,39 @@ export interface CreateRegistrasiDTO {
   created_by?: string;
 }
 
+// Lengkapi kode wilayah dari nama DPC/DPD jika frontend tidak mengirim kodenya
+// (sebagian data dpd_dpc belum punya kode, sehingga dropdown registrasi mengirim kode kosong)
+const lengkapiKodeWilayah = async (data: CreateRegistrasiDTO) => {
+  let kode_provinsi = data.kode_provinsi || null;
+  let kode_kabupaten = data.kode_kabupaten || null;
+  const filterProvinsi = data.dpd ? { nama_provinsi: { equals: data.dpd, mode: "insensitive" as const } } : {};
+
+  if (!kode_kabupaten && data.dpc) {
+    const dpc = await prisma.dpdDpc.findFirst({
+      where: {
+        dpc: { equals: data.dpc, mode: "insensitive" },
+        kode_kabupaten: { not: null },
+        deleted_at: null,
+        ...(data.dpd && { dpd: { equals: data.dpd, mode: "insensitive" } }),
+      },
+    });
+    const master = dpc
+      ? null
+      : await prisma.dataMasterWilayah.findFirst({
+          where: { nama_kabupaten: { equals: data.dpc, mode: "insensitive" }, ...filterProvinsi },
+        });
+    kode_kabupaten = dpc?.kode_kabupaten ?? master?.kode_kabupaten ?? null;
+    kode_provinsi = kode_provinsi ?? dpc?.kode_provinsi ?? master?.kode_provinsi ?? null;
+  }
+
+  if (!kode_provinsi && data.dpd) {
+    const provinsi = await prisma.dataMasterWilayah.findFirst({ where: filterProvinsi });
+    kode_provinsi = provinsi?.kode_provinsi ?? null;
+  }
+
+  return { kode_provinsi, kode_kabupaten };
+};
+
 export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
   if (!data.email) {
     throw new Error("Email wajib diisi");
@@ -46,6 +79,8 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
   // Validasi tambahan ditiadakan (confirmEmail dihapus)
 
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+
+  const kodeWilayah = await lengkapiKodeWilayah(data);
 
   const registrasi = await prisma.$transaction(async (tx) => {
     // 0. Cek apakah email sudah pernah mendaftar
@@ -74,8 +109,8 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         // akunUuid dihapus karena belum dibuat
         dpd: data.dpd || null,
         dpc: data.dpc || null,
-        kode_provinsi: data.kode_provinsi || null,
-        kode_kabupaten: data.kode_kabupaten || null,
+        kode_provinsi: kodeWilayah.kode_provinsi,
+        kode_kabupaten: kodeWilayah.kode_kabupaten,
         kotaDomisili: data.kotaDomisili || data.dpc || null,
         tingkatPendidikan: data.tingkatPendidikan || null,
         pendidikanUuid: data.pendidikanUuid || null,
