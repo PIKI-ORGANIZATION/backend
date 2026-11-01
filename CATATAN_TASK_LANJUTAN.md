@@ -1,74 +1,434 @@
-# Catatan Task Lanjutan (Backend PIKI)
+# Catatan Backend PIKI — Perubahan, Panduan Tim & Dokumentasi API
 
-Daftar pekerjaan yang sudah disepakati untuk **ditunda**. Kerjakan berurutan sesuai prioritas.
+Dokumen ini untuk **tim developer** (backend/frontend) dan **tim ops**. Berisi:
+
+1. [Ringkasan perubahan](#1-ringkasan-perubahan)
+2. [Panduan developer setelah `git pull`](#2-panduan-developer-setelah-git-pull)
+3. [Panduan deploy production (tim ops)](#3-panduan-deploy-production-tim-ops)
+4. [Dokumentasi API](#4-dokumentasi-api)
+5. [Task lanjutan (ditunda)](#5-task-lanjutan-ditunda)
+6. [Temuan lain](#6-temuan-lain)
+
+Production saat dokumen ini ditulis menjalankan commit `8aabe47` (branch `main`). Semua perubahan di bawah ada di branch `dev`.
 
 ---
 
-## 1. Verifikasi registrasi anggota per wilayah (DPP / DPD / DPC)
+## 1. Ringkasan perubahan
+
+| Commit | Perubahan | Migration |
+|---|---|---|
+| `96c5e32` | CRUD DPD & DPC dengan hierarki akses DPP/DPD/DPC; akun admin bisa ditautkan ke Cabang; Cabang bisa ditautkan ke DPD/DPC | `20261031192351_dpd_dpc_hierarki` |
+| `5d4cc9f` | `Anggota.statusKta` jadi nullable (menyamakan schema dengan DB) | `20261031202901_anggota_statuskta_nullable` |
+| `1cf56e0` | Hapus modul & tabel `registrasi_pengurus` | `20261031202902_hapus_registrasi_pengurus` |
+| `09b1470` | Role `USER` (anggota) dicabut semua permission-nya: hanya bisa lihat/ubah data diri & KTA | `20261031202903_cabut_permission_user` |
+| `cefd928` | Kode wilayah registrasi anggota dilengkapi otomatis | – |
+| `bccd299` | CMS Sejarah PIKI (`SejarahCabang` → tabel `sejarah`, tanpa relasi cabang) | `20261101153132_sejarah_piki` |
+| `0e33f99` | CMS Sosmed (Instagram & YouTube); hapus `/api/v1/youtube/videos` | `20261101163806_sosmed` |
+| `3099777` | Akses CMS Sejarah & Sosmed untuk `ADMIN_CABANG` & `KETUA_CABANG` | `20261101165640_permission_sejarah_sosmed` |
+
+Selain itu, migration lama `20260927142556` (pindah atribut KTA dari `registrasi` ke `Anggota`) **belum pernah dijalankan di production** dan akan ikut jalan saat deploy berikutnya. Datanya sudah diverifikasi aman (semua nomor KTA sudah ada di `Anggota`).
+
+### Endpoint yang dihapus / berubah perilaku
+
+| Endpoint | Perubahan | Dampak frontend |
+|---|---|---|
+| `/api/v1/registrasi-pengurus/*` | **Dihapus** | Tidak dipakai frontend |
+| `/api/v1/sejarah-cabang/*` | **Dihapus**, diganti `/api/v1/sejarah` | Tidak dipakai frontend |
+| `/api/v1/youtube/videos` | **Dihapus**, diganti `/api/v1/sosmed` | Tidak dipakai frontend |
+| `GET /api/v1/dpd`, `GET /api/v1/dpd-dpc` | Sebelumnya publik, sekarang **wajib login** sesuai hierarki | Tidak dipakai frontend (registrasi memakai `/master-wilayah`) |
+| `DELETE /api/v1/dpd/:id`, `/dpd-dpc/:id` | Sekarang **soft delete** (data tidak hilang) | – |
+| `GET /api/v1/cabang`, `/cabang/:uuid` | Field `sejarahCabang` tidak ada lagi di response | Tidak dipakai frontend |
+| `GET /api/v1/page/history`, `history` di `/page/home` | Sekarang berisi data tabel `sejarah` (sebelumnya selalu `[]`) | – |
+| Token login (JWT) | Tambahan field `tingkat`, `dpdId`, `dpcId`; masa berlaku menjadi **1 hari** (via `.env`) | User login ulang tiap hari |
+| Semua endpoint admin | Akun ber-role `USER` saja sekarang ditolak `403` | Portal anggota tetap jalan (`/auth/me`, `/auth/profile`, `/auth/change-password`, `/kta/download`) |
+
+---
+
+## 2. Panduan developer setelah `git pull`
+
+Proyek memakai **Bun** (lihat `bun.lock`). **Jangan pakai `npm install`** agar tidak muncul `package-lock.json` dan versi dependency tidak berbeda.
+
+```bash
+cd backend
+git checkout dev
+git pull
+
+bun install                                              # 1. dependency (saat ini tidak ada dependency baru)
+bun scripts/with-db-url.ts bunx prisma migrate deploy    # 2. jalankan migration baru ke DB lokal
+bun run db:generate                                      # 3. generate ulang Prisma Client
+bun run dev                                              # 4. jalankan server (port dari .env, default 3000)
+```
+
+**Penting:**
+- **Pakai `migrate deploy` untuk menerapkan migration dari repo.** Jangan `bun run db:migrate` (`migrate dev`) untuk itu: jika DB lokal berbeda dengan riwayat migration, `migrate dev` akan menawarkan **reset DB (semua data hilang)**.
+- `bun run db:migrate` hanya dipakai saat **membuat migration baru** setelah mengubah `schema.prisma` (sebaiknya dengan `--create-only` lalu cek isi SQL-nya).
+- **Jangan jalankan `bun run seed` di DB yang sudah berisi data.** Seed menambah data dummy (cabang, akun demo, berita) di atas data yang ada.
+- Ubah `.env` lokal: **`JWT_EXPIRES_IN=1d`**. `.env` tidak ikut git.
+- Cek status migration kapan saja: `bun run db:migrate:status` (harus "Database schema is up to date!").
+- Ingin data lokal sama dengan production? Restore backup ke DB lokal (bukan ke production):
+  ```bash
+  pg_dump -Fc -d piki_db -f ~/piki_db_lokal_backup.backup     # backup lokal dulu
+  pg_restore --clean --if-exists --no-owner --no-privileges -d piki_db <file-backup-production>
+  bun scripts/with-db-url.ts bunx prisma migrate deploy
+  bun run db:generate
+  ```
+
+---
+
+## 3. Panduan deploy production (tim ops)
+
+Server: `/var/www/backend/backend`, dijalankan pm2 dengan nama **`piki-backend`** (`bun dist/server.js`).
+
+### 3.1 Kenapa urutan penting
+- Kode baru membaca kolom/tabel baru. **Kode baru + DB lama = crash** (login gagal untuk semua user, endpoint cabang error).
+- DB baru + kode lama **sebagian besar aman**, kecuali migration `sejarah_piki` yang me-rename tabel: di antara `migrate deploy` dan `pm2 restart`, endpoint `/cabang` & `/sejarah-cabang` kode lama akan error. Maka **migrate → build → restart harus berurutan tanpa jeda**.
+- Selama `bun run build`, server lama tetap jalan memakai `dist/` lama sampai `pm2 restart`.
+
+### 3.2 Sebelum deploy (wajib)
+
+1. **Merge `dev` → `main`** (jika production deploy dari `main`) dan pastikan CI/review sudah OK.
+2. **Backup database production** (wajib, karena ada migration yang menghapus data — lihat 3.5):
+   ```bash
+   pg_dump -Fc -d piki_db -f /root/backup/piki_db_$(date +%Y%m%d_%H%M)_sebelum_deploy.backup
+   ```
+3. **Catat commit yang sedang jalan** untuk rollback:
+   ```bash
+   cd /var/www/backend/backend && git log -1 --oneline      # saat ini: 8aabe47
+   ```
+4. **Cek data aman untuk unique index baru** (hasil harus **0 baris**):
+   ```sql
+   SELECT "kodeProvinsi", COUNT(*) FROM dpd WHERE "kodeProvinsi" IS NOT NULL GROUP BY 1 HAVING COUNT(*) > 1;
+   SELECT kode_kabupaten, COUNT(*) FROM dpd_dpc WHERE kode_kabupaten IS NOT NULL GROUP BY 1 HAVING COUNT(*) > 1;
+   ```
+   (Sudah dicek pada backup 29-10-2026: 0 duplikat.)
+5. **Cek migration yang akan jalan**:
+   ```bash
+   bun scripts/with-db-url.ts bunx prisma migrate status
+   ```
+   Harus menampilkan **8 migration belum diterapkan**: `20260927142556` (KTA) + 7 migration di tabel bagian 1.
+6. **Akun demo PNPS** (10 akun `admin_<kota>@pnps.id` & `ketua_<kota>@pnps.id`, password default dari seed) — setelah deploy mereka **bisa mengubah Sejarah & Sosmed nasional**. Nonaktifkan atau ganti password sebelum/segera setelah deploy:
+   ```sql
+   UPDATE "Akun" SET "statusAkun" = 'INACTIVE' WHERE email LIKE '%@pnps.id';
+   ```
+   (Keputusan ada di tim; query ini tidak dijalankan otomatis.)
+7. Jika ada `package-lock.json` tak ter-track di server (bekas `npm install`), jangan dipakai; gunakan `bun install`.
+
+### 3.3 Langkah deploy
+
+```bash
+cd /var/www/backend/backend
+
+git fetch origin
+git checkout main && git pull origin main          # sesuaikan branch yang di-deploy
+
+bun install                                         # dependency
+# ── mulai dari sini jalankan berurutan tanpa jeda ──
+bun scripts/with-db-url.ts bunx prisma migrate deploy
+bun run db:generate
+bun run build
+```
+
+Ubah `.env` server **sebelum restart**:
+```
+JWT_EXPIRES_IN=1d
+```
+
+Lalu:
+```bash
+pm2 restart piki-backend
+pm2 logs piki-backend --lines 50                   # pastikan "Server running on port ..." tanpa error
+```
+
+⚠️ **Jangan** menjalankan `migrate dev`, `bun run db:migrate`, `prisma db push`, atau `bun run seed` di production.
+
+### 3.4 Verifikasi setelah deploy
+
+```bash
+BASE=https://<domain-api>/api/v1     # atau http://localhost:<PORT>/api/v1 di server
+
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/master-wilayah/master-provinsi   # 200
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/master-wilayah/dpd              # 200 (dropdown registrasi)
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/cabang                          # 200
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/sejarah                         # 200
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/sosmed                          # 200
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/news-utama                      # 200
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/dpd                             # 401 (wajib login)
+bun scripts/with-db-url.ts bunx prisma migrate status                           # "Database schema is up to date!"
+```
+
+Lalu cek manual:
+- Login sebagai superadmin DPP dan sebagai anggota → berhasil.
+- Anggota tetap bisa buka profil & download KTA.
+- Halaman registrasi anggota: dropdown DPD/DPC tetap muncul.
+
+Setelah deploy: semua user perlu **login ulang** (token lama tidak membawa field baru). Tabel `sejarah` & `sosmed` masih kosong, diisi admin lewat CMS.
+
+### 3.5 Migration yang mengubah/menghapus data
+
+| Migration | Yang terjadi |
+|---|---|
+| `20260927142556` | Salin data KTA `registrasi` → `Anggota`, lalu **hapus 4 kolom KTA** di `registrasi` |
+| `20261031202902_hapus_registrasi_pengurus` | **DROP TABLE** `registrasi_pengurus` (kosong di production) |
+| `20261031202903_cabut_permission_user` | **Hapus** semua permission role `USER` dari `PermissionRole` |
+| `20261101153132_sejarah_piki` | **Hapus semua data** `SejarahCabang` (data seed proyek lain), rename tabel → `sejarah` |
+
+Migration lain hanya menambah kolom/tabel/permission (aman).
+
+### 3.6 Rollback
+
+- **Masalah di kode, DB sudah termigrasi:** kembalikan kode ke commit sebelumnya **tidak disarankan** karena kode lama mencari tabel `SejarahCabang` yang sudah tidak ada. Lebih aman perbaiki maju (hotfix) di branch baru.
+- **Perlu kembali total ke kondisi sebelum deploy:**
+  ```bash
+  pm2 stop piki-backend
+  pg_restore --clean --if-exists -d piki_db /root/backup/piki_db_<timestamp>_sebelum_deploy.backup
+  git checkout 8aabe47                       # commit sebelum deploy (lihat 3.2 no. 3)
+  bun install && bun run db:generate && bun run build
+  pm2 restart piki-backend
+  ```
+  Kembalikan juga `.env` (`JWT_EXPIRES_IN`) jika perlu.
+
+---
+
+## 4. Dokumentasi API
+
+Base URL: `/api/v1`. Autentikasi: header `Authorization: Bearer <accessToken>` (dari `POST /auth/login`).
+
+Format error umum: `{ "success": false, "message": "...", "data": null }` atau `{ "message": "..." }`.
+Kode status: `400` validasi/data salah, `401` belum login/token tidak valid, `403` tidak punya akses, `404` tidak ditemukan, `409` data bentrok/duplikat.
+
+### 4.1 Hak akses & token
+
+| Role | Permission kunci | Keterangan |
+|---|---|---|
+| `SUPER_ADMIN` (DPP) | `MANAGE_ALL_CABANG` + semua | Akses penuh |
+| `ADMIN_CABANG` | `SEJARAH_MANAGE`, `SOSMED_MANAGE`, `CABANG_UPDATE`, dll | Admin DPD/DPC jika akunnya ditautkan ke Cabang |
+| `KETUA_CABANG` | `SEJARAH_MANAGE`, `SOSMED_MANAGE`, `CABANG_UPDATE`, dll | Sama seperti admin cabang |
+| `USER` (anggota) | – (tidak ada) | Hanya data diri & KTA |
+
+Payload token login (field baru ditandai ★):
+
+```json
+{
+  "sub": "<uuid akun>",
+  "roles": ["USER", "ADMIN_CABANG"],
+  "permissions": ["..."],
+  "cabangId": "<uuid cabang | null>",
+  "cabang": "<nama cabang | null>",
+  "tingkat": "DPD | DPC | null",   // ★ dari Cabang.dpdId / Cabang.dpcId
+  "dpdId": "<uuid | null>",        // ★
+  "dpcId": 12,                     // ★ number | null
+  "exp": 0
+}
+```
+
+`cabangId` diambil dari `Akun.cabangUuid` (akun admin) jika ada, jika tidak dari cabang data Anggota (perilaku lama). Perubahan role/cabang baru berlaku setelah **login ulang**.
+
+### 4.2 Alur menjadikan anggota admin DPD/DPC (oleh DPP)
+
+1. Buat DPD/DPC → `POST /dpd` atau `POST /dpd-dpc`.
+2. Buat profil Cabang dan tautkan → `POST /cabang` dengan `dpdId` **atau** `dpcId`.
+3. Ubah akun anggota → `POST /akuns/:uuid/update` dengan `roleUuids` lengkap + `cabangUuid`:
+   ```json
+   { "roleUuids": ["<uuid USER>", "<uuid KETUA_CABANG>"], "cabangUuid": "<uuid cabang>" }
+   ```
+   ⚠️ `roleUuids` **mengganti seluruh role** (replace), jadi sertakan `USER` agar tidak hilang.
+4. Anggota login ulang.
+
+### 4.3 DPD — `/api/v1/dpd`
+
+Satu DPD per provinsi. Nama DPD diisi otomatis dari `data_master_wilayah`.
+
+| Method | Endpoint | Akses |
+|---|---|---|
+| GET | `/dpd` | DPP: semua · admin DPD: dirinya · lainnya `403` |
+| GET | `/dpd/:id` | Sama seperti di atas (di luar scope → `404`) |
+| POST | `/dpd` | DPP |
+| PATCH | `/dpd/:id` | DPP: semua field · admin DPD: dirinya, field terbatas |
+| DELETE | `/dpd/:id` | DPP (soft delete) |
+
+Query list: `search`, `currentPage` (default 1), `pageSize` (default 10, maks 100).
+
+```http
+POST /api/v1/dpd
+{ "kodeProvinsi": "12", "pengurus": "Nama Ketua", "noHandphone": "0812...", "keterangan": "Definitif", "penerbitanSk": "SK-001" }
+```
+- `kodeProvinsi` wajib; tidak ada di master → `400`; sudah ada → `409`.
+- PATCH oleh DPD sendiri hanya boleh: `pengurus`, `noHandphone`, `keterangan`, `penerbitanSk` (field lain → `400`).
+
+Response list:
+```json
+{ "success": true, "message": "Berhasil mengambil data DPD", "data": [ { "id": "uuid", "kodeProvinsi": "12", "dpd": "Sumatera Utara", "pengurus": "...", "noHandphone": "...", "keterangan": "...", "penerbitanSk": "...", "createdAt": "...", "updatedAt": "...", "deletedAt": null } ], "meta": { "total": 38, "page": 1, "limit": 10 } }
+```
+
+### 4.4 DPC — `/api/v1/dpd-dpc`
+
+Satu DPC per kabupaten/kota. `dpc`, `dpd`, `kode_provinsi` diisi otomatis dari `data_master_wilayah`. `id` berupa angka.
+
+| Method | Endpoint | Akses |
+|---|---|---|
+| GET | `/dpd-dpc` | DPP: semua · admin DPD: DPC se-provinsinya · admin DPC: dirinya |
+| GET | `/dpd-dpc/:id` | Sama seperti di atas (di luar scope → `404`) |
+| POST | `/dpd-dpc` | DPP |
+| PATCH | `/dpd-dpc/:id` | DPP: semua field · admin DPC: dirinya, field terbatas · admin DPD: `403` |
+| DELETE | `/dpd-dpc/:id` | DPP (soft delete) |
+
+Query list: `search`, `kode_provinsi`, `currentPage`, `pageSize`.
+
+```http
+POST /api/v1/dpd-dpc
+{ "kode_kabupaten": "12.71", "pengurus": "Nama Ketua", "no_handphone": "0812...", "keterangan": "Caretaker", "penerbitan_sk": "SK-002" }
+```
+- `kode_kabupaten` wajib; tidak ada di master → `400`; sudah ada (termasuk yang pernah dihapus) → `409`.
+- PATCH oleh DPC sendiri hanya boleh: `pengurus`, `no_handphone`, `keterangan`, `penerbitan_sk`.
+- Format response sama seperti DPD (`data` + `meta`).
+
+### 4.5 Master wilayah (publik) — `/api/v1/master-wilayah`
+
+| Method | Endpoint | Sumber | Kegunaan |
+|---|---|---|---|
+| GET | `/master-provinsi` | `data_master_wilayah` | Dropdown provinsi di form tambah DPD/DPC |
+| GET | `/master-kabupaten?kode_provinsi=12` | `data_master_wilayah` | Dropdown kab/kota di form tambah DPC |
+| GET | `/dpd` | `dpd_dpc` | Dropdown DPD di registrasi anggota |
+| GET | `/dpc?dpd=Sumatera Utara` atau `?kode_provinsi=12` | `dpd_dpc` | Dropdown DPC di registrasi anggota |
+
+Format response tidak berubah; DPD/DPC yang di-soft delete tidak muncul.
+
+### 4.6 Akun — `/api/v1/akuns` (perubahan)
+
+| Endpoint | Perubahan |
+|---|---|
+| `POST /akuns` | Field baru `cabangUuid` (opsional). `anggotaUuid` boleh kosong **jika** `cabangUuid` diisi (akun admin yang bukan anggota). Cabang tidak ada → `404` |
+| `POST /akuns/:uuid/update` | Field baru `cabangUuid` (uuid, atau `null` untuk melepas tautan). Hanya akun dengan `AKUN_UPDATE` (DPP) |
+
+### 4.7 Cabang — `/api/v1/cabang` (perubahan)
+
+Field opsional baru di `POST /cabang` dan `POST /cabang/:uuid/update`:
+
+| Field | Tipe | Keterangan |
+|---|---|---|
+| `dpdId` | uuid \| null | Tautkan cabang ke DPD |
+| `dpcId` | number \| null | Tautkan cabang ke DPC |
+
+Aturan: isi salah satu saja (keduanya → `400`); DPD/DPC harus ada & belum dihapus (`404`); satu DPD/DPC hanya untuk satu cabang (`409`).
+
+### 4.8 Sejarah PIKI — `/api/v1/sejarah`
+
+| Method | Endpoint | Akses |
+|---|---|---|
+| GET | `/sejarah` | Publik (hanya `ACTIVE`). Pengelola + `?fixed=all`: semua status |
+| GET | `/sejarah/:uuid` | Pengelola CMS |
+| POST | `/sejarah` | Pengelola CMS — satu objek atau array |
+| POST | `/sejarah/:uuid/update` | Pengelola CMS |
+| POST | `/sejarah/:uuid/delete` | Pengelola CMS — set `statusSejarah = NON_ACTIVE` |
+
+Pengelola CMS = `MANAGE_ALL_CABANG` atau `SEJARAH_MANAGE` (DPP, admin cabang, ketua cabang).
+Query list: `search`, `currentPage`, `pageSize`, `fixed=all`. Urutan: `urutan` (kosong di akhir) → tahun → waktu input.
+
+```http
+POST /api/v1/sejarah
+{ "timeline": "1963", "judul": "Lahirnya PIKI", "deskripsiTimeline": "Berdiri di Jakarta ...", "gambar": "/footage/image1.webp", "urutan": 1 }
+```
+Wajib: `timeline`, `judul` (min 3), `deskripsiTimeline` (min 5). Opsional: `gambar`, `urutan`, `statusSejarah` (`ACTIVE`/`NON_ACTIVE`).
+
+Response list:
+```json
+{ "success": true, "message": "Success", "data": { "result": [ { "uuid": "...", "timeline": "1963", "judul": "...", "deskripsiTimeline": "...", "gambar": "...", "urutan": 1, "statusSejarah": "ACTIVE" } ], "pagination": { "currentPage": 1, "pageSize": 10, "total": 5 } } }
+```
+
+Untuk tampilan web juga tersedia `GET /page/history` (array sejarah aktif) dan `history.items` di `GET /page/home`. Cache halaman otomatis dibersihkan setiap data berubah.
+
+### 4.9 Sosmed (Instagram & YouTube) — `/api/v1/sosmed`
+
+Admin cukup paste **link biasa**; backend membuat `embedUrl` siap dipakai di `<iframe>`.
+
+| Method | Endpoint | Akses |
+|---|---|---|
+| GET | `/sosmed` | Publik (hanya `PUBLISHED`). Pengelola: `?fixed=all` atau `?statusSosmed=` |
+| POST | `/sosmed/preview` | Pengelola — validasi link tanpa menyimpan |
+| GET | `/sosmed/:uuid` | Pengelola |
+| POST | `/sosmed` | Pengelola — satu objek atau array, status awal selalu `DRAFT` |
+| POST | `/sosmed/:uuid/update` | Pengelola — ubah data &/atau status |
+| POST | `/sosmed/:uuid/archive` | Pengelola — set `ARCHIVED` (pengganti hapus) |
+
+Pengelola = `MANAGE_ALL_CABANG` atau `SOSMED_MANAGE` (DPP, admin cabang, ketua cabang).
+Query list: `platform` (`YOUTUBE`/`INSTAGRAM`), `penempatan` (`BERANDA`/`GALERI`), `search`, `currentPage`, `pageSize`, `fixed=all`, `statusSosmed`.
+Urutan: `urutan` (kosong di akhir) → terbaru tayang → terbaru dibuat.
+
+Link yang diterima:
+
+| Platform | Contoh link | `embedUrl` |
+|---|---|---|
+| YOUTUBE | `youtube.com/watch?v=ID`, `youtu.be/ID`, `/shorts/ID`, `/embed/ID`, `/live/ID` | `https://www.youtube.com/embed/ID` |
+| INSTAGRAM | `instagram.com/p/KODE`, `/reel/KODE`, `/tv/KODE`, `instagram.com/<user>/p/KODE` | `https://www.instagram.com/p\|reel/KODE/embed` |
+
+```http
+POST /api/v1/sosmed
+{ "platform": "YOUTUBE", "url": "https://youtu.be/dQw4w9WgXcQ", "judul": null, "penempatan": ["BERANDA", "GALERI"], "urutan": 1 }
+```
+- Wajib: `platform`, `url`. Opsional: `judul`, `penempatan` (default `["BERANDA"]`), `urutan`.
+- `judul` kosong + YouTube → diisi otomatis dari judul asli video (jika YouTube bisa dihubungi).
+- Link tidak dikenali / tidak cocok dengan platform → `400`. Konten yang sama sudah ada → `409`.
+
+Ubah status:
+```http
+POST /api/v1/sosmed/:uuid/update
+{ "statusSosmed": "PUBLISHED" }
+```
+Alur status: `DRAFT` → `PUBLISHED` (mengisi `published_at`/`published_by`) → `ARCHIVED` → bisa kembali ke `PUBLISHED`. `ARCHIVED` → `DRAFT` ditolak `400`. Mengganti `url` menghitung ulang `embedUrl`.
+
+Response preview:
+```json
+{ "success": true, "message": "Success", "data": { "platform": "YOUTUBE", "url": "...", "kontenId": "dQw4w9WgXcQ", "embedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ", "thumbnail": "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg", "judul": "..." } }
+```
+
+Catatan frontend: embed Instagram hanya tampil untuk akun **publik**. Thumbnail Instagram selalu `null`.
+
+### 4.10 Anggota (role USER)
+
+Anggota tanpa role admin hanya dapat memakai endpoint berikut (cukup login, tanpa permission):
+`GET /auth/me`, `POST /auth/profile`, `POST /auth/change-password`, `GET /kta/download`, serta semua endpoint publik.
+
+### 4.11 Registrasi anggota (perubahan kecil)
+
+`POST /api/v1/registrasi`: jika `kode_provinsi` / `kode_kabupaten` kosong, backend mencarinya dari nama `dpc`/`dpd` (tabel `dpd_dpc`, lalu `data_master_wilayah`). Kode yang dikirim frontend tetap dipakai apa adanya.
+
+---
+
+## 5. Task lanjutan (ditunda)
+
+### 5.1 Verifikasi registrasi anggota per wilayah (DPP / DPD / DPC)
 
 **Status sekarang (production):** registrasi baru langsung berstatus `PENDING_VERIFIKASI_DPP`, satu kali ACC langsung mengaktifkan KTA. Belum ada pembagian wilayah.
 
 **Yang disepakati:**
 - Tetap **satu kali ACC** (bukan berjenjang).
-- Hak ACC:
-  - **DPP (superadmin)**: semua pendaftar.
-  - **DPD**: pendaftar di provinsinya (`registrasi.kode_provinsi`).
-  - **DPC**: pendaftar di kabupaten/kotanya (`registrasi.kode_kabupaten`).
-- **List pendaftar** (`GET /api/v1/registrasi`) ikut difilter per wilayah dengan aturan yang sama. Saat ini filter memakai `cabangUuid` yang selalu kosong di data registrasi.
+- Hak ACC: **DPP** semua pendaftar; **DPD** pendaftar di provinsinya (`registrasi.kode_provinsi`); **DPC** pendaftar di kab/kotanya (`registrasi.kode_kabupaten`).
+- **List pendaftar** (`GET /api/v1/registrasi`) ikut difilter per wilayah. Saat ini filter memakai `cabangUuid` yang selalu kosong di data registrasi.
 - Status hasil ACC (`APPROVED_DPC` / `APPROVED_DPD` / `APPROVED_DPP`) ditentukan otomatis sesuai level verifikator.
 
 **Celah keamanan di endpoint verifikasi** (`PATCH /api/v1/registrasi/:id/verifikasi`, `src/controllers/registrasi.controller.ts`) yang ikut diperbaiki:
 - `status` hasil verifikasi dikirim dari body (frontend), bisa diisi bebas.
 - `verifikatorUuid` dan `actorNama` diambil dari body, bukan dari token login.
-- Tidak ada pengecekan wilayah: semua akun dengan permission `REGISTRASI_APPROVE` (termasuk 10 akun demo PNPS `ADMIN_CABANG`/`KETUA_CABANG`) bisa ACC registrasi mana pun.
+- Tidak ada pengecekan wilayah: semua akun dengan `REGISTRASI_APPROVE` (termasuk akun demo PNPS) bisa ACC registrasi mana pun.
 
-**Catatan data:** di production hanya 29/65 registrasi punya `kode_provinsi` dan 21/65 punya `kode_kabupaten`. Registrasi tanpa kode hanya bisa di-ACC DPP. Registrasi baru sudah otomatis dilengkapi kodenya oleh backend (`lengkapiKodeWilayah` di `src/services/registrasi.service.ts`).
+**Catatan data:** di production hanya 29/65 registrasi punya `kode_provinsi` dan 21/65 punya `kode_kabupaten`. Registrasi tanpa kode hanya bisa di-ACC DPP.
 
-Hierarki akun DPD/DPC (`Akun.cabangUuid` → `Cabang.dpdId` / `Cabang.dpcId`, token `tingkat`/`dpdId`/`dpcId`) **sudah tersedia** dari task CRUD DPD/DPC dan bisa langsung dipakai.
+Hierarki akun DPD/DPC (`Akun.cabangUuid` → `Cabang.dpdId` / `Cabang.dpcId`, token `tingkat`/`dpdId`/`dpcId`) **sudah tersedia** dan bisa langsung dipakai.
 
----
+### 5.2 Frontend (di luar backend)
 
-## 2. ~~CMS Sejarah PIKI~~ ✅ Selesai
-
-Modul `/api/v1/sejarah` (tabel `sejarah`). Sisa pekerjaan di luar backend:
-- Frontend `HistorySection.tsx` masih memakai timeline hardcoded, perlu diganti memanggil `GET /api/v1/sejarah` atau `GET /api/v1/page/history`.
-- Setelah deploy, tabel `sejarah` di production kosong. Admin DPP perlu mengisi timeline lewat CMS.
+- `HistorySection.tsx` masih timeline hardcoded → ganti dengan `GET /api/v1/sejarah` atau `GET /api/v1/page/history`.
+- Section sosmed di landing page & tab YouTube di halaman Galeri (masih placeholder) → `GET /api/v1/sosmed?platform=...&penempatan=...`, tampilkan `embedUrl` di `<iframe>`.
+- Menu CMS baru: DPD/DPC, tautan Cabang ke DPD/DPC, pilih cabang di form Akun, CMS Sejarah, CMS Sosmed (dengan pratinjau `POST /sosmed/preview`).
 
 ---
 
-## 3. ~~Integrasi beranda dengan Instagram & YouTube~~ ✅ Selesai
+## 6. Temuan lain
 
-Modul `/api/v1/sosmed` (tabel `sosmed`). Endpoint lama `/api/v1/youtube/videos` sudah dihapus. Sisa pekerjaan di luar backend:
-- Frontend menampilkan konten dari `GET /api/v1/sosmed?platform=YOUTUBE|INSTAGRAM&penempatan=BERANDA|GALERI` (iframe `embedUrl`). Tab YouTube di halaman Galeri masih placeholder.
-- CMS frontend: form input link + pratinjau via `POST /api/v1/sosmed/preview`.
-- Page setting `land-youtube` (di DB & `prisma/seedPageSetting.ts`) sudah tidak dipakai backend, dibiarkan agar data/seed tidak berubah.
-
----
-
-## ⚠️ Checklist deploy production
-
-Urutan perintah di server (`/var/www/backend/backend`, proses pm2 `piki-backend`):
-
-```bash
-git pull                                                  # branch yang di-deploy
-bun install
-bun scripts/with-db-url.ts bunx prisma migrate deploy     # DB dulu
-bun run db:generate
-bun run build
-pm2 restart piki-backend                                  # kode baru terakhir
-```
-
-1. **Migrate lalu langsung build & restart.** Migration `sejarah_piki` me-rename tabel `SejarahCabang` → `sejarah`, sehingga di antara `migrate deploy` dan `pm2 restart` endpoint cabang & sejarah pada kode lama akan error. Jangan pakai `migrate dev` / `bun run db:migrate` di server.
-2. **Ubah `.env` server sebelum restart:** `JWT_EXPIRES_IN=1d` (sebelumnya `7d`). `.env` tidak ikut git, jadi harus diubah manual di server. Token lama tetap berlaku sampai kedaluwarsa; token baru berlaku 1 hari.
-3. **Akun demo PNPS.** Di production ada 10 akun demo PNPS (`admin_<kota>@pnps.id`, `ketua_<kota>@pnps.id`) dengan role `ADMIN_CABANG`/`KETUA_CABANG` dan password default dari seed. Sejak permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` diberikan ke kedua role tersebut, akun-akun ini **bisa mengubah Sejarah PIKI dan konten sosmed di landing page nasional**. Tim perlu menonaktifkan (`statusAkun = INACTIVE`) atau mengganti password akun tersebut.
-4. **Setelah deploy:** tabel `sejarah` & `sosmed` kosong, admin mengisi lewat CMS. Semua user perlu login ulang agar token memuat permission & data cabang terbaru.
-
-Catatan: `prisma/seed.ts` belum memuat permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` (seed sengaja tidak diubah); permission diberikan lewat migration `permission_sejarah_sosmed`. Di environment yang dibuat dari nol, migration berjalan sebelum role dibuat seed, sehingga kedua permission belum tertaut ke role.
-
----
-
-## Temuan lain (belum dijadwalkan)
-
+- **Akun demo PNPS** (lihat 3.2 no. 6) — risiko utama sebelum deploy.
 - Tabel `Cabang` di production berisi data bawaan proyek lain (duplikat Jakarta/Surabaya/Yogyakarta/Bandung/Kupang dan "PNPS Pusat"). **Dibiarkan**, jangan dihapus.
-- Endpoint `POST /api/v1/akuns/:uuid/update` mengganti seluruh role (replace). Frontend wajib mengirim daftar role lengkap, contoh `[USER, KETUA_CABANG]`.
-- Penyeragaman status: Sejarah masih `ACTIVE`/`NON_ACTIVE`, sedangkan Berita & Sosmed memakai `DRAFT`/`PUBLISHED`/`ARCHIVED`. Seragamkan nanti jika diperlukan.
+- `POST /api/v1/akuns/:uuid/update` mengganti seluruh role (replace). Frontend wajib mengirim daftar role lengkap, contoh `[USER, KETUA_CABANG]`.
+- Pencabutan role admin baru berlaku setelah token kedaluwarsa (maks 1 hari) atau login ulang. Pembatalan token seketika saat role berubah butuh perubahan di sistem login.
+- `prisma/seed.ts` belum memuat permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` (seed sengaja tidak diubah). Di environment yang dibuat dari nol, migration berjalan sebelum role dibuat seed, sehingga kedua permission belum tertaut ke role.
+- Page setting `land-youtube` (DB & `prisma/seedPageSetting.ts`) sudah tidak dipakai backend, dibiarkan.
+- Penyeragaman status: Sejarah masih `ACTIVE`/`NON_ACTIVE`, sedangkan Berita & Sosmed memakai `DRAFT`/`PUBLISHED`/`ARCHIVED`.
