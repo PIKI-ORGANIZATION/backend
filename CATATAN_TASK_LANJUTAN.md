@@ -45,11 +45,25 @@ Modul `/api/v1/sosmed` (tabel `sosmed`). Endpoint lama `/api/v1/youtube/videos` 
 
 ---
 
-## ⚠️ Wajib sebelum deploy: akun demo PNPS
+## ⚠️ Checklist deploy production
 
-Di production ada 10 akun demo PNPS (`admin_<kota>@pnps.id`, `ketua_<kota>@pnps.id`) dengan role `ADMIN_CABANG`/`KETUA_CABANG` dan password default dari seed. Sejak permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` diberikan ke kedua role tersebut, akun-akun ini **bisa mengubah Sejarah PIKI dan konten sosmed di landing page nasional**. Tim perlu menonaktifkan (`statusAkun = INACTIVE`) atau mengganti password akun tersebut.
+Urutan perintah di server (`/var/www/backend/backend`, proses pm2 `piki-backend`):
 
-Catatan: `prisma/seed.ts` belum memuat permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` (seed sengaja tidak diubah); permission diberikan lewat migration `permission_sejarah_sosmed`.
+```bash
+git pull                                                  # branch yang di-deploy
+bun install
+bun scripts/with-db-url.ts bunx prisma migrate deploy     # DB dulu
+bun run db:generate
+bun run build
+pm2 restart piki-backend                                  # kode baru terakhir
+```
+
+1. **Migrate lalu langsung build & restart.** Migration `sejarah_piki` me-rename tabel `SejarahCabang` → `sejarah`, sehingga di antara `migrate deploy` dan `pm2 restart` endpoint cabang & sejarah pada kode lama akan error. Jangan pakai `migrate dev` / `bun run db:migrate` di server.
+2. **Ubah `.env` server sebelum restart:** `JWT_EXPIRES_IN=1d` (sebelumnya `7d`). `.env` tidak ikut git, jadi harus diubah manual di server. Token lama tetap berlaku sampai kedaluwarsa; token baru berlaku 1 hari.
+3. **Akun demo PNPS.** Di production ada 10 akun demo PNPS (`admin_<kota>@pnps.id`, `ketua_<kota>@pnps.id`) dengan role `ADMIN_CABANG`/`KETUA_CABANG` dan password default dari seed. Sejak permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` diberikan ke kedua role tersebut, akun-akun ini **bisa mengubah Sejarah PIKI dan konten sosmed di landing page nasional**. Tim perlu menonaktifkan (`statusAkun = INACTIVE`) atau mengganti password akun tersebut.
+4. **Setelah deploy:** tabel `sejarah` & `sosmed` kosong, admin mengisi lewat CMS. Semua user perlu login ulang agar token memuat permission & data cabang terbaru.
+
+Catatan: `prisma/seed.ts` belum memuat permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` (seed sengaja tidak diubah); permission diberikan lewat migration `permission_sejarah_sosmed`. Di environment yang dibuat dari nol, migration berjalan sebelum role dibuat seed, sehingga kedua permission belum tertaut ke role.
 
 ---
 
