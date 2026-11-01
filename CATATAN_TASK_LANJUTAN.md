@@ -36,13 +36,12 @@ Modul `/api/v1/sejarah` (tabel `sejarah`). Sisa pekerjaan di luar backend:
 
 ---
 
-## 3. Integrasi beranda dengan Instagram & YouTube (CRUD admin pusat)
+## 3. ~~Integrasi beranda dengan Instagram & YouTube~~ ✅ Selesai
 
-- **YouTube** sudah berjalan: `GET /api/v1/youtube/videos` membaca channel dari page setting `land-youtube`.
-- **Instagram** belum ada. Opsi yang pernah dibahas:
-  - **Manual (disarankan):** admin DPP menyimpan link post IG, frontend menampilkan sebagai embed.
-  - **Otomatis:** Instagram Graph API (butuh akun Business/Creator, Meta App, token diperbarui tiap 60 hari).
-- Perlu diputuskan apakah YouTube juga butuh fitur video pilihan (pinned) oleh admin.
+Modul `/api/v1/sosmed` (tabel `sosmed`). Endpoint lama `/api/v1/youtube/videos` sudah dihapus. Sisa pekerjaan di luar backend:
+- Frontend menampilkan konten dari `GET /api/v1/sosmed?platform=YOUTUBE|INSTAGRAM&penempatan=BERANDA|GALERI` (iframe `embedUrl`). Tab YouTube di halaman Galeri masih placeholder.
+- CMS frontend: form input link + pratinjau via `POST /api/v1/sosmed/preview`.
+- Page setting `land-youtube` (di DB & `prisma/seedPageSetting.ts`) sudah tidak dipakai backend, dibiarkan agar data/seed tidak berubah.
 
 ---
 
@@ -50,3 +49,4 @@ Modul `/api/v1/sejarah` (tabel `sejarah`). Sisa pekerjaan di luar backend:
 
 - Tabel `Cabang` di production berisi data bawaan proyek lain (duplikat Jakarta/Surabaya/Yogyakarta/Bandung/Kupang dan "PNPS Pusat"). **Dibiarkan**, jangan dihapus.
 - Endpoint `POST /api/v1/akuns/:uuid/update` mengganti seluruh role (replace). Frontend wajib mengirim daftar role lengkap, contoh `[USER, KETUA_CABANG]`.
+- Penyeragaman status: Sejarah masih `ACTIVE`/`NON_ACTIVE`, sedangkan Berita & Sosmed memakai `DRAFT`/`PUBLISHED`/`ARCHIVED`. Seragamkan nanti jika diperlukan.

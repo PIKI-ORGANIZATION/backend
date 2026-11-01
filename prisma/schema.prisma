@@ -173,6 +173,29 @@ model Sejarah {
   @@map("sejarah")
 }
 
+// Konten sosmed (Instagram / YouTube) untuk landing page, dikelola DPP
+model Sosmed {
+  uuid         String    @id @default(uuid()) @db.Uuid
+  platform     String    // INSTAGRAM | YOUTUBE
+  url          String
+  embedUrl     String
+  kontenId     String
+  judul        String?
+  thumbnail    String?
+  penempatan   String[]  @default(["BERANDA"]) // BERANDA | GALERI
+  urutan       Int?
+  statusSosmed String    @default("DRAFT") // DRAFT | PUBLISHED | ARCHIVED
+  published_at DateTime?
+  published_by String?   @db.Uuid
+  insert_at    DateTime  @default(now())
+  insert_by    String?   @db.Uuid
+  update_at    DateTime  @updatedAt
+  update_by    String?   @db.Uuid
+
+  @@unique([platform, kontenId])
+  @@map("sosmed")
+}
+
 model PeriodeKepengurusan {
   uuid         String               @id @default(uuid()) @db.Uuid
   namaPeriode  String
