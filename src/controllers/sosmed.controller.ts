@@ -38,7 +38,7 @@ const siapkanKonten = async (platform: PlatformSosmed, url: string, judul?: stri
 
 ////////////////////////////////////////////////////
 // GET ALL SOSMED
-// Publik: hanya PUBLISHED. DPP: ?fixed=all (semua status) atau ?statusSosmed=
+// Publik: hanya PUBLISHED. Pengelola CMS: ?fixed=all (semua status) atau ?statusSosmed=
 ////////////////////////////////////////////////////
 export const getSosmed = async (req: Request, res: Response) => {
   try {
@@ -56,11 +56,12 @@ export const getSosmed = async (req: Request, res: Response) => {
     const size = Number(pageSize) || 10;
     const skip = (page - 1) * size;
 
-    const isSuperAdmin = req.user?.permissions?.includes("MANAGE_ALL_CABANG");
+    const permissions = req.user?.permissions ?? [];
+    const isPengelola = permissions.includes("MANAGE_ALL_CABANG") || permissions.includes("SOSMED_MANAGE");
 
     const whereCondition: any = {};
 
-    if (!isSuperAdmin) {
+    if (!isPengelola) {
       whereCondition.statusSosmed = "PUBLISHED";
     } else if (statusSosmed) {
       whereCondition.statusSosmed = statusSosmed;

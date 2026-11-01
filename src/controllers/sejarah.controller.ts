@@ -20,7 +20,7 @@ const clearSejarahCache = async () => {
 
 ////////////////////////////////////////////////////
 // GET ALL SEJARAH
-// Publik: hanya ACTIVE. DPP dengan ?fixed=all: semua status.
+// Publik: hanya ACTIVE. Pengelola CMS dengan ?fixed=all: semua status.
 ////////////////////////////////////////////////////
 export const getSejarah = async (req: Request, res: Response) => {
   try {
@@ -35,11 +35,12 @@ export const getSejarah = async (req: Request, res: Response) => {
     const size = Number(pageSize) || 10;
     const skip = (page - 1) * size;
 
-    const isSuperAdmin = req.user?.permissions?.includes("MANAGE_ALL_CABANG");
+    const permissions = req.user?.permissions ?? [];
+    const isPengelola = permissions.includes("MANAGE_ALL_CABANG") || permissions.includes("SEJARAH_MANAGE");
 
     const whereCondition: any = {};
 
-    if (!(isSuperAdmin && fixed === "all")) {
+    if (!(isPengelola && fixed === "all")) {
       whereCondition.statusSejarah = "ACTIVE";
     }
 

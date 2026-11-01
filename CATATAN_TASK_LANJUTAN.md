@@ -45,6 +45,14 @@ Modul `/api/v1/sosmed` (tabel `sosmed`). Endpoint lama `/api/v1/youtube/videos` 
 
 ---
 
+## ⚠️ Wajib sebelum deploy: akun demo PNPS
+
+Di production ada 10 akun demo PNPS (`admin_<kota>@pnps.id`, `ketua_<kota>@pnps.id`) dengan role `ADMIN_CABANG`/`KETUA_CABANG` dan password default dari seed. Sejak permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` diberikan ke kedua role tersebut, akun-akun ini **bisa mengubah Sejarah PIKI dan konten sosmed di landing page nasional**. Tim perlu menonaktifkan (`statusAkun = INACTIVE`) atau mengganti password akun tersebut.
+
+Catatan: `prisma/seed.ts` belum memuat permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` (seed sengaja tidak diubah); permission diberikan lewat migration `permission_sejarah_sosmed`.
+
+---
+
 ## Temuan lain (belum dijadwalkan)
 
 - Tabel `Cabang` di production berisi data bawaan proyek lain (duplikat Jakarta/Surabaya/Yogyakarta/Bandung/Kupang dan "PNPS Pusat"). **Dibiarkan**, jangan dihapus.
