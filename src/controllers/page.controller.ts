@@ -1,13 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../config/prisma';
 import { ApiResponse } from '../utils/apiResponse';
+import { SEJARAH_ORDER_BY } from './sejarah.controller';
+
+// Timeline Sejarah PIKI yang tampil di web (hanya ACTIVE)
+const getSejarahAktif = () =>
+  prisma.sejarah.findMany({
+    where: { statusSejarah: 'ACTIVE' },
+    orderBy: SEJARAH_ORDER_BY,
+  });
 
 export const getHomeData = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Fetch all home page related data
     const heroSetting = await prisma.pageSetting.findUnique({ where: { key: 'home_hero' } });
     const programs = await prisma.programKerja.findMany();
-    const history: any[] = []; // await prisma.history.findMany({ orderBy: { order: 'asc' } });
+    const history = await getSejarahAktif();
     const team: any[] = []; // await prisma.teamMember.findMany({ orderBy: { order: 'asc' } });
     
     // Construct response matching homeData.ts structure approximately
@@ -37,7 +45,7 @@ export const getPrograms = async (req: Request, res: Response, next: NextFunctio
 
 export const getHistory = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const history: any[] = []; // await prisma.history.findMany();
+    const history = await getSejarahAktif();
     res.json(ApiResponse.success(history));
   } catch (error) {
     next(error);

@@ -299,18 +299,6 @@ async function seedAllCabang() {
       },
     });
 
-    // 1b. SejarahCabang
-    await prisma.sejarahCabang.deleteMany({
-      where: { cabang_uuid: cabang.uuid },
-    });
-    await prisma.sejarahCabang.createMany({
-      data: c.sejarah.map((s) => ({
-        timeline: s.timeline,
-        deskripsiTimeline: s.deskripsiTimeline,
-        cabang_uuid: cabang.uuid,
-      })),
-    });
-
     // 1c. Senior Admin
     let adminSenior = await prisma.anggota.findFirst({
       where: { namaLengkap: `Admin ${c.nama}`, cabangUuid: cabang.uuid },

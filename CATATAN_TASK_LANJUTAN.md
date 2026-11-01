@@ -28,11 +28,11 @@ Hierarki akun DPD/DPC (`Akun.cabangUuid` → `Cabang.dpdId` / `Cabang.dpcId`, to
 
 ---
 
-## 2. CMS Sejarah PIKI (khusus admin DPP)
+## 2. ~~CMS Sejarah PIKI~~ ✅ Selesai
 
-- CRUD konten sejarah PIKI, hanya untuk DPP.
-- API publik untuk tampilan web. Saat ini `GET /api/v1/page/history` dan bagian `history` di `GET /api/v1/page/home` masih mengembalikan array kosong (stub di `src/controllers/page.controller.ts`).
-- Opsi yang pernah dibahas: memakai ulang `SejarahCabang` milik cabang "DPP Pusat", kemungkinan perlu kolom `urutan`.
+Modul `/api/v1/sejarah` (tabel `sejarah`). Sisa pekerjaan di luar backend:
+- Frontend `HistorySection.tsx` masih memakai timeline hardcoded, perlu diganti memanggil `GET /api/v1/sejarah` atau `GET /api/v1/page/history`.
+- Setelah deploy, tabel `sejarah` di production kosong. Admin DPP perlu mengisi timeline lewat CMS.
 
 ---
 

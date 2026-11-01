@@ -25,7 +25,7 @@ import newsKategori from './routes/newsKategori.routes';
 
 // PROFIL CABANG
 import cabangRoutes from './routes/cabang.routes';
-import sejarahCabangRoutes from './routes/sejarahCabang.routes';
+import sejarahRoutes from './routes/sejarah.routes';
 
 // STRUKTUR ORGANISASI
 import strukturOrganisasiRoutes from './routes/strukturOrganisasi.routes';
@@ -81,7 +81,7 @@ app.use('/api/v1/news-tags', newsTags);
 app.use('/api/v1/news-kategori', newsKategori);
 
 app.use('/api/v1/cabang', cabangRoutes);
-app.use('/api/v1/sejarah-cabang', sejarahCabangRoutes);
+app.use('/api/v1/sejarah', sejarahRoutes);
 app.use('/api/v1/struktur-organisasi', strukturOrganisasiRoutes);
 app.use('/api/v1/periode-kepengurusan', periodeKepengurusan);
 app.use('/api/v1/jabatan', jabatan);

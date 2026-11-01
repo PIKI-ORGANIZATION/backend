@@ -97,15 +97,6 @@ export const getCabang = async (req: Request, res: Response) => {
           },
         },
 
-        sejarahCabang: {
-          select: {
-            uuid: true,
-            timeline: true,
-            deskripsiTimeline: true,
-            gambar: true,
-          },
-        },
-
         AlbumGaleriList: {
           select: {
             uuid: true,
@@ -205,15 +196,6 @@ export const getCabangById = async (req: Request, res: Response) => {
                 { urutan: "asc" },
               ],
             },
-          },
-        },
-
-        sejarahCabang: {
-          select: {
-            uuid: true,
-            timeline: true,
-            deskripsiTimeline: true,
-            gambar: true,
           },
         },
       },

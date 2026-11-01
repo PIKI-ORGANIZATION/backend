@@ -8,38 +8,38 @@ export const uuidParamSchema = z.object({
 });
 
 ////////////////////////////////////////////////////
-// BASE SEJARAH CABANG SCHEMA
+// BASE SEJARAH SCHEMA
 ////////////////////////////////////////////////////
-const baseSejarahCabangSchema = z.object({
-  timeline: z.string().trim().min(3),
+const baseSejarahSchema = z.object({
+  timeline: z.string().trim().min(1),
+
+  judul: z.string().trim().min(3),
 
   deskripsiTimeline: z.string().trim().min(5),
 
-  gambar: z.string().optional(),
+  gambar: z.string().trim().nullable().optional(),
 
-  statusSejarahCabang: z.string().trim().optional(),
+  urutan: z.coerce.number().int().nullable().optional(),
 
-  cabang_uuid: z.string().uuid(),
+  statusSejarah: z.enum(["ACTIVE", "NON_ACTIVE"]).optional(),
 });
 
 ////////////////////////////////////////////////////
-// CREATE
+// CREATE (satu data atau banyak sekaligus)
 ////////////////////////////////////////////////////
-export const createSejarahCabangSchema = baseSejarahCabangSchema;
+export const createSejarahSchema = z.union([
+  baseSejarahSchema,
+  z.array(baseSejarahSchema).min(1),
+]);
 
 ////////////////////////////////////////////////////
 // UPDATE
 ////////////////////////////////////////////////////
-export const updateSejarahCabangSchema =
-  baseSejarahCabangSchema.partial();
+export const updateSejarahSchema = baseSejarahSchema.partial();
 
 ////////////////////////////////////////////////////
 // TYPES
 ////////////////////////////////////////////////////
-export type CreateSejarahCabangInput = z.infer<
-  typeof createSejarahCabangSchema
->;
+export type CreateSejarahInput = z.infer<typeof baseSejarahSchema>;
 
-export type UpdateSejarahCabangInput = z.infer<
-  typeof updateSejarahCabangSchema
->;
+export type UpdateSejarahInput = z.infer<typeof updateSejarahSchema>;

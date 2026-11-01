@@ -144,7 +144,6 @@ model Cabang {
   misi                   MisiCabang[]
   newsList               NewsUtama[]
   periodeList            PeriodeKepengurusan[]
-  sejarahCabang          SejarahCabang[]
   registrasiList         Registrasi[]
 }
 
@@ -157,18 +156,21 @@ model MisiCabang {
   cabang      Cabang   @relation(fields: [cabang_uuid], references: [uuid])
 }
 
-model SejarahCabang {
-  uuid                String   @id @default(uuid()) @db.Uuid
-  timeline            String
-  deskripsiTimeline   String
-  gambar              String?
-  statusSejarahCabang String   @default("ACTIVE")
-  cabang_uuid         String   @db.Uuid
-  insert_at           DateTime @default(now())
-  insert_by           String?  @db.Uuid
-  update_at           DateTime @updatedAt
-  update_by           String?  @db.Uuid
-  cabang              Cabang   @relation(fields: [cabang_uuid], references: [uuid])
+// Sejarah PIKI (nasional, dikelola DPP)
+model Sejarah {
+  uuid              String   @id @default(uuid()) @db.Uuid
+  timeline          String
+  judul             String
+  deskripsiTimeline String
+  gambar            String?
+  urutan            Int?
+  statusSejarah     String   @default("ACTIVE")
+  insert_at         DateTime @default(now())
+  insert_by         String?  @db.Uuid
+  update_at         DateTime @updatedAt
+  update_by         String?  @db.Uuid
+
+  @@map("sejarah")
 }
 
 model PeriodeKepengurusan {
