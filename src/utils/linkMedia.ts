@@ -1,8 +1,8 @@
-// Normalisasi link konten sosmed (YouTube / Instagram) menjadi embed URL siap tampil
+// Normalisasi link konten YouTube / Instagram menjadi embed URL siap tampil
 
-export type PlatformSosmed = "YOUTUBE" | "INSTAGRAM";
+export type PlatformLink = "YOUTUBE" | "INSTAGRAM";
 
-export interface KontenSosmed {
+export interface KontenLink {
   kontenId: string;
   embedUrl: string;
   thumbnail: string | null;
@@ -36,7 +36,7 @@ function extractInstagramPost(url: string): { tipe: "p" | "reel"; kode: string }
 }
 
 // Kembalikan null jika link tidak dikenali untuk platform tersebut
-export function normalisasiLinkSosmed(platform: PlatformSosmed, url: string): KontenSosmed | null {
+export function normalisasiLink(platform: PlatformLink, url: string): KontenLink | null {
   if (platform === "YOUTUBE") {
     if (!/youtube\.com|youtu\.be/i.test(url)) return null;
     const videoId = extractVideoId(url);

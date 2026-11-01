@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import sharp from 'sharp';
 import { authenticate } from '../middlewares/auth.middleware';
+import { authorize } from '../middlewares/authorize.middleware';
 
 const UPLOAD_DIR = path.resolve(process.cwd(), 'uploads');
 
@@ -187,5 +188,68 @@ router.post('/bukti-transfer', buktiTransferUpload.single('file'), (req: Request
     mimetype: req.file.mimetype,
   });
 });
+
+// ── Video Galeri Upload (mp4/webm/mov, maks 50MB, khusus pengelola galeri) ──
+const VIDEO_DIR = path.join(UPLOAD_DIR, 'video');
+if (!fs.existsSync(VIDEO_DIR)) {
+  fs.mkdirSync(VIDEO_DIR, { recursive: true });
+}
+
+const VIDEO_MAX_SIZE_MB = 50;
+
+const videoUpload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => {
+      cb(null, VIDEO_DIR);
+    },
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      const hash = crypto.randomBytes(12).toString('hex');
+      cb(null, `${Date.now()}-${hash}${ext}`);
+    },
+  }),
+  limits: { fileSize: VIDEO_MAX_SIZE_MB * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowedMime = ['video/mp4', 'video/webm', 'video/quicktime'];
+    const allowedExt = ['.mp4', '.webm', '.mov'];
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowedMime.includes(file.mimetype) && allowedExt.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Hanya file video MP4, WebM, atau MOV yang diperbolehkan'));
+    }
+  },
+});
+
+router.post(
+  '/video',
+  authenticate,
+  authorize('MANAGE_ALL_CABANG', 'GALERI_MANAGE'),
+  (req: Request, res: Response) => {
+    videoUpload.single('file')(req, res, (err: any) => {
+      if (err) {
+        const terlaluBesar = err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE';
+        res.status(terlaluBesar ? 413 : 400).json({
+          error: terlaluBesar ? `Ukuran video maksimal ${VIDEO_MAX_SIZE_MB}MB` : err.message,
+        });
+        return;
+      }
+
+      if (!req.file) {
+        res.status(400).json({ error: 'No file uploaded' });
+        return;
+      }
+
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      res.json({
+        url: `${baseUrl}/uploads/video/${req.file.filename}`,
+        filename: req.file.filename,
+        originalName: req.file.originalname,
+        size: req.file.size,
+        mimetype: req.file.mimetype,
+      });
+    });
+  }
+);
 
 export default router;

@@ -55,7 +55,7 @@ import permissionRoutes from './routes/permission.routes';
 import uploadRoutes from './routes/upload.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 import masterRoutes from './routes/master.routes';
-import sosmedRoutes from './routes/sosmed.routes';
+import galeriRoutes from './routes/galeri.routes';
 import registrasiRoutes from './routes/registrasi.routes';
 import masterWilayahRoutes from './routes/masterWilayah.routes';
 import ktaRoutes from './routes/kta.routes';
@@ -103,7 +103,7 @@ app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/master', masterRoutes);
-app.use('/api/v1/sosmed', sosmedRoutes);
+app.use('/api/v1/galeri', galeriRoutes);
 app.use('/api/v1/kta', ktaRoutes);
 
 // Serve uploaded files

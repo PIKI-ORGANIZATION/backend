@@ -173,27 +173,35 @@ model Sejarah {
   @@map("sejarah")
 }
 
-// Konten sosmed (Instagram / YouTube) untuk landing page, dikelola DPP
-model Sosmed {
-  uuid         String    @id @default(uuid()) @db.Uuid
-  platform     String    // INSTAGRAM | YOUTUBE
-  url          String
-  embedUrl     String
-  kontenId     String
-  judul        String?
-  thumbnail    String?
-  penempatan   String[]  @default(["BERANDA"]) // BERANDA | GALERI
-  urutan       Int?
-  statusSosmed String    @default("DRAFT") // DRAFT | PUBLISHED | ARCHIVED
-  published_at DateTime?
-  published_by String?   @db.Uuid
-  insert_at    DateTime  @default(now())
-  insert_by    String?   @db.Uuid
-  update_at    DateTime  @updatedAt
-  update_by    String?   @db.Uuid
+// Galeri landing page: foto, video (YouTube / upload), dan post Instagram
+model Galeri {
+  id               String    @id @default(uuid()) @db.Uuid
+  type             String    // PHOTO | VIDEO | INSTAGRAM
+  title            String
+  deskripsi        String?
+  url              String
+  thumbnailUrl     String?
+  embedUrl         String?   // YouTube & Instagram
+  kontenId         String?   // ID video YouTube / kode post Instagram
+  kategoriKegiatan String?
+  tanggal          DateTime? @db.Date
+  lokasi           String?
+  duration         String?
+  penempatan       String[]  @default(["GALERI"]) // BERANDA | GALERI
+  featured         Boolean   @default(false)
+  urutan           Int?
+  status           String    @default("DRAFT") // DRAFT | PUBLISHED | ARCHIVED
+  published_at     DateTime?
+  published_by     String?   @db.Uuid
+  deleted_at       DateTime?
+  deleted_by       String?   @db.Uuid
+  insert_at        DateTime  @default(now())
+  insert_by        String?   @db.Uuid
+  update_at        DateTime  @updatedAt
+  update_by        String?   @db.Uuid
 
-  @@unique([platform, kontenId])
-  @@map("sosmed")
+  @@index([type, status])
+  @@map("galeri")
 }
 
 model PeriodeKepengurusan {

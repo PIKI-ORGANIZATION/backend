@@ -25,6 +25,7 @@ Production saat dokumen ini ditulis menjalankan commit `8aabe47` (branch `main`)
 | `bccd299` | CMS Sejarah PIKI (`SejarahCabang` → tabel `sejarah`, tanpa relasi cabang) | `20261101153132_sejarah_piki` |
 | `0e33f99` | CMS Sosmed (Instagram & YouTube); hapus `/api/v1/youtube/videos` | `20261101163806_sosmed` |
 | `3099777` | Akses CMS Sejarah & Sosmed untuk `ADMIN_CABANG` & `KETUA_CABANG` | `20261101165640_permission_sejarah_sosmed` |
+| (galeri) | **CMS Galeri** (foto, video YouTube/upload, post Instagram) **menggantikan Sosmed**; upload video 50MB; `SOSMED_MANAGE` → `GALERI_MANAGE` | `20261102001841_galeri_ganti_sosmed` |
 
 Selain itu, migration lama `20260927142556` (pindah atribut KTA dari `registrasi` ke `Anggota`) **belum pernah dijalankan di production** dan akan ikut jalan saat deploy berikutnya. Datanya sudah diverifikasi aman (semua nomor KTA sudah ada di `Anggota`).
 
@@ -34,7 +35,9 @@ Selain itu, migration lama `20260927142556` (pindah atribut KTA dari `registrasi
 |---|---|---|
 | `/api/v1/registrasi-pengurus/*` | **Dihapus** | Tidak dipakai frontend |
 | `/api/v1/sejarah-cabang/*` | **Dihapus**, diganti `/api/v1/sejarah` | Tidak dipakai frontend |
-| `/api/v1/youtube/videos` | **Dihapus**, diganti `/api/v1/sosmed` | Tidak dipakai frontend |
+| `/api/v1/youtube/videos` | **Dihapus**, diganti `/api/v1/galeri` | Tidak dipakai frontend |
+| `/api/v1/sosmed/*` | Dibuat lalu **dihapus** (belum pernah di production), diganti `/api/v1/galeri` | – |
+| `POST /api/v1/upload/video` | **Baru**: upload video galeri (mp4/webm/mov, maks 50MB) | Dipakai form Galeri tab Video |
 | `GET /api/v1/dpd`, `GET /api/v1/dpd-dpc` | Sebelumnya publik, sekarang **wajib login** sesuai hierarki | Tidak dipakai frontend (registrasi memakai `/master-wilayah`) |
 | `DELETE /api/v1/dpd/:id`, `/dpd-dpc/:id` | Sekarang **soft delete** (data tidak hilang) | – |
 | `GET /api/v1/cabang`, `/cabang/:uuid` | Field `sejarahCabang` tidak ada lagi di response | Tidak dipakai frontend |
@@ -105,13 +108,18 @@ Server: `/var/www/backend/backend`, dijalankan pm2 dengan nama **`piki-backend`*
    ```bash
    bun scripts/with-db-url.ts bunx prisma migrate status
    ```
-   Harus menampilkan **8 migration belum diterapkan**: `20260927142556` (KTA) + 7 migration di tabel bagian 1.
-6. **Akun demo PNPS** (10 akun `admin_<kota>@pnps.id` & `ketua_<kota>@pnps.id`, password default dari seed) — setelah deploy mereka **bisa mengubah Sejarah & Sosmed nasional**. Nonaktifkan atau ganti password sebelum/segera setelah deploy:
+   Harus menampilkan **9 migration belum diterapkan**: `20260927142556` (KTA) + 8 migration di tabel bagian 1.
+6. **Upload video Galeri (maks 50MB)** — naikkan batas upload di nginx (blok server API) lalu reload nginx, kalau tidak upload video > 1MB ditolak nginx (`413`):
+   ```nginx
+   client_max_body_size 50M;
+   ```
+   Pantau juga kapasitas disk folder `uploads/` (video disimpan di `uploads/video/`). Folder ini tidak ikut git, ikutkan dalam backup server.
+7. **Akun demo PNPS** (10 akun `admin_<kota>@pnps.id` & `ketua_<kota>@pnps.id`, password default dari seed) — setelah deploy mereka **bisa mengubah Sejarah & Galeri nasional**. Nonaktifkan atau ganti password sebelum/segera setelah deploy:
    ```sql
    UPDATE "Akun" SET "statusAkun" = 'INACTIVE' WHERE email LIKE '%@pnps.id';
    ```
    (Keputusan ada di tim; query ini tidak dijalankan otomatis.)
-7. Jika ada `package-lock.json` tak ter-track di server (bekas `npm install`), jangan dipakai; gunakan `bun install`.
+8. Jika ada `package-lock.json` tak ter-track di server (bekas `npm install`), jangan dipakai; gunakan `bun install`.
 
 ### 3.3 Langkah deploy
 
@@ -150,7 +158,7 @@ curl -s -o /dev/null -w "%{http_code}\n" $BASE/master-wilayah/master-provinsi   
 curl -s -o /dev/null -w "%{http_code}\n" $BASE/master-wilayah/dpd              # 200 (dropdown registrasi)
 curl -s -o /dev/null -w "%{http_code}\n" $BASE/cabang                          # 200
 curl -s -o /dev/null -w "%{http_code}\n" $BASE/sejarah                         # 200
-curl -s -o /dev/null -w "%{http_code}\n" $BASE/sosmed                          # 200
+curl -s -o /dev/null -w "%{http_code}\n" $BASE/galeri                          # 200
 curl -s -o /dev/null -w "%{http_code}\n" $BASE/news-utama                      # 200
 curl -s -o /dev/null -w "%{http_code}\n" $BASE/dpd                             # 401 (wajib login)
 bun scripts/with-db-url.ts bunx prisma migrate status                           # "Database schema is up to date!"
@@ -161,7 +169,7 @@ Lalu cek manual:
 - Anggota tetap bisa buka profil & download KTA.
 - Halaman registrasi anggota: dropdown DPD/DPC tetap muncul.
 
-Setelah deploy: semua user perlu **login ulang** (token lama tidak membawa field baru). Tabel `sejarah` & `sosmed` masih kosong, diisi admin lewat CMS.
+Setelah deploy: semua user perlu **login ulang** (token lama tidak membawa field baru). Tabel `sejarah` & `galeri` masih kosong, diisi admin lewat CMS.
 
 ### 3.5 Migration yang mengubah/menghapus data
 
@@ -171,6 +179,8 @@ Setelah deploy: semua user perlu **login ulang** (token lama tidak membawa field
 | `20261031202902_hapus_registrasi_pengurus` | **DROP TABLE** `registrasi_pengurus` (kosong di production) |
 | `20261031202903_cabut_permission_user` | **Hapus** semua permission role `USER` dari `PermissionRole` |
 | `20261101153132_sejarah_piki` | **Hapus semua data** `SejarahCabang` (data seed proyek lain), rename tabel → `sejarah` |
+
+| `20261102001841_galeri_ganti_sosmed` | **DROP TABLE** `sosmed` (tidak pernah ada di production), buat tabel `galeri`, ganti nama permission `SOSMED_MANAGE` → `GALERI_MANAGE` |
 
 Migration lain hanya menambah kolom/tabel/permission (aman).
 
@@ -201,8 +211,8 @@ Kode status: `400` validasi/data salah, `401` belum login/token tidak valid, `40
 | Role | Permission kunci | Keterangan |
 |---|---|---|
 | `SUPER_ADMIN` (DPP) | `MANAGE_ALL_CABANG` + semua | Akses penuh |
-| `ADMIN_CABANG` | `SEJARAH_MANAGE`, `SOSMED_MANAGE`, `CABANG_UPDATE`, dll | Admin DPD/DPC jika akunnya ditautkan ke Cabang |
-| `KETUA_CABANG` | `SEJARAH_MANAGE`, `SOSMED_MANAGE`, `CABANG_UPDATE`, dll | Sama seperti admin cabang |
+| `ADMIN_CABANG` | `SEJARAH_MANAGE`, `GALERI_MANAGE`, `CABANG_UPDATE`, dll | Admin DPD/DPC jika akunnya ditautkan ke Cabang |
+| `KETUA_CABANG` | `SEJARAH_MANAGE`, `GALERI_MANAGE`, `CABANG_UPDATE`, dll | Sama seperti admin cabang |
 | `USER` (anggota) | – (tidak ada) | Hanya data diri & KTA |
 
 Payload token login (field baru ditandai ★):
@@ -337,51 +347,92 @@ Response list:
 
 Untuk tampilan web juga tersedia `GET /page/history` (array sejarah aktif) dan `history.items` di `GET /page/home`. Cache halaman otomatis dibersihkan setiap data berubah.
 
-### 4.9 Sosmed (Instagram & YouTube) — `/api/v1/sosmed`
+### 4.9 Galeri (foto, video, Instagram) — `/api/v1/galeri`
 
-Admin cukup paste **link biasa**; backend membuat `embedUrl` siap dipakai di `<iframe>`.
+Satu modul untuk 3 tab CMS Galeri. Konten tampil di halaman galeri dan/atau landing page (`penempatan`).
 
-| Method | Endpoint | Akses |
+| `type` | Tab CMS | `url` berisi | Wajib | Diolah backend |
+|---|---|---|---|---|
+| `PHOTO` | Dokumentasi Foto | URL foto (hasil `POST /upload` atau link gambar) | `title`, `url` | `thumbnailUrl` = `url` jika kosong |
+| `VIDEO` | Video Kegiatan | **Link YouTube** atau **URL file video** hasil `POST /upload/video` | `url`; `title` (boleh kosong untuk YouTube); `thumbnailUrl` untuk video upload | YouTube: `youtubeVideoId`, `embedUrl`, thumbnail & judul otomatis. Upload: diputar dari file |
+| `INSTAGRAM` | Instagram Post | Link post/reel Instagram | `title`, `url`, `thumbnailUrl` (cover) | `instagramUrl`, `embedUrl` |
+
+Link yang dikenali:
+
+| Jenis | Contoh link | `embedUrl` |
 |---|---|---|
-| GET | `/sosmed` | Publik (hanya `PUBLISHED`). Pengelola: `?fixed=all` atau `?statusSosmed=` |
-| POST | `/sosmed/preview` | Pengelola — validasi link tanpa menyimpan |
-| GET | `/sosmed/:uuid` | Pengelola |
-| POST | `/sosmed` | Pengelola — satu objek atau array, status awal selalu `DRAFT` |
-| POST | `/sosmed/:uuid/update` | Pengelola — ubah data &/atau status |
-| POST | `/sosmed/:uuid/archive` | Pengelola — set `ARCHIVED` (pengganti hapus) |
+| YouTube | `youtube.com/watch?v=ID`, `youtu.be/ID`, `/shorts/ID`, `/embed/ID`, `/live/ID` | `https://www.youtube.com/embed/ID` |
+| Instagram | `instagram.com/p/KODE`, `/reel/KODE`, `/tv/KODE`, `instagram.com/<user>/p/KODE` | `https://www.instagram.com/p\|reel/KODE/embed` |
+| Video upload | URL berakhiran `.mp4`, `.webm`, `.mov` | – |
 
-Pengelola = `MANAGE_ALL_CABANG` atau `SOSMED_MANAGE` (DPP, admin cabang, ketua cabang).
-Query list: `platform` (`YOUTUBE`/`INSTAGRAM`), `penempatan` (`BERANDA`/`GALERI`), `search`, `currentPage`, `pageSize`, `fixed=all`, `statusSosmed`.
-Urutan: `urutan` (kosong di akhir) → terbaru tayang → terbaru dibuat.
+| Method | Endpoint | Akses | Fungsi |
+|---|---|---|---|
+| GET | `/galeri` | Publik | Hanya `PUBLISHED`. Pengelola: `?status=` atau `?fixed=all` |
+| GET | `/galeri/stats` | Pengelola | Statistik kartu dashboard |
+| POST | `/galeri/preview` | Pengelola | Cek link YouTube/Instagram tanpa menyimpan |
+| GET | `/galeri/:id` | Pengelola | Detail |
+| POST | `/galeri` | Pengelola | Tambah (satu objek atau array). `status` `DRAFT`/`PUBLISHED`, default `DRAFT` |
+| POST | `/galeri/:id/update` | Pengelola | Ubah data &/atau status |
+| POST | `/galeri/:id/toggle-status` | Pengelola | `PUBLISHED` ⇄ `DRAFT` (`ARCHIVED` → `PUBLISHED`) |
+| POST | `/galeri/:id/toggle-featured` | Pengelola | Spotlight on/off; hanya **satu** item spotlight (item lain otomatis dilepas) |
+| POST | `/galeri/:id/archive` | Pengelola | Arsipkan (spotlight dilepas), bisa dikembalikan ke `PUBLISHED` |
+| POST | `/galeri/:id/delete` | Pengelola | Hapus = **soft delete**, hilang dari CMS & publik |
 
-Link yang diterima:
-
-| Platform | Contoh link | `embedUrl` |
-|---|---|---|
-| YOUTUBE | `youtube.com/watch?v=ID`, `youtu.be/ID`, `/shorts/ID`, `/embed/ID`, `/live/ID` | `https://www.youtube.com/embed/ID` |
-| INSTAGRAM | `instagram.com/p/KODE`, `/reel/KODE`, `/tv/KODE`, `instagram.com/<user>/p/KODE` | `https://www.instagram.com/p\|reel/KODE/embed` |
+Pengelola = `MANAGE_ALL_CABANG` atau `GALERI_MANAGE` (DPP, admin cabang, ketua cabang).
+Query list: `type` (`PHOTO`/`VIDEO`/`INSTAGRAM`), `kategori`, `penempatan` (`BERANDA`/`GALERI`), `search` (judul, deskripsi, lokasi, kategori), `currentPage`, `pageSize`, `fixed=all`, `status`.
+Urutan: `urutan` (kosong di akhir) → `tanggal` terbaru → terbaru dibuat.
 
 ```http
-POST /api/v1/sosmed
-{ "platform": "YOUTUBE", "url": "https://youtu.be/dQw4w9WgXcQ", "judul": null, "penempatan": ["BERANDA", "GALERI"], "urutan": 1 }
+POST /api/v1/galeri
+{
+  "type": "VIDEO",
+  "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "title": null,
+  "deskripsi": "Rekaman pembukaan kongres",
+  "kategoriKegiatan": "Kongres & Pelantikan",
+  "tanggal": "2024-10-15",
+  "lokasi": "Jakarta",
+  "duration": "14:32",
+  "penempatan": ["BERANDA", "GALERI"],
+  "featured": false,
+  "urutan": null,
+  "status": "PUBLISHED"
+}
 ```
-- Wajib: `platform`, `url`. Opsional: `judul`, `penempatan` (default `["BERANDA"]`), `urutan`.
-- `judul` kosong + YouTube → diisi otomatis dari judul asli video (jika YouTube bisa dihubungi).
-- Link tidak dikenali / tidak cocok dengan platform → `400`. Konten yang sama sudah ada → `409`.
+- `tanggal` wajib format **`YYYY-MM-DD`** (contoh `2024-10-15`); format lain / tanggal tidak valid → `400`. Response juga `YYYY-MM-DD`, tampilan "15 Oktober 2024" diformat di frontend.
+- `penempatan` default `["GALERI"]`. `kategoriKegiatan` teks bebas (maks 100), mengikuti pilihan di frontend.
+- Video YouTube / post Instagram yang sama sudah ada → `409`. Lebih dari satu `featured` dalam satu request → `400`.
+- Status: `DRAFT` → `PUBLISHED` (mengisi `publishedAt`) → `ARCHIVED` → bisa kembali ke `PUBLISHED`; `ARCHIVED` → `DRAFT` ditolak `400`; item arsip tidak bisa dijadikan spotlight.
+- Mengganti `url` menghitung ulang `embedUrl`/`youtubeVideoId`; thumbnail otomatis (foto / YouTube) ikut diperbarui, cover yang diisi admin tetap dipertahankan.
 
-Ubah status:
-```http
-POST /api/v1/sosmed/:uuid/update
-{ "statusSosmed": "PUBLISHED" }
-```
-Alur status: `DRAFT` → `PUBLISHED` (mengisi `published_at`/`published_by`) → `ARCHIVED` → bisa kembali ke `PUBLISHED`. `ARCHIVED` → `DRAFT` ditolak `400`. Mengganti `url` menghitung ulang `embedUrl`.
-
-Response preview:
+Bentuk item (response list, detail, create, update) — sama dengan `GaleriItem` di frontend:
 ```json
-{ "success": true, "message": "Success", "data": { "platform": "YOUTUBE", "url": "...", "kontenId": "dQw4w9WgXcQ", "embedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ", "thumbnail": "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg", "judul": "..." } }
+{
+  "id": "uuid", "title": "...", "deskripsi": "...", "type": "VIDEO",
+  "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "thumbnailUrl": "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+  "embedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ", "kategoriKegiatan": "Kongres & Pelantikan",
+  "tanggal": "2024-10-15", "lokasi": "Jakarta", "duration": "14:32",
+  "youtubeVideoId": "dQw4w9WgXcQ", "instagramUrl": null, "sumberVideo": "YOUTUBE",
+  "penempatan": ["BERANDA", "GALERI"], "featured": false, "urutan": null,
+  "status": "PUBLISHED", "publishedAt": "...", "createdAt": "...", "updatedAt": "..."
+}
+```
+`sumberVideo`: `YOUTUBE` / `UPLOAD` untuk `VIDEO`, `null` untuk tipe lain.
+
+Response list: `{ "data": { "result": [ ...item ], "pagination": { "currentPage": 1, "pageSize": 10, "total": 3 } } }`
+
+Response stats:
+```json
+{ "data": { "total": 3, "photoCount": 1, "videoCount": 1, "instagramCount": 1, "publishedCount": 2, "draftCount": 1, "archivedCount": 0, "spotlightCount": 1 } }
 ```
 
-Catatan frontend: embed Instagram hanya tampil untuk akun **publik**. Thumbnail Instagram selalu `null`.
+#### Upload video — `POST /api/v1/upload/video`
+- Akses pengelola galeri. `multipart/form-data`, field `file`.
+- Format **mp4 / webm / mov**, maksimal **50MB** (lebih → `413`, format salah → `400`).
+- Response: `{ "url": "https://<host>/uploads/video/<nama-file>.mp4", "filename": "...", "originalName": "...", "size": 123, "mimetype": "video/mp4" }` → pakai `url` sebagai `url` item galeri `VIDEO`, plus `thumbnailUrl` (cover, upload via `POST /upload`).
+- Upload foto tetap lewat `POST /api/v1/upload` (JPEG/PNG/WebP/GIF, maks 5MB).
+
+Catatan frontend: embed Instagram hanya tampil untuk akun **publik**. Modul `album-galeri` / `media-galeri` tetap ada (dipakai album di modul Berita), bukan untuk CMS Galeri.
 
 ### 4.10 Anggota (role USER)
 
@@ -418,8 +469,9 @@ Hierarki akun DPD/DPC (`Akun.cabangUuid` → `Cabang.dpdId` / `Cabang.dpcId`, to
 ### 5.2 Frontend (di luar backend)
 
 - `HistorySection.tsx` masih timeline hardcoded → ganti dengan `GET /api/v1/sejarah` atau `GET /api/v1/page/history`.
-- Section sosmed di landing page & tab YouTube di halaman Galeri (masih placeholder) → `GET /api/v1/sosmed?platform=...&penempatan=...`, tampilkan `embedUrl` di `<iframe>`.
-- Menu CMS baru: DPD/DPC, tautan Cabang ke DPD/DPC, pilih cabang di form Akun, CMS Sejarah, CMS Sosmed (dengan pratinjau `POST /sosmed/preview`).
+- `src/features/galeri/hooks/useGaleri.ts` masih menyimpan data di `localStorage` → ganti dengan API `/api/v1/galeri` (bentuk data sudah sama dengan `GaleriItem`). Section galeri di landing page memakai `GET /api/v1/galeri?penempatan=BERANDA`.
+- Field `tanggal` dikirim/diterima `YYYY-MM-DD`; format tampilan "15 Oktober 2024" dilakukan di frontend. Upload foto `POST /api/v1/upload`, upload video `POST /api/v1/upload/video`.
+- Menu CMS baru: DPD/DPC, tautan Cabang ke DPD/DPC, pilih cabang di form Akun, CMS Sejarah, CMS Galeri (pratinjau link via `POST /galeri/preview`).
 
 ---
 
@@ -429,6 +481,6 @@ Hierarki akun DPD/DPC (`Akun.cabangUuid` → `Cabang.dpdId` / `Cabang.dpcId`, to
 - Tabel `Cabang` di production berisi data bawaan proyek lain (duplikat Jakarta/Surabaya/Yogyakarta/Bandung/Kupang dan "PNPS Pusat"). **Dibiarkan**, jangan dihapus.
 - `POST /api/v1/akuns/:uuid/update` mengganti seluruh role (replace). Frontend wajib mengirim daftar role lengkap, contoh `[USER, KETUA_CABANG]`.
 - Pencabutan role admin baru berlaku setelah token kedaluwarsa (maks 1 hari) atau login ulang. Pembatalan token seketika saat role berubah butuh perubahan di sistem login.
-- `prisma/seed.ts` belum memuat permission `SEJARAH_MANAGE` & `SOSMED_MANAGE` (seed sengaja tidak diubah). Di environment yang dibuat dari nol, migration berjalan sebelum role dibuat seed, sehingga kedua permission belum tertaut ke role.
+- `prisma/seed.ts` belum memuat permission `SEJARAH_MANAGE` & `GALERI_MANAGE` (seed sengaja tidak diubah). Di environment yang dibuat dari nol, migration berjalan sebelum role dibuat seed, sehingga kedua permission belum tertaut ke role.
 - Page setting `land-youtube` (DB & `prisma/seedPageSetting.ts`) sudah tidak dipakai backend, dibiarkan.
-- Penyeragaman status: Sejarah masih `ACTIVE`/`NON_ACTIVE`, sedangkan Berita & Sosmed memakai `DRAFT`/`PUBLISHED`/`ARCHIVED`.
+- Penyeragaman status: Sejarah masih `ACTIVE`/`NON_ACTIVE`, sedangkan Berita & Galeri memakai `DRAFT`/`PUBLISHED`/`ARCHIVED`.
