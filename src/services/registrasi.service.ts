@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma";
 import bcrypt from "bcrypt";
+import { RequestScope } from "../middlewares/scope.middleware";
 import {
   sendRegistrasiSubmitEmail,
   sendRegistrasiVerifikasiEmail,
@@ -192,6 +193,7 @@ export const getRegistrasiList = async (params: {
   isAdmin?: boolean;
   isSuperAdmin?: boolean;
   cabangId?: string | null;
+  scope?: RequestScope;
 }) => {
   const where: any = {};
 
@@ -211,8 +213,23 @@ export const getRegistrasiList = async (params: {
   const take = params.take ? Number(params.take) : 10;
   const skip = params.skip ? Number(params.skip) : 0;
 
-  // ROLE BASED (SCOPE)
-  if (!params.isSuperAdmin && params.cabangId) {
+  // ROLE BASED / TERRITORIAL SCOPING
+  const scope = params.scope;
+  if (scope && !scope.isSuperAdmin) {
+    if (scope.tingkat === "DPC") {
+      if (scope.kodeKabupaten) {
+        where.kode_kabupaten = scope.kodeKabupaten;
+      } else {
+        where.id = "none";
+      }
+    } else if (scope.tingkat === "DPD") {
+      if (scope.kodeProvinsi) {
+        where.kode_provinsi = scope.kodeProvinsi;
+      } else {
+        where.id = "none";
+      }
+    }
+  } else if (!params.isSuperAdmin && params.cabangId) {
     where.cabangUuid = params.cabangId;
   }
 
@@ -273,23 +290,67 @@ export const updateRegistrasi = async (
 
 export const verifikasiRegistrasi = async (params: {
   id: string;
-  status: "APPROVED_DPC" | "APPROVED_DPD" | "APPROVED_DPP" | "REJECTED";
+  action?: "APPROVE" | "REJECT";
+  status?: "APPROVED_DPC" | "APPROVED_DPD" | "APPROVED_DPP" | "REJECTED" | string;
   verifikatorUuid?: string;
   actorNama?: string;
   catatanVerifikasi?: string;
+  scope?: RequestScope;
 }) => {
   const reg = await prisma.registrasi.findUnique({ where: { id: params.id } });
-  if (!reg) throw new Error("Data registrasi tidak ditemukan");
+  if (!reg) {
+    const error: any = new Error("Data registrasi tidak ditemukan");
+    error.status = 404;
+    throw error;
+  }
 
-  const isApproved =
-    params.status === "APPROVED_DPC" || params.status === "APPROVED_DPD" || params.status === "APPROVED_DPP";
+  const scope = params.scope;
+
+  // Enforce territorial boundaries
+  if (scope && !scope.isSuperAdmin) {
+    if (scope.tingkat === "DPC") {
+      if (!scope.kodeKabupaten || reg.kode_kabupaten !== scope.kodeKabupaten) {
+        const error: any = new Error(
+          "Anda tidak memiliki wewenang memverifikasi pendaftar di luar wilayah DPC Anda",
+        );
+        error.status = 403;
+        throw error;
+      }
+    } else if (scope.tingkat === "DPD") {
+      if (!scope.kodeProvinsi || reg.kode_provinsi !== scope.kodeProvinsi) {
+        const error: any = new Error(
+          "Anda tidak memiliki wewenang memverifikasi pendaftar di luar wilayah DPD Anda",
+        );
+        error.status = 403;
+        throw error;
+      }
+    }
+  }
+
+  // Tentukan status verifikasi secara otomatis berdasarkan role verifikator
+  const isReject = params.action === "REJECT" || params.status === "REJECTED";
+  let targetStatus: "APPROVED_DPC" | "APPROVED_DPD" | "APPROVED_DPP" | "REJECTED";
+
+  if (isReject) {
+    targetStatus = "REJECTED";
+  } else {
+    if (scope?.tingkat === "DPC") {
+      targetStatus = "APPROVED_DPC";
+    } else if (scope?.tingkat === "DPD") {
+      targetStatus = "APPROVED_DPD";
+    } else {
+      targetStatus = "APPROVED_DPP";
+    }
+  }
+
+  const isApproved = !isReject;
   const langkahNext = isApproved ? 5 : 2; // Langsung ke tahap 5 (KTA Aktif) jika di-approve
 
   const updated = await prisma.$transaction(async (tx) => {
     const updatedReg = await tx.registrasi.update({
       where: { id: params.id },
       data: {
-        statusVerifikasi: params.status,
+        statusVerifikasi: targetStatus,
         ...(isApproved && { statusPembayaran: "PAID" }), // Otomatis dianggap PAID karena sudah upload bukti
         verifikatorUuid: params.verifikatorUuid || null,
         catatanVerifikasi: params.catatanVerifikasi || null,
@@ -302,8 +363,8 @@ export const verifikasiRegistrasi = async (params: {
     await tx.registrasiLog.create({
       data: {
         registrasiId: params.id,
-        aksi: `VERIFIKASI_${params.status}`,
-        keterangan: `Verifikasi pendaftaran diproses dengan status ${params.status}. Catatan: ${params.catatanVerifikasi || "-"}`,
+        aksi: `VERIFIKASI_${targetStatus}`,
+        keterangan: `Verifikasi pendaftaran diproses dengan status ${targetStatus}. Catatan: ${params.catatanVerifikasi || "-"}`,
         actorUuid: params.verifikatorUuid || null,
         actorNama: params.actorNama || "Verifikator",
       },
@@ -313,13 +374,13 @@ export const verifikasiRegistrasi = async (params: {
   });
 
   // Email Notification hanya jika ditolak (berjalan asinkron di background)
-  if (params.status === "REJECTED") {
+  if (targetStatus === "REJECTED") {
     sendRegistrasiVerifikasiEmail(
       reg.email,
       reg.namaLengkap,
-      params.status,
+      targetStatus,
       params.catatanVerifikasi,
-    ).catch(err => {
+    ).catch((err) => {
       console.error("Gagal mengirim email penolakan:", err);
     });
   }

@@ -64,9 +64,7 @@ export const getRegistrasiListHandler = async (
       langkahSekarang: langkahSekarang ? Number(langkahSekarang) : undefined,
       skip: skip ? Number(skip) : undefined,
       take: take ? Number(take) : undefined,
-      isAdmin: scope?.isAdmin,
-      isSuperAdmin: scope?.isSuperAdmin,
-      cabangId: scope?.cabangId,
+      scope,
     });
     res.json({
       success: true,
@@ -95,6 +93,26 @@ export const getRegistrasiByIdHandler = async (
         .status(404)
         .json({ success: false, message: "Data registrasi tidak ditemukan" });
     }
+
+    const scope = req.scope;
+    if (scope && !scope.isSuperAdmin) {
+      if (scope.tingkat === "DPC") {
+        if (!scope.kodeKabupaten || registrasi.kode_kabupaten !== scope.kodeKabupaten) {
+          return res.status(403).json({
+            success: false,
+            message: "Data registrasi di luar wilayah DPC Anda",
+          });
+        }
+      } else if (scope.tingkat === "DPD") {
+        if (!scope.kodeProvinsi || registrasi.kode_provinsi !== scope.kodeProvinsi) {
+          return res.status(403).json({
+            success: false,
+            message: "Data registrasi di luar wilayah DPD Anda",
+          });
+        }
+      }
+    }
+
     res.json({ success: true, data: registrasi });
   } catch (error) {
     next(error);
@@ -126,13 +144,17 @@ export const verifikasiRegistrasiHandler = async (
 ) => {
   try {
     const id = req.params.id as string;
-    const { status, verifikatorUuid, actorNama, catatanVerifikasi } = req.body;
+    const { status, action, catatanVerifikasi } = req.body;
+    const user = req.user!;
+    const scope = req.scope;
+
     const result = await registrasiService.verifikasiRegistrasi({
       id: id,
-      status: status || "APPROVED_DPC",
-      verifikatorUuid,
-      actorNama,
+      action: action || (status === "REJECTED" ? "REJECT" : "APPROVE"),
+      verifikatorUuid: user.sub,
+      actorNama: user.username || user.email || "Verifikator",
       catatanVerifikasi,
+      scope,
     });
     res.json({
       success: true,

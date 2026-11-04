@@ -46,6 +46,7 @@ router.get(
   "/:id",
   authenticate,
   authorize("REGISTRASI_READ", "REGISTRASI_APPROVE"),
+  scope,
   getRegistrasiByIdHandler
 );
 
@@ -54,14 +55,16 @@ router.put(
   "/:id",
   authenticate,
   authorize("REGISTRASI_APPROVE"),
+  scope,
   updateRegistrasiHandler
 );
 
-// 6. Verifikasi DPC / DPD (Tahap 2 & 3)
+// 6. Verifikasi DPC / DPD / DPP (Tahap 2 & 3)
 router.patch(
   "/:id/verifikasi",
   authenticate,
   authorize("REGISTRASI_APPROVE"),
+  scope,
   verifikasiRegistrasiHandler
 );
 

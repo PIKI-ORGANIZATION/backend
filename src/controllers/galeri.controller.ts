@@ -285,6 +285,10 @@ export const createGaleri = async (req: Request, res: Response) => {
       throw httpError(400, "Spotlight (featured) hanya boleh satu item");
     }
 
+    if (data.some((d) => d.featured && d.type !== "VIDEO")) {
+      throw httpError(400, "Spotlight (featured) hanya boleh untuk item berformat VIDEO");
+    }
+
     const siap = await Promise.all(
       data.map(async (item) => ({ ...item, ...(await siapkanMedia(item)) }))
     );
@@ -382,6 +386,9 @@ export const updateGaleri = async (req: Request, res: Response) => {
       data.published_by = user.sub;
     }
     if (body.status === "ARCHIVED") data.featured = false;
+    if (body.featured === true && (body.type ?? existing.type) !== "VIDEO") {
+      throw httpError(400, "Spotlight (featured) hanya boleh untuk item berformat VIDEO");
+    }
 
     ////////////////////////////////////////////////////
     // TYPE / URL / THUMBNAIL / TITLE BERUBAH -> OLAH ULANG MEDIA
@@ -469,6 +476,10 @@ export const toggleFeaturedGaleri = async (req: Request, res: Response) => {
 
     if (!existing.featured && existing.status === "ARCHIVED") {
       throw httpError(400, "Item yang diarsipkan tidak bisa dijadikan spotlight");
+    }
+
+    if (!existing.featured && existing.type !== "VIDEO") {
+      throw httpError(400, "Spotlight (featured) hanya boleh untuk item berformat VIDEO");
     }
 
     const updated = await prisma.$transaction(async (tx) => {

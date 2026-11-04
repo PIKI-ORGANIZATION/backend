@@ -22,6 +22,7 @@ export const getAnggotas = async (req: Request, res: Response) => {
       isApprovedByDPC,
       isApprovedByDPP,
       approvalStatus,
+      statusKta,
       currentPage,
       pageSize,
       pekerjaanUuid,
@@ -36,6 +37,7 @@ export const getAnggotas = async (req: Request, res: Response) => {
       isApprovedByDPC?: string;
       isApprovedByDPP?: string;
       approvalStatus?: string;
+      statusKta?: string;
       currentPage?: string;
       pageSize?: string;
       pekerjaanUuid?: string | string[];
@@ -166,6 +168,10 @@ export const getAnggotas = async (req: Request, res: Response) => {
 
     if (isApprovedByDPP !== undefined) {
       andConditions.push({ isApprovedByDPP: isApprovedByDPP === "true" });
+    }
+
+    if (statusKta) {
+      andConditions.push({ statusKta });
     }
 
     ////////////////////////////////////////////////////

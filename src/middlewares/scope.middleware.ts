@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import prisma from "../config/prisma";
 
 export interface RequestScope {
   isAdmin: boolean;
@@ -7,6 +8,8 @@ export interface RequestScope {
   tingkat: "DPD" | "DPC" | null;
   dpdId: string | null;
   dpcId: number | null;
+  kodeProvinsi: string | null;
+  kodeKabupaten: string | null;
 }
 
 declare global {
@@ -17,26 +20,53 @@ declare global {
   }
 }
 
-export const scope = (
+export const scope = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const user = req.user;
+  try {
+    const user = req.user;
 
-  const permissions = user?.permissions || [];
+    const permissions = user?.permissions || [];
 
-  const isSuperAdmin = permissions.includes("MANAGE_ALL_CABANG");
-  const isAdmin = user?.isFromAdmin === true || isSuperAdmin;
+    const isSuperAdmin = permissions.includes("MANAGE_ALL_CABANG");
+    const isAdmin = user?.isFromAdmin === true || isSuperAdmin;
 
-  req.scope = {
-    isAdmin,
-    isSuperAdmin,
-    cabangId: user?.cabangId ?? null,
-    tingkat: user?.tingkat ?? null,
-    dpdId: user?.dpdId ?? null,
-    dpcId: user?.dpcId ?? null,
-  };
+    let kodeProvinsi: string | null = null;
+    let kodeKabupaten: string | null = null;
 
-  next();
+    // Resolusi kode wilayah berdasarkan hierarki akun (DPD / DPC)
+    if (!isSuperAdmin && user) {
+      if (user.tingkat === "DPD" && user.dpdId) {
+        const dpd = await prisma.dpd.findFirst({
+          where: { id: user.dpdId, deletedAt: null },
+          select: { kodeProvinsi: true },
+        });
+        kodeProvinsi = dpd?.kodeProvinsi ?? null;
+      } else if (user.tingkat === "DPC" && user.dpcId) {
+        const dpc = await prisma.dpdDpc.findFirst({
+          where: { id: user.dpcId, deleted_at: null },
+          select: { kode_kabupaten: true, kode_provinsi: true },
+        });
+        kodeKabupaten = dpc?.kode_kabupaten ?? null;
+        kodeProvinsi = dpc?.kode_provinsi ?? null;
+      }
+    }
+
+    req.scope = {
+      isAdmin,
+      isSuperAdmin,
+      cabangId: user?.cabangId ?? null,
+      tingkat: user?.tingkat ?? null,
+      dpdId: user?.dpdId ?? null,
+      dpcId: user?.dpcId ?? null,
+      kodeProvinsi,
+      kodeKabupaten,
+    };
+
+    next();
+  } catch (error) {
+    next(error);
+  }
 };

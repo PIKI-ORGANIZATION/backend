@@ -25,6 +25,22 @@ const tanggalSchema = z
     return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === val;
   }, "Tanggal tidak valid");
 
+// Schema validasi URL aman (mencegah XSS scheme seperti javascript:, vbscript:)
+const safeUrlSchema = z
+  .string()
+  .trim()
+  .refine(
+    (val) => {
+      const lower = val.toLowerCase();
+      return (
+        !lower.startsWith("javascript:") &&
+        !lower.startsWith("vbscript:") &&
+        !lower.startsWith("data:text/html")
+      );
+    },
+    { message: "URL tidak aman atau format skema dilarang" }
+  );
+
 ////////////////////////////////////////////////////
 // BASE GALERI SCHEMA
 // title boleh kosong untuk video YouTube (diisi otomatis dari judul asli video)
@@ -36,9 +52,9 @@ const baseGaleriSchema = z.object({
 
   deskripsi: z.string().trim().nullable().optional(),
 
-  url: z.string().trim().min(1),
+  url: safeUrlSchema.min(1),
 
-  thumbnailUrl: z.string().trim().nullable().optional(),
+  thumbnailUrl: safeUrlSchema.nullable().optional(),
 
   kategoriKegiatan: z.string().trim().max(100).nullable().optional(),
 
