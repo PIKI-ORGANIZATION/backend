@@ -399,6 +399,17 @@ export const getAnggotaById = async (req: Request, res: Response) => {
             uuid: true,
             email: true,
             username: true,
+            cabangUuid: true,
+            roles: {
+              include: {
+                role: {
+                  select: {
+                    uuid: true,
+                    namaRole: true,
+                  },
+                },
+              },
+            },
           },
         },
         approverDPC: { select: { uuid: true, namaLengkap: true, strukturDPP: true } },

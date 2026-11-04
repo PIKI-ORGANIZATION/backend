@@ -65,6 +65,11 @@ export const getDpdList = async (
       skip: (currentPage - 1) * pageSize,
       take: pageSize,
       orderBy: { createdAt: "desc" },
+      include: {
+        cabang: {
+          select: { uuid: true, namaCabang: true },
+        },
+      },
     }),
   ]);
 
@@ -74,6 +79,11 @@ export const getDpdList = async (
 export const getDpdById = async (scope: RequestScope, id: string) => {
   return await prisma.dpd.findFirst({
     where: { AND: [{ id, deletedAt: null }, getScopeWhere(scope)] },
+    include: {
+      cabang: {
+        select: { uuid: true, namaCabang: true },
+      },
+    },
   });
 };
 
