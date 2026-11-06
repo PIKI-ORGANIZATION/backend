@@ -98,6 +98,14 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
     // 1. Pembuatan Akun dipindahkan ke Tahap 5 (Aktivasi KTA)
     // agar password yang di-generate bisa dikirim di email ke-3 tanpa kolom sementara.
 
+    // Tentukan status verifikasi awal berdasarkan hierarki wilayah pendaftaran
+    let initialStatus = "PENDING_VERIFIKASI_DPP";
+    if (data.dpc || kodeWilayah.kode_kabupaten) {
+      initialStatus = "PENDING_VERIFIKASI_DPC";
+    } else if (data.dpd || kodeWilayah.kode_provinsi) {
+      initialStatus = "PENDING_VERIFIKASI_DPD";
+    }
+
     // 2. Buat Pendaftaran Registrasi
     const newReg = await tx.registrasi.create({
       data: {
@@ -126,8 +134,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
         setujuKerahasiaanData: data.setujuKerahasiaanData ?? true,
         tglPersetujuanPdp: new Date(),
 
-        // statusVerifikasi: "PENDING_VERIFIKASI_DPC",
-        statusVerifikasi: "PENDING_VERIFIKASI_DPP",
+        statusVerifikasi: initialStatus,
         statusPembayaran: "PENDING_CONFIRMATION",
         buktiBayarUrl: data.buktiBayarUrl || null,
         langkahSekarang: 1,
@@ -146,13 +153,19 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
       },
     });
 
+    const targetTingkat =
+      initialStatus === "PENDING_VERIFIKASI_DPC"
+        ? `DPC ${data.dpc || "Kabupaten/Kota"}`
+        : initialStatus === "PENDING_VERIFIKASI_DPD"
+        ? `DPD ${data.dpd || "Provinsi"}`
+        : "DPP (Pusat)";
+
     // 3. Catat Log Audit Trail
     await tx.registrasiLog.create({
       data: {
         registrasiId: newReg.id,
         aksi: "SUBMIT_REGISTRASI",
-        keterangan:
-          "Pendaftaran Tahap 1 berhasil di-submit. Akun dibuat & masuk antrean verifikasi DPD (Pusat).",
+        keterangan: `Pendaftaran Tahap 1 berhasil di-submit. Berkas masuk antrean verifikasi ${targetTingkat}.`,
         actorNama: data.namaLengkap,
       },
     });
@@ -205,7 +218,17 @@ export const getRegistrasiList = async (params: {
     ];
   }
 
-  if (params.statusVerifikasi) where.statusVerifikasi = params.statusVerifikasi;
+  if (params.statusVerifikasi) {
+    if (params.statusVerifikasi === "PENDING") {
+      where.statusVerifikasi = { startsWith: "PENDING" };
+    } else if (params.statusVerifikasi === "APPROVED") {
+      where.statusVerifikasi = { startsWith: "APPROVED" };
+    } else if (params.statusVerifikasi === "REJECTED") {
+      where.statusVerifikasi = "REJECTED";
+    } else if (params.statusVerifikasi !== "ALL") {
+      where.statusVerifikasi = params.statusVerifikasi;
+    }
+  }
   if (params.statusPembayaran) where.statusPembayaran = params.statusPembayaran;
   if (params.langkahSekarang)
     where.langkahSekarang = Number(params.langkahSekarang);
@@ -233,22 +256,51 @@ export const getRegistrasiList = async (params: {
     where.cabangUuid = params.cabangId;
   }
 
-  const [total, data] = await Promise.all([
-    prisma.registrasi.count({ where }),
-    prisma.registrasi.findMany({
-      where,
-      skip,
-      take,
-      orderBy: { created_at: "desc" },
-      include: {
-        akun: {
-          select: { uuid: true, email: true, username: true, statusAkun: true },
-        },
-      },
-    }),
-  ]);
+  // Compute base where without statusVerifikasi for status breakdown counts
+  const baseWhere = { ...where };
+  delete baseWhere.statusVerifikasi;
 
-  return { total, page: Math.floor(skip / take) + 1, limit: take, data };
+  const [total, data, countAll, countPending, countApproved, countRejected] =
+    await Promise.all([
+      prisma.registrasi.count({ where }),
+      prisma.registrasi.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { created_at: "desc" },
+        include: {
+          akun: {
+            select: { uuid: true, email: true, username: true, statusAkun: true },
+          },
+          cabang: {
+            select: { uuid: true, namaCabang: true, provinsi: true },
+          },
+        },
+      }),
+      prisma.registrasi.count({ where: baseWhere }),
+      prisma.registrasi.count({
+        where: { ...baseWhere, statusVerifikasi: { startsWith: "PENDING" } },
+      }),
+      prisma.registrasi.count({
+        where: { ...baseWhere, statusVerifikasi: { startsWith: "APPROVED" } },
+      }),
+      prisma.registrasi.count({
+        where: { ...baseWhere, statusVerifikasi: "REJECTED" },
+      }),
+    ]);
+
+  return {
+    total,
+    page: Math.floor(skip / take) + 1,
+    limit: take,
+    counts: {
+      all: countAll,
+      pending: countPending,
+      approved: countApproved,
+      rejected: countRejected,
+    },
+    data,
+  };
 };
 
 export const getRegistrasiById = async (id: string) => {

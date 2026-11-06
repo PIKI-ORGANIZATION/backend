@@ -73,6 +73,7 @@ export const getRegistrasiListHandler = async (
         total: result.total,
         page: result.page,
         limit: result.limit,
+        counts: result.counts,
       },
     });
   } catch (error) {
