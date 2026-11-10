@@ -9,6 +9,9 @@ import {
   sendNotifikasiPendaftarBaru,
 } from "../config/email";
 
+const AKSI_NOTIF_BARU = "NOTIF_REGISTRASI_BARU";
+const AKSI_NOTIF_DPD = "NOTIF_DPD_BELUM_VERIFIKASI";
+
 export interface CreateRegistrasiDTO {
   namaLengkap: string;
   tanggalLahir: string | Date;
@@ -170,6 +173,16 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
       },
     });
 
+    // Penanda pendaftar baru: hanya registrasi yang punya log ini yang ikut eskalasi ke DPD
+    await tx.registrasiLog.create({
+      data: {
+        registrasiId: newReg.id,
+        aksi: AKSI_NOTIF_BARU,
+        keterangan: "Notifikasi pendaftar baru dikirim ke DPP dan DPC.",
+        actorNama: "System",
+      },
+    });
+
     return newReg;
   });
 
@@ -178,7 +191,7 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
 
   // Kirim ke Superadmin selalu (ambil otomatis dari database)
   prisma.akunRole.findMany({
-    where: { role: { namaRole: { in: ["SUPERADMIN", "Superadmin", "Super Admin"] } } },
+    where: { role: { namaRole: { in: ["SUPER_ADMIN", "SUPERADMIN", "Superadmin", "Super Admin"] } } },
     include: { akun: true }
   }).then(superadmins => {
     for (const sa of superadmins) {
@@ -193,7 +206,95 @@ export const createRegistrasi = async (data: CreateRegistrasiDTO) => {
     }
   }).catch(err => console.error(err));
 
+  // Kirim ke admin DPC sesuai pilihan pendaftar
+  cariAkunDpc(registrasi.kode_kabupaten).then(akunList => {
+    for (const akun of akunList) {
+      sendNotifikasiPendaftarBaru(
+        akun.email,
+        akun.username || "Pengurus DPC",
+        data.namaLengkap,
+        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`,
+        namaWilayah(registrasi),
+      ).catch(err => console.error(err));
+    }
+  }).catch(err => console.error(err));
+
   return registrasi;
+};
+
+const STATUS_BELUM_VERIFIKASI = ["PENDING_VERIFIKASI_DPC", "PENDING_VERIFIKASI_DPP", "BYPASSED_TO_DPD"];
+
+const namaWilayah = (reg: { dpc: string | null; dpd: string | null }) =>
+  [reg.dpc, reg.dpd].filter(Boolean).join(", ") || undefined;
+
+const akunAktifCabang = (cabangFilter: { dpcId: number } | { dpdId: string }) =>
+  prisma.akun.findMany({
+    where: { statusAkun: "ACTIVE", cabang: cabangFilter },
+    select: { email: true, username: true },
+  });
+
+// Akun admin yang ditautkan ke DPC (Cabang.dpcId) berdasarkan kode kab/kota
+const cariAkunDpc = async (kodeKabupaten: string | null) => {
+  if (!kodeKabupaten) return [];
+  const dpc = await prisma.dpdDpc.findFirst({
+    where: { kode_kabupaten: kodeKabupaten, deleted_at: null },
+    select: { id: true },
+  });
+  return dpc ? akunAktifCabang({ dpcId: dpc.id }) : [];
+};
+
+// Akun admin yang ditautkan ke DPD (Cabang.dpdId) berdasarkan kode provinsi
+const cariAkunDpd = async (kodeProvinsi: string | null) => {
+  if (!kodeProvinsi) return [];
+  const dpd = await prisma.dpd.findFirst({
+    where: { kodeProvinsi, deletedAt: null },
+    select: { id: true },
+  });
+  return dpd ? akunAktifCabang({ dpdId: dpd.id }) : [];
+};
+
+// Dipanggil scheduler: pendaftar belum diverifikasi > 3 hari -> notif ke DPD provinsinya (sekali per pendaftar)
+export const notifikasiDpdBelumVerifikasi = async () => {
+  const batas = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+
+  const pendingList = await prisma.registrasi.findMany({
+    where: {
+      statusVerifikasi: { in: STATUS_BELUM_VERIFIKASI },
+      created_at: { lte: batas },
+      kode_provinsi: { not: null },
+      // hanya pendaftar baru (punya penanda) dan belum pernah dieskalasi ke DPD
+      logs: { some: { aksi: AKSI_NOTIF_BARU }, none: { aksi: AKSI_NOTIF_DPD } },
+    },
+  });
+
+  let terkirim = 0;
+  for (const reg of pendingList) {
+    const akunList = await cariAkunDpd(reg.kode_provinsi);
+    if (akunList.length === 0) continue; // belum ada akun DPD: dicoba lagi pada putaran berikutnya
+
+    for (const akun of akunList) {
+      await sendNotifikasiPendaftarBaru(
+        akun.email,
+        akun.username || "Pengurus DPD",
+        reg.namaLengkap,
+        `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard/verifikasi`,
+        namaWilayah(reg),
+        true,
+      ).catch(err => console.error(err));
+    }
+
+    await prisma.registrasiLog.create({
+      data: {
+        registrasiId: reg.id,
+        aksi: AKSI_NOTIF_DPD,
+        keterangan: `Belum diverifikasi lebih dari 3 hari. Notifikasi dikirim ke ${akunList.length} akun DPD.`,
+        actorNama: "System SLA Scheduler",
+      },
+    });
+    terkirim++;
+  }
+
+  return { count: terkirim };
 };
 
 export const getRegistrasiList = async (params: {
@@ -353,6 +454,7 @@ export const verifikasiRegistrasi = async (params: {
   if (!reg) {
     const error: any = new Error("Data registrasi tidak ditemukan");
     error.status = 404;
+    error.statusCode = 404;
     throw error;
   }
 
@@ -366,6 +468,7 @@ export const verifikasiRegistrasi = async (params: {
           "Anda tidak memiliki wewenang memverifikasi pendaftar di luar wilayah DPC Anda",
         );
         error.status = 403;
+        error.statusCode = 403;
         throw error;
       }
     } else if (scope.tingkat === "DPD") {
@@ -374,26 +477,31 @@ export const verifikasiRegistrasi = async (params: {
           "Anda tidak memiliki wewenang memverifikasi pendaftar di luar wilayah DPD Anda",
         );
         error.status = 403;
+        error.statusCode = 403;
         throw error;
       }
     }
   }
 
-  // Tentukan status verifikasi secara otomatis berdasarkan role verifikator
-  const isReject = params.action === "REJECT" || params.status === "REJECTED";
-  let targetStatus: "APPROVED_DPC" | "APPROVED_DPD" | "APPROVED_DPP" | "REJECTED";
-
-  if (isReject) {
-    targetStatus = "REJECTED";
-  } else {
-    if (scope?.tingkat === "DPC") {
-      targetStatus = "APPROVED_DPC";
-    } else if (scope?.tingkat === "DPD") {
-      targetStatus = "APPROVED_DPD";
-    } else {
-      targetStatus = "APPROVED_DPP";
-    }
+  // Level verifikator menentukan status hasil ACC; akun selain DPP/DPD/DPC tidak berhak (approve maupun reject)
+  const levelStatus: "APPROVED_DPC" | "APPROVED_DPD" | "APPROVED_DPP" | null =
+    scope?.isSuperAdmin
+      ? "APPROVED_DPP"
+      : scope?.tingkat === "DPC"
+        ? "APPROVED_DPC"
+        : scope?.tingkat === "DPD"
+          ? "APPROVED_DPD"
+          : null;
+  if (!levelStatus) {
+    const error: any = new Error("Akun tidak berhak memverifikasi pendaftaran");
+    error.status = 403;
+    error.statusCode = 403;
+    throw error;
   }
+
+  const isReject = params.action === "REJECT" || params.status === "REJECTED";
+  const targetStatus: "APPROVED_DPC" | "APPROVED_DPD" | "APPROVED_DPP" | "REJECTED" =
+    isReject ? "REJECTED" : levelStatus;
 
   const isApproved = !isReject;
   const langkahNext = isApproved ? 5 : 2; // Langsung ke tahap 5 (KTA Aktif) jika di-approve

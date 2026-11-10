@@ -167,85 +167,89 @@ export const verifikasiRegistrasiHandler = async (
   }
 };
 
-export const checkSlaHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { actorNama } = req.body;
-    const result = await registrasiService.checkAndBypassSla(
-      actorNama || "System SLA Scheduler"
-    );
-    res.json({
-      success: true,
-      message: `Pengecekan SLA selesai. ${result.count} pendaftaran berhasil diekskalasi otomatis ke DPD.`,
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// Tidak dipakai frontend — dinonaktifkan 2026-11-05 (lihat CATATAN_TASK_LANJUTAN.md §5.1). Hapus komentar untuk mengaktifkan kembali.
+// export const checkSlaHandler = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const { actorNama } = req.body;
+//     const result = await registrasiService.checkAndBypassSla(
+//       actorNama || "System SLA Scheduler"
+//     );
+//     res.json({
+//       success: true,
+//       message: `Pengecekan SLA selesai. ${result.count} pendaftaran berhasil diekskalasi otomatis ke DPD.`,
+//       data: result,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
-export const prosesPembayaranHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = req.params.id as string;
-    const { buktiBayarUrl, statusPembayaran, actorUuid, actorNama } = req.body;
-    const result = await registrasiService.prosesPembayaran({
-      id: id,
-      buktiBayarUrl,
-      statusPembayaran,
-      actorUuid,
-      actorNama,
-    });
-    res.json({
-      success: true,
-      message: "Status pembayaran iuran berhasil diproses",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// Tidak dipakai frontend — dinonaktifkan 2026-11-05 (lihat CATATAN_TASK_LANJUTAN.md §5.1). Hapus komentar untuk mengaktifkan kembali.
+// export const prosesPembayaranHandler = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const id = req.params.id as string;
+//     const { buktiBayarUrl, statusPembayaran, actorUuid, actorNama } = req.body;
+//     const result = await registrasiService.prosesPembayaran({
+//       id: id,
+//       buktiBayarUrl,
+//       statusPembayaran,
+//       actorUuid,
+//       actorNama,
+//     });
+//     res.json({
+//       success: true,
+//       message: "Status pembayaran iuran berhasil diproses",
+//       data: result,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
-export const aktivasiKtaHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = req.params.id as string;
-    const { actorUuid, actorNama, customNoKta } = req.body;
-    const result = await registrasiService.aktivasiKta({
-      id: id,
-      actorUuid,
-      actorNama,
-      customNoKta,
-    });
-    res.json({
-      success: true,
-      message: `KTA Digital berhasil diterbitkan dan status keanggotaan aktif resmi.`,
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// Tidak dipakai frontend — dinonaktifkan 2026-11-05 (lihat CATATAN_TASK_LANJUTAN.md §5.1). Hapus komentar untuk mengaktifkan kembali.
+// export const aktivasiKtaHandler = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const id = req.params.id as string;
+//     const { actorUuid, actorNama, customNoKta } = req.body;
+//     const result = await registrasiService.aktivasiKta({
+//       id: id,
+//       actorUuid,
+//       actorNama,
+//       customNoKta,
+//     });
+//     res.json({
+//       success: true,
+//       message: `KTA Digital berhasil diterbitkan dan status keanggotaan aktif resmi.`,
+//       data: result,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
-export const deleteRegistrasiHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = req.params.id as string;
-    await registrasiService.deleteRegistrasi(id);
-    res.json({ success: true, message: "Data registrasi berhasil dihapus" });
-  } catch (error) {
-    next(error);
-  }
-};
+// Tidak dipakai frontend — dinonaktifkan 2026-11-05 (lihat CATATAN_TASK_LANJUTAN.md §5.1). Hapus komentar untuk mengaktifkan kembali.
+// export const deleteRegistrasiHandler = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const id = req.params.id as string;
+//     await registrasiService.deleteRegistrasi(id);
+//     res.json({ success: true, message: "Data registrasi berhasil dihapus" });
+//   } catch (error) {
+//     next(error);
+//   }
+// };

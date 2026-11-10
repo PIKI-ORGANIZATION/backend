@@ -811,15 +811,24 @@ export const sendNotifikasiPendaftarBaru = async (
   emailPengurus: string,
   namaPengurus: string,
   namaPendaftar: string,
-  urlDashboard: string
+  urlDashboard: string,
+  wilayah?: string,
+  eskalasi?: boolean
 ) => {
-  const subject = "Pemberitahuan Pendaftar Baru (Menunggu Verifikasi)";
-  const preheader = `Halo ${namaPengurus}, ada pendaftar baru yang menunggu verifikasi dari Anda.`;
-  
+  const subject = eskalasi
+    ? "Pengingat: Pendaftar Belum Diverifikasi Lebih dari 3 Hari"
+    : "Pemberitahuan Pendaftar Baru (Menunggu Verifikasi)";
+  const preheader = eskalasi
+    ? `Halo ${namaPengurus}, ada pendaftar di wilayah Anda yang belum diverifikasi lebih dari 3 hari.`
+    : `Halo ${namaPengurus}, ada pendaftar baru yang menunggu verifikasi dari Anda.`;
+  const pembuka = eskalasi
+    ? "Pendaftar berikut sudah lebih dari 3 hari belum diverifikasi oleh pengurus DPC di wilayahnya. Mohon tindak lanjut dari pihak DPD."
+    : "Sistem mencatat ada pendaftar baru yang menunggu verifikasi dari pihak Pengurus PIKI.";
+
   const content = `
     <p style="margin-bottom: 20px;">Halo <strong>${namaPengurus}</strong>,</p>
-    <p style="margin-bottom: 24px;">Sistem mencatat ada pendaftar baru yang menunggu verifikasi dari pihak Pengurus PIKI.</p>
-    
+    <p style="margin-bottom: 24px;">${pembuka}</p>
+
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; background-color: #ffffff;">
       <tr>
         <td style="padding: 10px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: 600; width: 35%;">Nama Pendaftar</td>
@@ -827,7 +836,7 @@ export const sendNotifikasiPendaftarBaru = async (
       </tr>
       <tr>
         <td style="padding: 10px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: 600;">Wilayah DPC/DPD</td>
-        <td style="padding: 10px; border: 1px solid #e5e7eb; color: #374151;">Silakan cek di Dashboard</td>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; color: #374151;">${wilayah || "Silakan cek di Dashboard"}</td>
       </tr>
       <tr>
         <td style="padding: 10px; border: 1px solid #e5e7eb; background-color: #f9fafb; font-weight: 600;">Status</td>

@@ -447,7 +447,31 @@ Anggota tanpa role admin hanya dapat memakai endpoint berikut (cukup login, tanp
 
 ## 5. Task lanjutan (ditunda)
 
-### 5.1 Verifikasi registrasi anggota per wilayah (DPP / DPD / DPC)
+### 5.1 Verifikasi registrasi anggota per wilayah (DPP / DPD / DPC) — ✅ SUDAH TEREALISASI (2026-11-05, branch `dev`, belum di-deploy)
+
+> **Status:** dikerjakan & diuji end-to-end di DB lokal (semua skenario lulus). Detail di bawah; teks "Status sekarang" dan "Celah keamanan" adalah kondisi **sebelum** perbaikan.
+>
+> | Item | Status |
+> |---|---|
+> | List pendaftar `GET /registrasi` difilter wilayah (DPP semua, DPD per `kode_provinsi`, DPC per `kode_kabupaten`) — **dikerjakan CanSaragih** (`scope.middleware.ts`), plus `counts` status & filter `PENDING`/`APPROVED`/`REJECTED`/`ALL` | ✅ |
+> | Detail `GET /registrasi/:id` di luar wilayah → `403` (CanSaragih) | ✅ |
+> | Status awal registrasi dinamis dari wilayah pendaftar: `PENDING_VERIFIKASI_DPC` / `_DPD` / `_DPP` (CanSaragih) | ✅ |
+> | `PATCH /registrasi/:id/verifikasi`: status hasil ACC ditentukan sistem dari level verifikator (`APPROVED_DPP/DPD/DPC`), `status` dari body hanya dipakai untuk `REJECTED` | ✅ |
+> | `verifikatorUuid` & nama aktor diambil dari token login, bukan body | ✅ |
+> | Cek wilayah saat verifikasi (luar wilayah → `403`, versi CanSaragih). Akun selain super admin/DPD/DPC (mis. akun demo PNPS) → `403` untuk approve maupun reject. Status error kini juga diisi `statusCode` karena `error.middleware.ts` membaca `statusCode` (sebelumnya `error.status` saja → keluar sebagai 500) | ✅ |
+> | Notif email registrasi baru ke DPP **dan** ke admin DPC pilihan pendaftar | ✅ |
+> | Scheduler: belum diverifikasi > 3 hari → email sekali ke admin DPD provinsinya (hanya registrasi baru) | ✅ |
+> | Bug lama: notif ke DPP tidak pernah terkirim (kode mencari role `SUPERADMIN`, di DB `SUPER_ADMIN`) | ✅ diperbaiki |
+> | Endpoint yang **tidak dipakai frontend** dinonaktifkan (dikomentari di `registrasi.routes.ts` & `registrasi.controller.ts`): `PATCH /:id/pembayaran`, `PATCH /:id/aktivasi-kta`, `DELETE /:id`, `POST /check-sla` → kini menjawab `404`. `GET /:id` dan `PUT /:id` **tetap aktif** karena sudah diberi cek wilayah oleh CanSaragih Service-nya tidak diubah; `aktivasiKta` tetap jalan otomatis saat ACC | ✅ |
+>
+> **Catatan deploy 5.1:**
+> - Tanpa migration. Penanda notif memakai tabel `registrasi_log` (`NOTIF_REGISTRASI_BARU`, `NOTIF_DPD_BELUM_VERIFIKASI`). Registrasi lama tidak punya penanda, jadi **tidak akan** dinotif scheduler.
+> - **Perilaku berubah:** email "Pendaftar Baru" kini benar-benar terkirim ke **semua akun role `SUPER_ADMIN`** (sebelumnya tidak ada yang terkirim). Pastikan itu memang akun yang diinginkan.
+> - Admin DPD/DPC harus punya akun yang ditautkan ke Cabang (`cabangUuid` → `dpdId`/`dpcId`) dan **login ulang**; tanpa itu list kosong dan tidak ada email.
+> - Registrasi tanpa `kode_provinsi`/`kode_kabupaten` hanya terlihat & bisa di-ACC DPP, dan tidak dieskalasi ke DPD.
+> - Scheduler berjalan di dalam proses server (`src/jobs/registrasiSla.scheduler.ts`, cek tiap jam). Jalankan **satu instance** `piki-backend` saja agar tidak dobel (aman karena dedupe via log, tapi tetap sebaiknya satu).
+> - `checkAndBypassSla` (endpoint manual `/registrasi/check-sla`) tidak diubah.
+> - Frontend: lihat **§5.1.1** di bawah (checklist tim frontend).
 
 **Status sekarang (production):** registrasi baru langsung berstatus `PENDING_VERIFIKASI_DPP`, satu kali ACC langsung mengaktifkan KTA. Belum ada pembagian wilayah.
 
@@ -465,6 +489,28 @@ Anggota tanpa role admin hanya dapat memakai endpoint berikut (cukup login, tanp
 **Catatan data:** di production hanya 29/65 registrasi punya `kode_provinsi` dan 21/65 punya `kode_kabupaten`. Registrasi tanpa kode hanya bisa di-ACC DPP.
 
 Hierarki akun DPD/DPC (`Akun.cabangUuid` → `Cabang.dpdId` / `Cabang.dpcId`, token `tingkat`/`dpdId`/`dpcId`) **sudah tersedia** dan bisa langsung dipakai.
+
+### 5.1.1 Checklist tim frontend untuk registrasi & verifikasi (hasil pengecekan repo `frontend`, 2026-11-05)
+
+**Endpoint registrasi yang dipakai frontend hanya 3** (`src/components/auth/register/Step4Pembayaran.tsx`, `src/hooks/api/useVerifikasi.ts`):
+
+| Endpoint | Status setelah perubahan backend |
+|---|---|
+| `POST /registrasi` | Tidak berubah |
+| `GET /registrasi?statusVerifikasi=PENDING_VERIFIKASI_DPP` | Sekarang otomatis difilter wilayah (DPP semua, DPD provinsinya, DPC kab/kotanya). ⚠️ Karena status awal kini dinamis (`PENDING_VERIFIKASI_DPC`/`_DPD`/`_DPP`), filter yang hanya `PENDING_VERIFIKASI_DPP` tidak menampilkan pendaftar berstatus DPC/DPD. Gunakan `statusVerifikasi=PENDING` (semua yang menunggu) — pastikan frontend sudah memakainya |
+| `PATCH /registrasi/:id/verifikasi` | Body lama (`status`, `actorNama`, `catatanVerifikasi`) tetap diterima. **Tidak perlu ubah kode** agar jalan |
+
+**Wajib / syarat agar berjalan (bukan perubahan kode):**
+1. **Akun admin DPD/DPC harus ditautkan ke Cabang** yang punya `dpdId`/`dpcId` (alur §4.2) lewat menu Akun, dan **login ulang** (token lama tidak membawa `tingkat`). Tanpa itu daftar pendaftar kosong dan tidak ada email notifikasi.
+2. Error baru dari backend ditampilkan lewat `errorData.message` yang sudah ada di `useVerifikasi.ts`: `403` (registrasi di luar wilayah). Tidak perlu penanganan baru.
+
+**Disarankan (kosmetik, tidak memblokir):**
+3. `useVerifikasi.ts`: hapus `actorNama: "SUPER_ADMIN"` dari body, sekarang diabaikan backend (nama aktor diambil dari token). Tipe `status` boleh dilonggarkan: `APPROVED_*` apa pun dianggap "setuju" sesuai level akun; hanya `REJECTED` yang menolak.
+4. Teks toast sukses di `dashboard/verifikasi/page.tsx` ("...KTA diterbitkan") tetap benar untuk DPP/DPD/DPC.
+5. `dashboard/verifikasi/page.tsx` baris ~179 membaca `item.dpp` untuk provinsi, padahal backend mengirim field `dpd` (dan tidak mengirim `cabang`). Akibatnya provinsi kosong di tabel. Masalah lama, bukan akibat perubahan ini; perbaikan: baca `item.dpd`.
+6. Menu "Verifikasi Pendaftar" di `AppSidebar.tsx` tampil untuk semua pengguna dashboard. Tidak bermasalah (backend yang membatasi), tapi bisa disembunyikan untuk akun tanpa `REGISTRASI_APPROVE`.
+
+**Tidak perlu dilakukan:** tidak ada endpoint pembayaran/aktivasi-kta/hapus/edit yang dipakai frontend, jadi tidak ada yang rusak akibat endpoint tersebut dikomentari. `GET /:id` dan `PUT /:id` tetap aktif.
 
 ### 5.2 Frontend (di luar backend)
 
