@@ -4,6 +4,14 @@ import { prisma } from "../config/prisma";
 import { clearCachePattern } from "../utils/cacheInvalidation";
 import { ApiResponse } from "../utils/apiResponse";
 
+function resolvePublishedAt(value: unknown): Date | null | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || value === "") return null;
+  const date = value instanceof Date ? value : new Date(String(value));
+  if (Number.isNaN(date.getTime())) return undefined;
+  return date;
+}
+
 export const getNewsUtama = async (req: Request, res: Response) => {
   try {
     const {
@@ -536,7 +544,7 @@ export const createNewsUtama = async (
                 estimateReadingTime(konten),
 
               published_at: isPublished
-                ? new Date()
+                ? (resolvePublishedAt(req.body.published_at) ?? new Date())
                 : null,
 
               published_by: isPublished
@@ -763,9 +771,23 @@ export const updateNewsUtama = async (req: Request, res: Response) => {
         existingNews.statusNewsUtama !== "PUBLISHED" &&
         statusNewsUtama === "PUBLISHED";
 
-      const isUnPublishing =
-        existingNews.statusNewsUtama === "PUBLISHED" &&
-        statusNewsUtama !== "PUBLISHED";
+      const nextStatus = statusNewsUtama || existingNews.statusNewsUtama;
+      const chosenPublishedAt = resolvePublishedAt(req.body.published_at);
+      const publishedPatch: {
+        published_at?: Date | null;
+        published_by?: string | null;
+      } = {};
+
+      if (statusNewsUtama && nextStatus !== "PUBLISHED") {
+        publishedPatch.published_at = null;
+        publishedPatch.published_by = null;
+      } else if (nextStatus === "PUBLISHED" && chosenPublishedAt instanceof Date) {
+        publishedPatch.published_at = chosenPublishedAt;
+        if (!existingNews.published_by) publishedPatch.published_by = userUuid;
+      } else if (isPublishingNow) {
+        publishedPatch.published_at = new Date();
+        publishedPatch.published_by = userUuid;
+      }
 
       // VALIDATE SLUG UNIQUENESS
       if (slug && slug !== existingNews.slug) {
@@ -799,16 +821,7 @@ export const updateNewsUtama = async (req: Request, res: Response) => {
           ...(isSuperAdmin && req.body.cabangUuid !== undefined && { cabangUuid: req.body.cabangUuid }),
 
           update_by: userUuid,
-
-          ...(isPublishingNow && {
-            published_at: new Date(),
-            published_by: userUuid,
-          }),
-
-          ...(isUnPublishing && {
-            published_at: null,
-            published_by: null,
-          }),
+          ...publishedPatch,
         },
       });
 

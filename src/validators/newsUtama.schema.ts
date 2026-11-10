@@ -7,6 +7,17 @@ export const newsStatusEnum = z.enum(
 
 export const uuidSchema = z.string().uuid("Format UUID tidak valid");
 
+export const publishedAtSchema = z
+  .union([
+    z.string().refine(
+      (value) => value.trim() !== "" && !Number.isNaN(Date.parse(value)),
+      "Tanggal terbit tidak valid",
+    ),
+    z.date(),
+    z.null(),
+  ])
+  .optional();
+
 const baseNewsUtamaSchema = z.object({
   judul: z.string().min(5, "Judul minimal 5 karakter"),
   ringkasan: z.string().optional(),
@@ -25,6 +36,7 @@ const baseNewsUtamaSchema = z.object({
     .optional(),
 
   statusNewsUtama: newsStatusEnum.optional(),
+  published_at: publishedAtSchema,
   durasi_baca: z.number().min(1).optional(),
   cabangUuid: uuidSchema.nullable().optional(),
 
@@ -62,6 +74,7 @@ export const updateNewsUtamaSchema = z.object({
   url_thumbnail_img: z.string().nullable().optional(),
 
   statusNewsUtama: newsStatusEnum.optional(),
+  published_at: publishedAtSchema,
 
   tags: z.array(uuidSchema).optional(),
   kategori: z.array(uuidSchema).optional(),
