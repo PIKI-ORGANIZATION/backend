@@ -6,19 +6,25 @@ import { prisma } from "../config/prisma";
  */
 export const getDpdList = async () => {
   // 1. Ambil dari tabel Dpd (38 DPD resmi)
-  const listDpd = await prisma.dpd.findMany({
-    where: {
-      deletedAt: null,
-      dpd: { not: null },
-    },
-    orderBy: {
-      dpd: "asc",
-    },
-    select: {
-      dpd: true,
-      kodeProvinsi: true,
-    },
-  });
+  let listDpd: { dpd: string | null; kodeProvinsi: string | null }[] = [];
+  try {
+    listDpd = await prisma.dpd.findMany({
+      where: {
+        deletedAt: null,
+        dpd: { not: null },
+      } as any,
+      orderBy: {
+        dpd: "asc",
+      },
+      select: {
+        dpd: true,
+        kodeProvinsi: true,
+      },
+    });
+  } catch (error) {
+    // Database yang belum menjalankan migrasi dpd_dpc_hierarki belum memiliki kolom deletedAt
+    console.warn("[masterWilayah] Gagal membaca tabel dpd, memakai data_master_wilayah:", (error as Error).message?.split("\n").pop());
+  }
 
   if (listDpd && listDpd.length > 0) {
     return listDpd.map((item) => ({
@@ -53,10 +59,12 @@ export const getDpcList = async (params: { dpd?: string; kode_provinsi?: string 
 
   // Jika kode_provinsi belum dikirim, cari dari nama DPD di tabel Dpd atau data_master_wilayah
   if (!kodeProv && params.dpd) {
-    const dpdRecord = await prisma.dpd.findFirst({
-      where: { dpd: { equals: params.dpd, mode: "insensitive" } },
-      select: { kodeProvinsi: true },
-    });
+    const dpdRecord = await prisma.dpd
+      .findFirst({
+        where: { dpd: { equals: params.dpd, mode: "insensitive" } },
+        select: { kodeProvinsi: true },
+      })
+      .catch(() => null);
     kodeProv = dpdRecord?.kodeProvinsi || undefined;
 
     if (!kodeProv) {
@@ -83,23 +91,37 @@ export const getDpcList = async (params: { dpd?: string; kode_provinsi?: string 
   }
 
   // 1. Ambil DPC yang sudah terdaftar di tabel dpd_dpc
-  const list = await prisma.dpdDpc.findMany({
-    where,
-    orderBy: {
-      dpc: "asc",
-    },
-    select: {
-      id: true,
-      dpd: true,
-      dpc: true,
-      kode_provinsi: true,
-      kode_kabupaten: true,
-      pengurus: true,
-      no_handphone: true,
-      keterangan: true,
-      penerbitan_sk: true,
-    },
-  });
+  const dpcSelect = {
+    id: true,
+    dpd: true,
+    dpc: true,
+    kode_provinsi: true,
+    kode_kabupaten: true,
+    pengurus: true,
+    no_handphone: true,
+    keterangan: true,
+    penerbitan_sk: true,
+  } as const;
+
+  let list: any[] = [];
+  try {
+    list = await prisma.dpdDpc.findMany({
+      where,
+      orderBy: { dpc: "asc" },
+      select: dpcSelect,
+    });
+  } catch (error) {
+    // Database yang belum menjalankan migrasi dpd_dpc_hierarki belum memiliki kolom deleted_at
+    console.warn("[masterWilayah] Gagal membaca dpd_dpc dengan filter deleted_at, mencoba tanpa filter:", (error as Error).message?.split("\n").pop());
+    const { deleted_at, ...legacyWhere } = where;
+    list = await prisma.dpdDpc
+      .findMany({
+        where: legacyWhere,
+        orderBy: { dpc: "asc" },
+        select: dpcSelect,
+      })
+      .catch(() => []);
+  }
 
   // 2. Jika di tabel dpd_dpc belum ada DPC untuk provinsi ini (misal Jambi, Aceh, Papua, dll.),
   // ambil seluruh kabupaten/kota resmi dari data_master_wilayah agar calon anggota tetap dapat mendaftar!
