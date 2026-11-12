@@ -123,28 +123,38 @@ export const getDpcList = async (params: { dpd?: string; kode_provinsi?: string 
       .catch(() => []);
   }
 
-  // 2. Jika di tabel dpd_dpc belum ada DPC untuk provinsi ini (misal Jambi, Aceh, Papua, dll.),
-  // ambil seluruh kabupaten/kota resmi dari data_master_wilayah agar calon anggota tetap dapat mendaftar!
-  if (list.length === 0 && (kodeProv || params.dpd)) {
-    const masterWhere: any = {
-      kode_kabupaten: { not: null },
-      nama_kabupaten: { not: null },
-    };
-    if (kodeProv) {
-      masterWhere.kode_provinsi = kodeProv;
-    } else if (params.dpd) {
-      masterWhere.nama_provinsi = { equals: params.dpd, mode: "insensitive" };
-    }
+  if (!kodeProv && !params.dpd) return list;
 
-    const masterKabupatens = await prisma.dataMasterWilayah.groupBy({
-      by: ["kode_provinsi", "nama_provinsi", "kode_kabupaten", "nama_kabupaten"],
-      where: masterWhere,
-      orderBy: {
-        nama_kabupaten: "asc",
-      },
-    });
+  // 2. Lengkapi dengan kabupaten/kota resmi dari data_master_wilayah yang DPC-nya belum terbentuk
+  // agar calon anggota di seluruh kabupaten/kota tetap dapat mendaftar.
+  const masterWhere: any = {
+    kode_kabupaten: { not: null },
+    nama_kabupaten: { not: null },
+  };
+  if (kodeProv) {
+    masterWhere.kode_provinsi = kodeProv;
+  } else if (params.dpd) {
+    masterWhere.nama_provinsi = { equals: params.dpd, mode: "insensitive" };
+  }
 
-    return masterKabupatens.map((mk) => ({
+  const masterKabupatens = await prisma.dataMasterWilayah.groupBy({
+    by: ["kode_provinsi", "nama_provinsi", "kode_kabupaten", "nama_kabupaten"],
+    where: masterWhere,
+    orderBy: {
+      nama_kabupaten: "asc",
+    },
+  });
+
+  const kodeTerdaftar = new Set(list.map((item) => item.kode_kabupaten).filter(Boolean));
+  const namaTerdaftar = new Set(list.map((item) => (item.dpc || "").toLowerCase()));
+
+  const belumTerbentuk = masterKabupatens
+    .filter(
+      (mk) =>
+        !kodeTerdaftar.has(mk.kode_kabupaten) &&
+        !namaTerdaftar.has((mk.nama_kabupaten || "").toLowerCase()),
+    )
+    .map((mk) => ({
       id: mk.kode_kabupaten || mk.nama_kabupaten || "",
       dpd: params.dpd || mk.nama_provinsi || "",
       dpc: mk.nama_kabupaten || "",
@@ -155,9 +165,10 @@ export const getDpcList = async (params: { dpd?: string; kode_provinsi?: string 
       keterangan: "DPC Belum Terbentuk",
       penerbitan_sk: null,
     }));
-  }
 
-  return list;
+  return [...list, ...belumTerbentuk].sort((a, b) =>
+    (a.dpc || "").localeCompare(b.dpc || "", "id"),
+  );
 };
 
 /**
