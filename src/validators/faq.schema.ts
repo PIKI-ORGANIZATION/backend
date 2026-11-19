@@ -25,6 +25,8 @@ const baseFAQSchema = z.object({
 
   statusFAQ: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
 
+  cabangUuid: z.string().uuid().optional().nullable(),
+
   ////////////////////////////////////////////////////
   // RELASI OPTIONAL
   ////////////////////////////////////////////////////

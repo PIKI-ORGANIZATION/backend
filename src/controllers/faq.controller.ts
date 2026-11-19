@@ -1,13 +1,26 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
+import {
+  buildCabangRelationScopeWhere,
+  resolveCreateCabangUuid,
+  assertCanReadCabangItem,
+  assertCanWriteCabangItem,
+} from "../middlewares/scope.middleware";
 
 ////////////////////////////////////////////////////
-// GET FAQ (WITH SCOPE)
+// GET FAQ (WITH SCOPE HIERARCHY)
 ////////////////////////////////////////////////////
 export const getFAQ = async (req: Request, res: Response) => {
   try {
-    const { search, currentPage, pageSize, kategori, status } = req.query as any;
+    const { search, currentPage, pageSize, kategori, status, cabangUuid } = req.query as {
+      search?: string;
+      currentPage?: string;
+      pageSize?: string;
+      kategori?: string;
+      status?: string;
+      cabangUuid?: string;
+    };
     const scope = req.scope;
 
     const page = Number(currentPage) || 1;
@@ -34,12 +47,23 @@ export const getFAQ = async (req: Request, res: Response) => {
     }
 
     ////////////////////////////////////////////////////
-    // SCOPE LOGIC
+    // SCOPE LOGIC (DPP > DPD > DPC)
     ////////////////////////////////////////////////////
     if (!scope?.isAdmin) {
       // PUBLIC USER
       whereCondition.isPublish = true;
       whereCondition.statusFAQ = "ACTIVE";
+      if (cabangUuid) {
+        whereCondition.cabangUuid = cabangUuid;
+      }
+    } else {
+      const scopeWhere = buildCabangRelationScopeWhere(scope);
+      const andFilters: any[] = [];
+      if (scopeWhere) andFilters.push(scopeWhere);
+      if (cabangUuid) andFilters.push({ cabangUuid });
+      if (andFilters.length > 0) {
+        whereCondition.AND = andFilters;
+      }
     }
 
     ////////////////////////////////////////////////////
@@ -76,7 +100,7 @@ export const getFAQ = async (req: Request, res: Response) => {
 ////////////////////////////////////////////////////
 export const getFAQById = async (req: Request, res: Response) => {
   try {
-    const uuid = req.params.uuid;
+    const uuid = String(req.params.uuid);
 
     const data = await prisma.fAQ.findUnique({
       where: { uuid },
@@ -86,9 +110,19 @@ export const getFAQById = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "FAQ not found" });
     }
 
+    if (!req.scope?.isAdmin) {
+      if (!data.isPublish || data.statusFAQ !== "ACTIVE") {
+        return res.status(404).json({ message: "FAQ not found" });
+      }
+    } else {
+      await assertCanReadCabangItem(req.scope, data.cabangUuid, "FAQ");
+    }
+
     return res.json(ApiResponse.success({ result: data }));
-  } catch (error) {
-    return res.status(500).json({ message: "Failed to fetch FAQ" });
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to fetch FAQ",
+    });
   }
 };
 
@@ -98,31 +132,39 @@ export const getFAQById = async (req: Request, res: Response) => {
 export const createFAQ = async (req: Request, res: Response) => {
   try {
     const userUuid = req.user?.sub;
-
     const payload = req.body;
 
+    const items = Array.isArray(payload) ? payload : [payload];
+    const resolvedItems = items.map((item: any) => ({
+      ...item,
+      cabangUuid: resolveCreateCabangUuid(req.scope, item.cabangUuid),
+      insert_by: userUuid,
+    }));
+
+    const targetCabangUuids = Array.from(
+      new Set(resolvedItems.map((i) => i.cabangUuid).filter((id): id is string => Boolean(id)))
+    );
+    if (targetCabangUuids.length > 0) {
+      const foundCabangs = await prisma.cabang.findMany({
+        where: { uuid: { in: targetCabangUuids } },
+        select: { uuid: true },
+      });
+      if (foundCabangs.length !== targetCabangUuids.length) {
+        return res.status(404).json({ message: "Cabang tidak ditemukan" });
+      }
+    }
+
     const data = Array.isArray(payload)
-      ? await prisma.fAQ.createMany({
-          data: payload.map((item: any) => ({
-            ...item,
-            insert_by: userUuid,
-          })),
-        })
-      : await prisma.fAQ.create({
-          data: {
-            ...payload,
-            insert_by: userUuid,
-          },
-        });
+      ? await prisma.fAQ.createMany({ data: resolvedItems })
+      : await prisma.fAQ.create({ data: resolvedItems[0] });
 
     return res.status(201).json({
       message: "FAQ created successfully",
       data,
     });
   } catch (error: any) {
-    return res.status(500).json({
-      message: "Failed to create FAQ",
-      error: error.message,
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to create FAQ",
     });
   }
 };
@@ -132,15 +174,37 @@ export const createFAQ = async (req: Request, res: Response) => {
 ////////////////////////////////////////////////////
 export const updateFAQ = async (req: Request, res: Response) => {
   try {
-    const uuid = req.params.uuid;
+    const uuid = String(req.params.uuid);
     const userUuid = req.user?.sub;
+
+    const existing = await prisma.fAQ.findUnique({ where: { uuid } });
+    if (!existing) {
+      return res.status(404).json({ message: "FAQ not found" });
+    }
+
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "FAQ");
+
+    const updateData: any = {
+      ...req.body,
+      update_by: userUuid,
+    };
+    delete updateData.insert_by;
+
+    if (!req.scope?.isSuperAdmin) {
+      delete updateData.cabangUuid;
+    } else if (updateData.cabangUuid) {
+      const targetCabang = await prisma.cabang.findUnique({
+        where: { uuid: String(updateData.cabangUuid) },
+        select: { uuid: true },
+      });
+      if (!targetCabang) {
+        return res.status(404).json({ message: "Cabang tidak ditemukan" });
+      }
+    }
 
     const data = await prisma.fAQ.update({
       where: { uuid },
-      data: {
-        ...req.body,
-        update_by: userUuid,
-      },
+      data: updateData,
     });
 
     return res.json({
@@ -148,9 +212,8 @@ export const updateFAQ = async (req: Request, res: Response) => {
       data,
     });
   } catch (error: any) {
-    return res.status(500).json({
-      message: "Failed to update FAQ",
-      error: error.message,
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to update FAQ",
     });
   }
 };
@@ -160,19 +223,30 @@ export const updateFAQ = async (req: Request, res: Response) => {
 ////////////////////////////////////////////////////
 export const archiveFAQ = async (req: Request, res: Response) => {
   try {
-    const uuid = req.params.uuid;
+    const uuid = String(req.params.uuid);
+    const userUuid = req.user?.sub;
+
+    const existing = await prisma.fAQ.findUnique({ where: { uuid } });
+    if (!existing) {
+      return res.status(404).json({ message: "FAQ not found" });
+    }
+
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "FAQ");
 
     await prisma.fAQ.update({
       where: { uuid },
-      data: { statusFAQ: "ARCHIVED" },
+      data: {
+        statusFAQ: "ARCHIVED",
+        update_by: userUuid,
+      },
     });
 
     return res.json({
       message: "FAQ archived successfully",
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to archive FAQ",
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to archive FAQ",
     });
   }
 };

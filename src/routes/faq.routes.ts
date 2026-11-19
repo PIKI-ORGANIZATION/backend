@@ -36,7 +36,8 @@ router.get("/:uuid", optionalAuthenticate, scope, getFAQById);
 router.post(
   "/",
   authenticate,
-  authorize("FAQ_CREATE", "MANAGE_ALL_CABANG"),
+  scope,
+  authorize("FAQ_CREATE", "FAQ_MANAGE", "MANAGE_ALL_CABANG"),
   validate(createFAQSchema), // sudah support array
   createFAQ
 );
@@ -47,7 +48,8 @@ router.post(
 router.post(
   "/:uuid/update",
   authenticate,
-  authorize("FAQ_UPDATE", "MANAGE_ALL_CABANG"),
+  scope,
+  authorize("FAQ_UPDATE", "FAQ_MANAGE", "MANAGE_ALL_CABANG"),
   validate(updateFAQSchema),
   updateFAQ
 );
@@ -58,7 +60,8 @@ router.post(
 router.post(
   "/:uuid/archive",
   authenticate,
-  authorize("FAQ_ARCHIVE", "MANAGE_ALL_CABANG"),
+  scope,
+  authorize("FAQ_ARCHIVE", "FAQ_MANAGE", "MANAGE_ALL_CABANG"),
   validate(updateFAQSchema),
   archiveFAQ
 );

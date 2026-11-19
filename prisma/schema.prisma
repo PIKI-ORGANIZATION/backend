@@ -147,6 +147,7 @@ model Cabang {
   registrasiList         Registrasi[]
   sejarahList            Sejarah[]
   galeriList             Galeri[]
+  faqList                FAQ[]
 }
 
 model MisiCabang {
@@ -397,11 +398,15 @@ model FAQ {
   urutan     Int      @default(0)
   isPublish  Boolean  @default(true)
   statusFAQ  String   @default("ACTIVE")
+  cabangUuid String?  @db.Uuid
   insert_at  DateTime @default(now())
   insert_by  String?  @db.Uuid
   update_at  DateTime @updatedAt
   update_by  String?  @db.Uuid
+  cabang     Cabang?  @relation(fields: [cabangUuid], references: [uuid])
   insertBy   Akun?    @relation("FAQInsertBy", fields: [insert_by], references: [uuid])
+
+  @@index([cabangUuid])
 }
 
 /// ///////////////////////////////////////////////
