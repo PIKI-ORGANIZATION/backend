@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
 import { clearCachePattern } from "../utils/cacheInvalidation";
-import { CreateSejarahInput } from "../validators/sejarah.schema";
+import { CreateSejarahInput, UpdateSejarahInput } from "../validators/sejarah.schema";
 
 ////////////////////////////////////////////////////
 // URUTAN TAMPIL: urutan (jika diisi) -> tahun -> waktu input
@@ -18,30 +18,47 @@ const clearSejarahCache = async () => {
   await clearCachePattern("cache:*:*/page/*");
 };
 
+const isPengelola = (req: Request) => {
+  const permissions = req.user?.permissions ?? [];
+  return permissions.includes("MANAGE_ALL_CABANG") || permissions.includes("SEJARAH_MANAGE");
+};
+
+const cariSejarah = async (uuid: string) => {
+  const sejarah = await prisma.sejarah.findFirst({
+    where: { uuid, deleted_at: null },
+  });
+  if (!sejarah) {
+    throw Object.assign(new Error("Sejarah tidak ditemukan"), { statusCode: 404 });
+  }
+  return sejarah;
+};
+
 ////////////////////////////////////////////////////
 // GET ALL SEJARAH
-// Publik: hanya ACTIVE. Pengelola CMS dengan ?fixed=all: semua status.
+// Publik: hanya PUBLISHED. Pengelola CMS: ?status=DRAFT|PUBLISHED|ARCHIVED atau ?fixed=all (semua status).
 ////////////////////////////////////////////////////
 export const getSejarah = async (req: Request, res: Response) => {
   try {
-    const { search, currentPage, pageSize, fixed } = req.query as {
+    const { search, currentPage, pageSize, fixed, status } = req.query as {
       search?: string;
       currentPage?: string;
       pageSize?: string;
       fixed?: string;
+      status?: string;
     };
 
     const page = Number(currentPage) || 1;
     const size = Number(pageSize) || 10;
     const skip = (page - 1) * size;
 
-    const permissions = req.user?.permissions ?? [];
-    const isPengelola = permissions.includes("MANAGE_ALL_CABANG") || permissions.includes("SEJARAH_MANAGE");
+    const whereCondition: any = { deleted_at: null };
 
-    const whereCondition: any = {};
-
-    if (!(isPengelola && fixed === "all")) {
-      whereCondition.statusSejarah = "ACTIVE";
+    if (!isPengelola(req)) {
+      whereCondition.statusSejarah = "PUBLISHED";
+    } else if (status) {
+      whereCondition.statusSejarah = status.toUpperCase();
+    } else if (fixed !== "all") {
+      whereCondition.statusSejarah = "PUBLISHED";
     }
 
     if (search) {
@@ -85,29 +102,17 @@ export const getSejarah = async (req: Request, res: Response) => {
 ////////////////////////////////////////////////////
 export const getSejarahById = async (req: Request, res: Response) => {
   try {
-    const uuid = String(req.params.uuid);
-
-    const sejarah = await prisma.sejarah.findUnique({
-      where: { uuid },
-    });
-
-    if (!sejarah) {
-      return res.status(404).json({
-        message: "Sejarah tidak ditemukan",
-      });
-    }
-
+    const sejarah = await cariSejarah(String(req.params.uuid));
     return res.status(200).json(ApiResponse.success(sejarah));
   } catch (error: any) {
-    return res.status(500).json({
-      message: "Failed to fetch sejarah",
-      error: error.message,
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to fetch sejarah",
     });
   }
 };
 
 ////////////////////////////////////////////////////
-// CREATE SEJARAH (satu data atau banyak sekaligus)
+// CREATE SEJARAH (satu data atau banyak sekaligus; default status DRAFT)
 ////////////////////////////////////////////////////
 export const createSejarah = async (req: Request, res: Response) => {
   try {
@@ -118,6 +123,7 @@ export const createSejarah = async (req: Request, res: Response) => {
     const result = await prisma.sejarah.createMany({
       data: data.map((item) => ({
         ...item,
+        statusSejarah: item.statusSejarah ?? "DRAFT",
         insert_by: user.sub,
       })),
     });
@@ -130,7 +136,7 @@ export const createSejarah = async (req: Request, res: Response) => {
       })
     );
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message || "Failed to create sejarah",
     });
   }
@@ -143,21 +149,20 @@ export const updateSejarah = async (req: Request, res: Response) => {
   try {
     const uuid = String(req.params.uuid);
     const user = req.user!;
+    const body = req.body as UpdateSejarahInput;
 
-    const existing = await prisma.sejarah.findUnique({
-      where: { uuid },
-    });
+    const existing = await cariSejarah(uuid);
 
-    if (!existing) {
-      return res.status(404).json({
-        message: "Sejarah tidak ditemukan",
+    if (existing.statusSejarah === "ARCHIVED" && body.statusSejarah === "DRAFT") {
+      return res.status(400).json({
+        message: "Item yang diarsipkan hanya bisa dikembalikan ke PUBLISHED",
       });
     }
 
     const updated = await prisma.sejarah.update({
       where: { uuid },
       data: {
-        ...req.body,
+        ...body,
         update_by: user.sub,
       },
     });
@@ -171,35 +176,86 @@ export const updateSejarah = async (req: Request, res: Response) => {
       })
     );
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message || "Failed to update sejarah",
     });
   }
 };
 
 ////////////////////////////////////////////////////
-// DELETE SEJARAH (nonaktifkan, data tidak dihapus permanen)
+// TOGGLE STATUS: PUBLISHED <-> DRAFT (ARCHIVED -> PUBLISHED)
+////////////////////////////////////////////////////
+export const toggleStatusSejarah = async (req: Request, res: Response) => {
+  try {
+    const uuid = String(req.params.uuid);
+    const user = req.user!;
+    const existing = await cariSejarah(uuid);
+
+    const statusSejarah = existing.statusSejarah === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
+
+    const updated = await prisma.sejarah.update({
+      where: { uuid },
+      data: {
+        statusSejarah,
+        update_by: user.sub,
+      },
+    });
+
+    await clearSejarahCache();
+
+    return res.status(200).json(
+      ApiResponse.success(updated, `Status diubah menjadi ${statusSejarah}`)
+    );
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to toggle status sejarah",
+    });
+  }
+};
+
+////////////////////////////////////////////////////
+// ARSIPKAN SEJARAH (bisa dikembalikan ke PUBLISHED)
+////////////////////////////////////////////////////
+export const archiveSejarah = async (req: Request, res: Response) => {
+  try {
+    const uuid = String(req.params.uuid);
+    const user = req.user!;
+    await cariSejarah(uuid);
+
+    const updated = await prisma.sejarah.update({
+      where: { uuid },
+      data: {
+        statusSejarah: "ARCHIVED",
+        update_by: user.sub,
+      },
+    });
+
+    await clearSejarahCache();
+
+    return res.status(200).json(
+      ApiResponse.success(updated, "Sejarah berhasil diarsipkan")
+    );
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to archive sejarah",
+    });
+  }
+};
+
+////////////////////////////////////////////////////
+// DELETE SEJARAH (soft delete, hilang dari CMS & publik)
 ////////////////////////////////////////////////////
 export const deleteSejarah = async (req: Request, res: Response) => {
   try {
     const uuid = String(req.params.uuid);
     const user = req.user!;
-
-    const existing = await prisma.sejarah.findUnique({
-      where: { uuid },
-    });
-
-    if (!existing) {
-      return res.status(404).json({
-        message: "Sejarah tidak ditemukan",
-      });
-    }
+    await cariSejarah(uuid);
 
     await prisma.sejarah.update({
       where: { uuid },
       data: {
-        statusSejarah: "NON_ACTIVE",
-        update_by: user.sub,
+        deleted_at: new Date(),
+        deleted_by: user.sub,
       },
     });
 
@@ -211,7 +267,7 @@ export const deleteSejarah = async (req: Request, res: Response) => {
       })
     );
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message || "Failed to delete sejarah",
     });
   }

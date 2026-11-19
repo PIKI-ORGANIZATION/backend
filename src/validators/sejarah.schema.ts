@@ -8,6 +8,11 @@ export const uuidParamSchema = z.object({
 });
 
 ////////////////////////////////////////////////////
+// ENUM
+////////////////////////////////////////////////////
+export const statusSejarahEnum = z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]);
+
+////////////////////////////////////////////////////
 // BASE SEJARAH SCHEMA
 ////////////////////////////////////////////////////
 const baseSejarahSchema = z.object({
@@ -20,26 +25,30 @@ const baseSejarahSchema = z.object({
   gambar: z.string().trim().nullable().optional(),
 
   urutan: z.coerce.number().int().nullable().optional(),
-
-  statusSejarah: z.enum(["ACTIVE", "NON_ACTIVE"]).optional(),
 });
 
 ////////////////////////////////////////////////////
 // CREATE (satu data atau banyak sekaligus)
 ////////////////////////////////////////////////////
+const createItemSchema = baseSejarahSchema.extend({
+  statusSejarah: z.enum(["DRAFT", "PUBLISHED"]).optional(),
+});
+
 export const createSejarahSchema = z.union([
-  baseSejarahSchema,
-  z.array(baseSejarahSchema).min(1),
+  createItemSchema,
+  z.array(createItemSchema).min(1),
 ]);
 
 ////////////////////////////////////////////////////
 // UPDATE
 ////////////////////////////////////////////////////
-export const updateSejarahSchema = baseSejarahSchema.partial();
+export const updateSejarahSchema = baseSejarahSchema.partial().extend({
+  statusSejarah: statusSejarahEnum.optional(),
+});
 
 ////////////////////////////////////////////////////
 // TYPES
 ////////////////////////////////////////////////////
-export type CreateSejarahInput = z.infer<typeof baseSejarahSchema>;
+export type CreateSejarahInput = z.infer<typeof createItemSchema>;
 
 export type UpdateSejarahInput = z.infer<typeof updateSejarahSchema>;

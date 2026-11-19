@@ -3,10 +3,10 @@ import prisma from '../config/prisma';
 import { ApiResponse } from '../utils/apiResponse';
 import { SEJARAH_ORDER_BY } from './sejarah.controller';
 
-// Timeline Sejarah PIKI yang tampil di web (hanya ACTIVE)
+// Timeline Sejarah PIKI yang tampil di web (hanya PUBLISHED & belum dihapus)
 const getSejarahAktif = () =>
   prisma.sejarah.findMany({
-    where: { statusSejarah: 'ACTIVE' },
+    where: { statusSejarah: 'PUBLISHED', deleted_at: null },
     orderBy: SEJARAH_ORDER_BY,
   });
 

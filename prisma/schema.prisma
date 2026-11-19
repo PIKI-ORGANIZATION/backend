@@ -158,17 +158,19 @@ model MisiCabang {
 
 // Sejarah PIKI (nasional, dikelola DPP)
 model Sejarah {
-  uuid              String   @id @default(uuid()) @db.Uuid
+  uuid              String    @id @default(uuid()) @db.Uuid
   timeline          String
   judul             String
   deskripsiTimeline String
   gambar            String?
   urutan            Int?
-  statusSejarah     String   @default("ACTIVE")
-  insert_at         DateTime @default(now())
-  insert_by         String?  @db.Uuid
-  update_at         DateTime @updatedAt
-  update_by         String?  @db.Uuid
+  statusSejarah     String    @default("DRAFT") // DRAFT | PUBLISHED | ARCHIVED
+  deleted_at        DateTime?
+  deleted_by        String?   @db.Uuid
+  insert_at         DateTime  @default(now())
+  insert_by         String?   @db.Uuid
+  update_at         DateTime  @updatedAt
+  update_by         String?   @db.Uuid
 
   @@map("sejarah")
 }
