@@ -1,25 +1,23 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
+import { buildAnggotaScopeWhere } from "../middlewares/scope.middleware";
 
 export const getDashboardStats = async (req: Request, res: Response) => {
   try {
     const scope = req.scope;
 
     // Default filters
-    const anggotaWhere: any = {};
+    const scopeCondition = await buildAnggotaScopeWhere(scope);
+    const anggotaWhere: any = scopeCondition ? { ...scopeCondition } : {};
     const newsWhere: any = {};
     const pendingWhere: any = {};
 
     if (!scope?.isAdmin) {
       // Public / Member level scope (if they ever hit this endpoint)
-      anggotaWhere.isApprovedByDPC = true;
-      anggotaWhere.isApprovedByDPP = true;
-      
       pendingWhere.isApprovedByDPC = false; // dummy for public
     } else {
       if (!scope.isSuperAdmin) {
         // ADMIN_CABANG
-        anggotaWhere.cabangUuid = scope.cabangId;
         newsWhere.cabangUuid = scope.cabangId;
         
         pendingWhere.isApprovedByDPC = false;

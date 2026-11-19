@@ -86,7 +86,7 @@ router.get(
 router.get(
   "/export",
   authenticate,
-  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "SENIOR_READ", "REGISTRASI_APPROVE", "MANAGE_ALL_CABANG"),
   scope,
   exportAnggotas
 );
@@ -97,7 +97,7 @@ router.get(
 router.get(
   "/export/template",
   authenticate,
-  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "SENIOR_READ", "REGISTRASI_APPROVE", "MANAGE_ALL_CABANG"),
   downloadTemplate
 );
 
@@ -107,7 +107,7 @@ router.get(
 router.get(
   "/export/download/:filename",
   authenticate,
-  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "SENIOR_READ", "REGISTRASI_APPROVE", "MANAGE_ALL_CABANG"),
   downloadExport
 );
 
@@ -117,7 +117,7 @@ router.get(
 router.post(
   "/import/parse-headers",
   authenticate,
-  authorize("ANGGOTA_CREATE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_CREATE", "SENIOR_CREATE", "MANAGE_ALL_CABANG"),
   excelUpload.single("file"),
   parseHeaders
 );
@@ -128,7 +128,7 @@ router.post(
 router.post(
   "/import/preview",
   authenticate,
-  authorize("ANGGOTA_CREATE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_CREATE", "SENIOR_CREATE", "MANAGE_ALL_CABANG"),
   excelUpload.single("file"),
   previewImport
 );
@@ -139,7 +139,7 @@ router.post(
 router.post(
   "/import/confirm",
   authenticate,
-  authorize("ANGGOTA_CREATE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_CREATE", "SENIOR_CREATE", "MANAGE_ALL_CABANG"),
   scope,
   confirmImport
 );
@@ -150,7 +150,7 @@ router.post(
 router.get(
   "/job/:jobId",
   authenticate,
-  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "SENIOR_READ", "REGISTRASI_APPROVE", "MANAGE_ALL_CABANG"),
   getJobStatus
 );
 
@@ -160,7 +160,7 @@ router.get(
 router.post(
   "/",
   authenticate,
-  authorize("ANGGOTA_CREATE"),
+  authorize("ANGGOTA_CREATE", "SENIOR_CREATE", "MANAGE_ALL_CABANG"),
   validate(createAnggotaSchema), // default body
   createAnggota
 );
@@ -171,7 +171,7 @@ router.post(
 router.get(
   "/",
   authenticate,
-  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "SENIOR_READ", "REGISTRASI_APPROVE", "MANAGE_ALL_CABANG"),
   scope,
   getAnggotas
 );
@@ -182,7 +182,8 @@ router.get(
 router.get(
   "/search",
   authenticate,
-  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "SENIOR_READ", "REGISTRASI_APPROVE", "MANAGE_ALL_CABANG"),
+  scope,
   getAnggotaSearch
 );
 
@@ -192,7 +193,8 @@ router.get(
 router.get(
   "/:uuid",
   authenticate,
-  authorize("ANGGOTA_READ", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_READ", "SENIOR_READ", "REGISTRASI_APPROVE", "MANAGE_ALL_CABANG"),
+  scope,
   getAnggotaById
 );
 
@@ -202,7 +204,7 @@ router.get(
 router.post(
   "/:uuid",
   authenticate,
-  authorize("ANGGOTA_UPDATE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_UPDATE", "SENIOR_UPDATE", "MANAGE_ALL_CABANG"),
   validate(uuidParamSchema, "params"),
   validate(updateAnggotaSchema),
   updateAnggota
@@ -214,7 +216,7 @@ router.post(
 router.post(
   "/:uuid/approve",
   authenticate,
-  authorize("ANGGOTA_APPROVE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_APPROVE", "SENIOR_APPROVE", "REGISTRASI_APPROVE", "MANAGE_ALL_CABANG"),
   validate(uuidParamSchema, "params"),
   approve
 );
@@ -225,7 +227,7 @@ router.post(
 router.post(
   "/:uuid/public-link",
   authenticate,
-  authorize("ANGGOTA_UPDATE", "ANGGOTA_APPROVE", "MANAGE_ALL_CABANG"),
+  authorize("ANGGOTA_UPDATE", "SENIOR_UPDATE", "ANGGOTA_APPROVE", "SENIOR_APPROVE", "MANAGE_ALL_CABANG"),
   validate(uuidParamSchema, "params"),
   generatePublicLink
 );

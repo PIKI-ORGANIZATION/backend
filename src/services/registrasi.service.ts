@@ -737,6 +737,22 @@ export const aktivasiKta = async (params: {
     }
 
     // 4. Buat record Anggota baru jika belum ada
+    let resolvedCabangUuid: string | null = reg.cabangUuid || null;
+    if (!resolvedCabangUuid && reg.kode_kabupaten) {
+      const dpcCabang = await tx.cabang.findFirst({
+        where: { dpcRef: { is: { kode_kabupaten: reg.kode_kabupaten } } },
+        select: { uuid: true },
+      });
+      resolvedCabangUuid = dpcCabang?.uuid ?? null;
+    }
+    if (!resolvedCabangUuid && reg.kode_provinsi) {
+      const dpdCabang = await tx.cabang.findFirst({
+        where: { dpdRef: { is: { kodeProvinsi: reg.kode_provinsi } } },
+        select: { uuid: true },
+      });
+      resolvedCabangUuid = dpdCabang?.uuid ?? null;
+    }
+
     let anggotaUuid = reg.anggotaUuid;
     if (!anggotaUuid) {
       const newAnggota = await tx.anggota.create({
@@ -745,8 +761,9 @@ export const aktivasiKta = async (params: {
           tanggalLahir: reg.tanggalLahir,
           alamat: reg.alamatDomisili,
           noWa: reg.noWa,
-          kotaDomisili: reg.kotaDomisili || null,
-          cabangUuid: reg.cabangUuid || null,
+          provinsi: reg.dpd || null,
+          kotaDomisili: reg.kotaDomisili || reg.dpc || null,
+          cabangUuid: resolvedCabangUuid,
           pendidikanUuid: reg.pendidikanUuid || null,
           pekerjaanUuid: reg.pekerjaanUuid || null,
           bidangMinatUuid: reg.bidangMinatUuid || null,
@@ -772,6 +789,8 @@ export const aktivasiKta = async (params: {
           fileKtaUrl,
           tglAktivasiKta: new Date(),
           fileKtpUrl: reg.fileKtpUrl,
+          ...(resolvedCabangUuid ? { cabangUuid: resolvedCabangUuid } : {}),
+          ...(reg.dpd ? { provinsi: reg.dpd } : {}),
         }
       });
     }

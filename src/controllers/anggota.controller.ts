@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
+import { buildAnggotaScopeWhere } from "../middlewares/scope.middleware";
 
 /** Resolve Anggota UUID from Akun UUID (for audit FK fields) */
 async function getAnggotaUuid(akunUuid: string): Promise<string | null> {
@@ -178,19 +179,9 @@ export const getAnggotas = async (req: Request, res: Response) => {
     // ROLE BASED (SCOPE)
     ////////////////////////////////////////////////////
 
-    if (!scope?.isAdmin) {
-      // PUBLIC
-      andConditions.push({
-        isApprovedByDPC: true,
-        isApprovedByDPP: true,
-      });
-    } else {
-      // 🛠 ADMIN
-
-      if (!scope.isSuperAdmin) {
-        // ADMIN CABANG
-        andConditions.push({ cabangUuid: scope.cabangId });
-      }
+    const scopeCondition = await buildAnggotaScopeWhere(scope);
+    if (scopeCondition) {
+      andConditions.push(scopeCondition);
     }
 
     if (andConditions.length > 0) {
@@ -213,6 +204,16 @@ export const getAnggotas = async (req: Request, res: Response) => {
               email: true,
               username: true,
               statusAkun: true,
+              registrasiList: {
+                select: {
+                  id: true,
+                  dpd: true,
+                  dpc: true,
+                  kode_provinsi: true,
+                  kode_kabupaten: true,
+                  statusVerifikasi: true,
+                },
+              },
             },
           },
           strukturDPP: {
