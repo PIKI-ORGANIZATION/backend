@@ -220,3 +220,156 @@ export const buildAnggotaScopeWhere = async (
 
   return { uuid: "00000000-0000-0000-0000-000000000000" };
 };
+
+const scopeHttpError = (statusCode: number, message: string) =>
+  Object.assign(new Error(message), { statusCode });
+
+/**
+ * Membangun filter Prisma untuk tabel `Cabang` sesuai hierarki DPP > DPD > DPC:
+ * - DPP (SuperAdmin): `null` (semua cabang).
+ * - Admin DPD: cabang miliknya sendiri + seluruh cabang DPC di provinsinya (`kodeProvinsi`).
+ * - Admin DPC: hanya cabang miliknya sendiri (`kodeKabupaten` / `cabangId`).
+ */
+export const buildCabangHierarchyWhere = (
+  scope?: RequestScope
+): Record<string, any> | null => {
+  if (!scope?.isAdmin || scope.isSuperAdmin) {
+    return null;
+  }
+
+  if (scope.tingkat === "DPD") {
+    const orConditions: any[] = [];
+    if (scope.kodeProvinsi) {
+      orConditions.push(
+        { dpdRef: { is: { kodeProvinsi: scope.kodeProvinsi } } },
+        { dpcRef: { is: { kode_provinsi: scope.kodeProvinsi } } }
+      );
+    }
+    if (scope.cabangId) {
+      orConditions.push({ uuid: scope.cabangId });
+    }
+    return orConditions.length > 0
+      ? { OR: orConditions }
+      : { uuid: "00000000-0000-0000-0000-000000000000" };
+  }
+
+  if (scope.tingkat === "DPC") {
+    const orConditions: any[] = [];
+    if (scope.kodeKabupaten) {
+      orConditions.push({
+        dpcRef: { is: { kode_kabupaten: scope.kodeKabupaten } },
+      });
+    }
+    if (scope.cabangId) {
+      orConditions.push({ uuid: scope.cabangId });
+    }
+    return orConditions.length > 0
+      ? { OR: orConditions }
+      : { uuid: "00000000-0000-0000-0000-000000000000" };
+  }
+
+  if (scope.cabangId) {
+    return { uuid: scope.cabangId };
+  }
+
+  return { uuid: "00000000-0000-0000-0000-000000000000" };
+};
+
+/**
+ * Membangun filter Prisma untuk model yang berelasi ke `Cabang` (`cabangUuid` + relasi `cabang`).
+ * - SuperAdmin (DPP): `null` (melihat semua: Pusat + DPD + DPC).
+ * - Admin DPD: melihat item cabangnya + seluruh DPC di provinsinya.
+ * - Admin DPC: hanya melihat item cabangnya sendiri.
+ */
+export const buildCabangRelationScopeWhere = (
+  scope?: RequestScope
+): Record<string, any> | null => {
+  const cabangWhere = buildCabangHierarchyWhere(scope);
+  if (!cabangWhere) return null;
+
+  if (scope?.cabangId) {
+    return {
+      OR: [
+        { cabangUuid: scope.cabangId },
+        { cabang: { is: cabangWhere } },
+      ],
+    };
+  }
+
+  return { cabang: { is: cabangWhere } };
+};
+
+/**
+ * Menentukan `cabangUuid` saat membuat item CMS baru:
+ * - SuperAdmin (DPP): memakai `bodyCabangUuid` jika dikirim, atau default `scope.cabangId` / `null`.
+ * - Admin DPD / DPC: selalu dikunci ke `scope.cabangId` milik akun (wajib tertaut ke Cabang).
+ */
+export const resolveCreateCabangUuid = (
+  scope?: RequestScope,
+  bodyCabangUuid?: string | null
+): string | null => {
+  if (scope?.isSuperAdmin) {
+    return bodyCabangUuid !== undefined ? bodyCabangUuid : (scope.cabangId ?? null);
+  }
+
+  if (!scope?.cabangId) {
+    throw scopeHttpError(
+      403,
+      "Akun admin wilayah belum ditautkan ke Cabang. Hubungi DPP."
+    );
+  }
+
+  return scope.cabangId;
+};
+
+/**
+ * Mengecek apakah admin berhak membaca detail item berdasarkan `cabangUuid` (hierarki DPP > DPD > DPC).
+ */
+export const assertCanReadCabangItem = async (
+  scope: RequestScope | undefined,
+  targetCabangUuid: string | null | undefined,
+  label = "data"
+) => {
+  if (!scope?.isAdmin || scope.isSuperAdmin) return;
+
+  if (scope.cabangId && targetCabangUuid === scope.cabangId) return;
+
+  if (targetCabangUuid && scope.tingkat === "DPD" && scope.kodeProvinsi) {
+    const match = await prisma.cabang.findFirst({
+      where: {
+        uuid: targetCabangUuid,
+        OR: [
+          { dpdRef: { is: { kodeProvinsi: scope.kodeProvinsi } } },
+          { dpcRef: { is: { kode_provinsi: scope.kodeProvinsi } } },
+        ],
+      },
+      select: { uuid: true },
+    });
+    if (match) return;
+  }
+
+  throw scopeHttpError(
+    403,
+    `Akses ditolak: Anda tidak memiliki izin melihat ${label} wilayah lain atau pusat`
+  );
+};
+
+/**
+ * Mengecek apakah admin berhak mengubah/mengarsipkan/menghapus item milik `targetCabangUuid`.
+ * - SuperAdmin (DPP): bebas mengelola seluruh wilayah.
+ * - Admin DPD / DPC: hanya boleh mengelola data milik cabangnya sendiri (`targetCabangUuid === scope.cabangId`).
+ */
+export const assertCanWriteCabangItem = (
+  scope: RequestScope | undefined,
+  targetCabangUuid: string | null | undefined,
+  label = "data"
+) => {
+  if (scope?.isSuperAdmin) return;
+
+  if (!scope?.cabangId || targetCabangUuid !== scope.cabangId) {
+    throw scopeHttpError(
+      403,
+      `Akses ditolak: Anda tidak memiliki izin mengelola ${label} cabang lain atau pusat`
+    );
+  }
+};

@@ -15,6 +15,7 @@ import { validate } from '../middlewares/validate.middleware';
 import { authenticate } from '../middlewares/auth.middleware';
 import { authorize } from '../middlewares/authorize.middleware';
 import { optionalAuthenticate } from '../middlewares/optionalAuthenticate.middleware';
+import { scope } from '../middlewares/scope.middleware';
 import {
   createGaleriSchema,
   updateGaleriSchema,
@@ -25,12 +26,12 @@ import {
 const router = Router();
 
 // CMS: DPP (MANAGE_ALL_CABANG) atau role dengan GALERI_MANAGE (ADMIN_CABANG, KETUA_CABANG)
-const pengelola = [authenticate, authorize("MANAGE_ALL_CABANG", "GALERI_MANAGE")];
+const pengelola = [authenticate, scope, authorize("MANAGE_ALL_CABANG", "GALERI_MANAGE")];
 const validId = validate(idParamSchema, "params");
 
 // Publik: item PUBLISHED. Parameter: type, kategori, penempatan, search, currentPage, pageSize
 // Khusus pengelola: fixed=all (semua status) atau status=DRAFT|PUBLISHED|ARCHIVED
-router.get("/", optionalAuthenticate, getGaleri);
+router.get("/", optionalAuthenticate, scope, getGaleri);
 
 router.get("/stats", ...pengelola, getGaleriStats);
 

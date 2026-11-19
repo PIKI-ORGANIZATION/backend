@@ -145,6 +145,8 @@ model Cabang {
   newsList               NewsUtama[]
   periodeList            PeriodeKepengurusan[]
   registrasiList         Registrasi[]
+  sejarahList            Sejarah[]
+  galeriList             Galeri[]
 }
 
 model MisiCabang {
@@ -156,7 +158,7 @@ model MisiCabang {
   cabang      Cabang   @relation(fields: [cabang_uuid], references: [uuid])
 }
 
-// Sejarah PIKI (nasional, dikelola DPP)
+// Sejarah PIKI (nasional atau per cabang DPP/DPD/DPC)
 model Sejarah {
   uuid              String    @id @default(uuid()) @db.Uuid
   timeline          String
@@ -165,13 +167,16 @@ model Sejarah {
   gambar            String?
   urutan            Int?
   statusSejarah     String    @default("DRAFT") // DRAFT | PUBLISHED | ARCHIVED
+  cabangUuid        String?   @db.Uuid
   deleted_at        DateTime?
   deleted_by        String?   @db.Uuid
   insert_at         DateTime  @default(now())
   insert_by         String?   @db.Uuid
   update_at         DateTime  @updatedAt
   update_by         String?   @db.Uuid
+  cabang            Cabang?   @relation(fields: [cabangUuid], references: [uuid])
 
+  @@index([cabangUuid])
   @@map("sejarah")
 }
 
@@ -193,6 +198,7 @@ model Galeri {
   featured         Boolean   @default(false)
   urutan           Int?
   status           String    @default("DRAFT") // DRAFT | PUBLISHED | ARCHIVED
+  cabangUuid       String?   @db.Uuid
   published_at     DateTime?
   published_by     String?   @db.Uuid
   deleted_at       DateTime?
@@ -201,8 +207,10 @@ model Galeri {
   insert_by        String?   @db.Uuid
   update_at        DateTime  @updatedAt
   update_by        String?   @db.Uuid
+  cabang           Cabang?   @relation(fields: [cabangUuid], references: [uuid])
 
   @@index([type, status])
+  @@index([cabangUuid])
   @@map("galeri")
 }
 

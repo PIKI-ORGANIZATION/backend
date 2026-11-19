@@ -5,6 +5,12 @@ import { ApiResponse } from "../utils/apiResponse";
 import { clearCachePattern } from "../utils/cacheInvalidation";
 import { normalisasiLink, ambilJudulYoutube } from "../utils/linkMedia";
 import { CreateGaleriInput, UpdateGaleriInput } from "../validators/galeri.schema";
+import {
+  buildCabangRelationScopeWhere,
+  resolveCreateCabangUuid,
+  assertCanReadCabangItem,
+  assertCanWriteCabangItem,
+} from "../middlewares/scope.middleware";
 
 ////////////////////////////////////////////////////
 // URUTAN TAMPIL: urutan (jika diisi) -> tanggal kegiatan terbaru -> terbaru dibuat
@@ -60,6 +66,7 @@ const keGaleriItem = (g: Galeri) => ({
   featured: g.featured,
   urutan: g.urutan,
   status: g.status,
+  cabangUuid: g.cabangUuid ?? null,
   publishedAt: g.published_at,
   createdAt: g.insert_at,
   updatedAt: g.update_at,
@@ -130,7 +137,7 @@ const cariGaleri = async (id: string) => {
 ////////////////////////////////////////////////////
 export const getGaleri = async (req: Request, res: Response) => {
   try {
-    const { search, currentPage, pageSize, fixed, type, kategori, penempatan, status } = req.query as {
+    const { search, currentPage, pageSize, fixed, type, kategori, penempatan, status, cabangUuid } = req.query as {
       search?: string;
       currentPage?: string;
       pageSize?: string;
@@ -139,6 +146,7 @@ export const getGaleri = async (req: Request, res: Response) => {
       kategori?: string;
       penempatan?: string;
       status?: string;
+      cabangUuid?: string;
     };
 
     const page = Number(currentPage) || 1;
@@ -146,13 +154,23 @@ export const getGaleri = async (req: Request, res: Response) => {
     const skip = (page - 1) * size;
 
     const whereCondition: any = { deleted_at: null };
+    const scope = req.scope;
 
     if (!isPengelola(req)) {
       whereCondition.status = "PUBLISHED";
-    } else if (status) {
-      whereCondition.status = status.toUpperCase();
-    } else if (fixed !== "all") {
-      whereCondition.status = "PUBLISHED";
+      if (cabangUuid) whereCondition.cabangUuid = cabangUuid;
+    } else {
+      const scopeWhere = buildCabangRelationScopeWhere(scope);
+      const andFilters: any[] = [];
+      if (scopeWhere) andFilters.push(scopeWhere);
+      if (cabangUuid) andFilters.push({ cabangUuid });
+      if (andFilters.length > 0) whereCondition.AND = andFilters;
+
+      if (status) {
+        whereCondition.status = status.toUpperCase();
+      } else if (fixed !== "all") {
+        whereCondition.status = "PUBLISHED";
+      }
     }
 
     if (type) whereCondition.type = type.toUpperCase();
@@ -199,10 +217,11 @@ export const getGaleri = async (req: Request, res: Response) => {
 ////////////////////////////////////////////////////
 // STATISTIK DASHBOARD (format GaleriStats frontend)
 ////////////////////////////////////////////////////
-export const getGaleriStats = async (_req: Request, res: Response) => {
+export const getGaleriStats = async (req: Request, res: Response) => {
   try {
+    const scopeWhere = buildCabangRelationScopeWhere(req.scope);
     const items = await prisma.galeri.findMany({
-      where: { deleted_at: null },
+      where: { deleted_at: null, ...(scopeWhere ?? {}) },
       select: { type: true, status: true, featured: true },
     });
 
@@ -234,6 +253,7 @@ export const getGaleriStats = async (_req: Request, res: Response) => {
 export const getGaleriById = async (req: Request, res: Response) => {
   try {
     const galeri = await cariGaleri(String(req.params.id));
+    await assertCanReadCabangItem(req.scope, galeri.cabangUuid, "item galeri");
     return res.status(200).json(ApiResponse.success(keGaleriItem(galeri)));
   } catch (error: any) {
     return kirimError(res, error, "Failed to fetch galeri");
@@ -290,7 +310,11 @@ export const createGaleri = async (req: Request, res: Response) => {
     }
 
     const siap = await Promise.all(
-      data.map(async (item) => ({ ...item, ...(await siapkanMedia(item)) }))
+      data.map(async (item) => ({
+        ...item,
+        ...(await siapkanMedia(item)),
+        cabangUuid: resolveCreateCabangUuid(req.scope, item.cabangUuid),
+      }))
     );
 
     ////////////////////////////////////////////////////
@@ -303,8 +327,12 @@ export const createGaleri = async (req: Request, res: Response) => {
     for (const s of siap) await cekKontenDobel(s.type, s.kontenId);
 
     const created = await prisma.$transaction(async (tx) => {
-      if (siap.some((s) => s.featured)) {
-        await tx.galeri.updateMany({ where: { featured: true }, data: { featured: false } });
+      const featuredItem = siap.find((s) => s.featured);
+      if (featuredItem) {
+        await tx.galeri.updateMany({
+          where: { featured: true, cabangUuid: featuredItem.cabangUuid },
+          data: { featured: false },
+        });
       }
 
       const hasil = [];
@@ -328,6 +356,7 @@ export const createGaleri = async (req: Request, res: Response) => {
               featured: s.featured ?? false,
               urutan: s.urutan ?? null,
               status,
+              cabangUuid: s.cabangUuid,
               ...(status === "PUBLISHED" && { published_at: new Date(), published_by: user.sub }),
               insert_by: user.sub,
             },
@@ -360,6 +389,7 @@ export const updateGaleri = async (req: Request, res: Response) => {
     const body = req.body as UpdateGaleriInput;
 
     const existing = await cariGaleri(id);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "item galeri");
 
     ////////////////////////////////////////////////////
     // VALIDASI TRANSISI STATUS
@@ -367,6 +397,11 @@ export const updateGaleri = async (req: Request, res: Response) => {
     if (existing.status === "ARCHIVED" && body.status === "DRAFT") {
       throw httpError(400, "Item yang diarsipkan hanya bisa dikembalikan ke PUBLISHED");
     }
+
+    const nextCabangUuid =
+      req.scope?.isSuperAdmin && body.cabangUuid !== undefined
+        ? body.cabangUuid
+        : existing.cabangUuid;
 
     const data: any = {
       ...(body.deskripsi !== undefined && { deskripsi: body.deskripsi || null }),
@@ -378,6 +413,7 @@ export const updateGaleri = async (req: Request, res: Response) => {
       ...(body.urutan !== undefined && { urutan: body.urutan }),
       ...(body.featured !== undefined && { featured: body.featured }),
       ...(body.status && { status: body.status }),
+      ...(req.scope?.isSuperAdmin && body.cabangUuid !== undefined && { cabangUuid: body.cabangUuid }),
       update_by: user.sub,
     };
 
@@ -424,7 +460,10 @@ export const updateGaleri = async (req: Request, res: Response) => {
 
     const updated = await prisma.$transaction(async (tx) => {
       if (data.featured === true) {
-        await tx.galeri.updateMany({ where: { featured: true, NOT: { id } }, data: { featured: false } });
+        await tx.galeri.updateMany({
+          where: { featured: true, cabangUuid: nextCabangUuid, NOT: { id } },
+          data: { featured: false },
+        });
       }
       return tx.galeri.update({ where: { id }, data });
     });
@@ -445,6 +484,7 @@ export const toggleStatusGaleri = async (req: Request, res: Response) => {
     const id = String(req.params.id);
     const user = req.user!;
     const existing = await cariGaleri(id);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "item galeri");
 
     const status = existing.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
 
@@ -466,13 +506,14 @@ export const toggleStatusGaleri = async (req: Request, res: Response) => {
 };
 
 ////////////////////////////////////////////////////
-// TOGGLE SPOTLIGHT (hanya satu item featured)
+// TOGGLE SPOTLIGHT (hanya satu item featured per scope cabang)
 ////////////////////////////////////////////////////
 export const toggleFeaturedGaleri = async (req: Request, res: Response) => {
   try {
     const id = String(req.params.id);
     const user = req.user!;
     const existing = await cariGaleri(id);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "item galeri");
 
     if (!existing.featured && existing.status === "ARCHIVED") {
       throw httpError(400, "Item yang diarsipkan tidak bisa dijadikan spotlight");
@@ -484,7 +525,10 @@ export const toggleFeaturedGaleri = async (req: Request, res: Response) => {
 
     const updated = await prisma.$transaction(async (tx) => {
       if (!existing.featured) {
-        await tx.galeri.updateMany({ where: { featured: true }, data: { featured: false } });
+        await tx.galeri.updateMany({
+          where: { featured: true, cabangUuid: existing.cabangUuid },
+          data: { featured: false },
+        });
       }
       return tx.galeri.update({
         where: { id },
@@ -512,7 +556,8 @@ export const archiveGaleri = async (req: Request, res: Response) => {
   try {
     const id = String(req.params.id);
     const user = req.user!;
-    await cariGaleri(id);
+    const existing = await cariGaleri(id);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "item galeri");
 
     const updated = await prisma.galeri.update({
       where: { id },
@@ -534,7 +579,8 @@ export const deleteGaleri = async (req: Request, res: Response) => {
   try {
     const id = String(req.params.id);
     const user = req.user!;
-    await cariGaleri(id);
+    const existing = await cariGaleri(id);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "item galeri");
 
     await prisma.galeri.update({
       where: { id },

@@ -20,14 +20,14 @@ const router = Router();
 // parameter: search, currentPage, pageSize, fixed (all->untuk statusCabang apapun / active->hanya yang aktif)
 router.get("/", optionalAuthenticate, scope, getPeriodeKepengurusan);
 
-router.get("/admin", authenticate, authorize("CABANG_READ", "MANAGE_ALL_CABANG"), getPeriodeKepengurusanAdminByCabang);
+router.get("/admin", authenticate, scope, authorize("CABANG_READ", "STRUKTUR_READ", "MANAGE_ALL_CABANG"), getPeriodeKepengurusanAdminByCabang);
 
-router.get("/:uuid", authenticate, authorize("CABANG_READ", "MANAGE_ALL_CABANG"), getPeriodeKepengurusanById);
+router.get("/:uuid", authenticate, scope, authorize("CABANG_READ", "STRUKTUR_READ", "MANAGE_ALL_CABANG"), getPeriodeKepengurusanById);
 
-router.post("/", authenticate, authorize("CABANG_CREATE"), validate(createPeriodeSchema), createPeriodeKepengurusan);
+router.post("/", authenticate, scope, authorize("CABANG_CREATE", "CABANG_UPDATE", "STRUKTUR_CREATE", "MANAGE_ALL_CABANG"), validate(createPeriodeSchema), createPeriodeKepengurusan);
 
-router.post("/:uuid/update", authenticate, authorize("CABANG_UPDATE"), validate(updatePeriodeSchema), updatePeriodeKepengurusan);
+router.post("/:uuid/update", authenticate, scope, authorize("CABANG_UPDATE", "STRUKTUR_UPDATE", "MANAGE_ALL_CABANG"), validate(updatePeriodeSchema), updatePeriodeKepengurusan);
 
-router.post("/:uuid/delete", authenticate, authorize("CABANG_DELETE"), deletePeriodeKepengurusan);
+router.post("/:uuid/delete", authenticate, scope, authorize("CABANG_DELETE", "CABANG_UPDATE", "STRUKTUR_DELETE", "MANAGE_ALL_CABANG"), deletePeriodeKepengurusan);
 
 export default router;

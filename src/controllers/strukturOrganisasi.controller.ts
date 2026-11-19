@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
+import {
+  buildCabangRelationScopeWhere,
+  assertCanReadCabangItem,
+  assertCanWriteCabangItem,
+} from "../middlewares/scope.middleware";
 
 ////////////////////////////////////////////////////
 // GET ALL STRUKTUR ORGANISASI
@@ -75,13 +80,12 @@ export const getStrukturOrganisasi = async (req: Request, res: Response) => {
         isAktif: true,
       };
     } else {
-      // 🛠 ADMIN
-
-      if (!scope.isSuperAdmin) {
-        // FILTER CABANG via relasi periode
+      // 🛠 ADMIN (Hierarki DPP > DPD > DPC)
+      const scopeWhere = buildCabangRelationScopeWhere(scope);
+      if (scopeWhere) {
         whereCondition.periode = {
           ...(whereCondition.periode || {}),
-          cabangUuid: scope.cabangId,
+          ...scopeWhere,
         };
       }
 
@@ -161,19 +165,14 @@ export const getStrukturOrganisasiAdminByCabang = async (
     const size = Number(pageSize) || 10;
     const skip = (page - 1) * size;
 
-    const uuid = req.user?.cabangId;
-    const isManageAllCabang =
-      req.user?.permissions.includes("MANAGE_ALL_CABANG");
-
     const whereCondition: any = {};
 
     ////////////////////////////////////////////////////
-    // FILTER CABANG (FIXED)
+    // FILTER CABANG (DPP > DPD > DPC)
     ////////////////////////////////////////////////////
-    if (!isManageAllCabang) {
-      whereCondition.periode = {
-        cabangUuid: uuid,
-      };
+    const scopeWhere = buildCabangRelationScopeWhere(req.scope);
+    if (scopeWhere) {
+      whereCondition.periode = scopeWhere;
     }
 
     ////////////////////////////////////////////////////
@@ -277,7 +276,7 @@ export const getStrukturOrganisasiAdminByCabang = async (
 
 export const getStrukturOrganisasiById = async (req: Request, res: Response) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
     const data = await prisma.strukturOrganisasi.findUnique({
       where: { uuid },
       include: {
@@ -291,10 +290,13 @@ export const getStrukturOrganisasiById = async (req: Request, res: Response) => 
     if (!data) {
       return res.status(404).json({ message: "Struktur organisasi tidak ditemukan" });
     }
+
+    await assertCanReadCabangItem(req.scope, data.periode.cabangUuid, "struktur organisasi");
+
     return res.status(200).json(ApiResponse.success(data));
-  } catch (error: any) {    res.status(500).json({
-      message: "Failed to fetch struktur organisasi",
-      error: error.message,
+  } catch (error: any) {
+    res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to fetch struktur organisasi",
     });
   }
 };
@@ -328,7 +330,7 @@ export const createStrukturOrganisasi = async (
     const periodeUuid = dataArray[0].periodeUuid;
 
     ////////////////////////////////////////////////////
-    // VALIDASI PERIODE
+    // VALIDASI PERIODE & KEPEMILIKAN CABANG
     ////////////////////////////////////////////////////
     const periode = await prisma.periodeKepengurusan.findUnique({
       where: { uuid: periodeUuid },
@@ -337,6 +339,8 @@ export const createStrukturOrganisasi = async (
     if (!periode) {
       return res.status(400).json({ message: "Periode tidak ditemukan" });
     }
+
+    assertCanWriteCabangItem(req.scope, periode.cabangUuid, "struktur organisasi");
 
     ////////////////////////////////////////////////////
     // VALIDASI ANGGOTA
@@ -428,7 +432,7 @@ export const createStrukturOrganisasi = async (
       })
     );
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
@@ -442,11 +446,12 @@ export const updateStrukturOrganisasi = async (
   res: Response
 ) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
     const user = req.user!;
 
     const existing = await prisma.strukturOrganisasi.findUnique({
       where: { uuid },
+      include: { periode: { select: { cabangUuid: true } } },
     });
 
     if (!existing) {
@@ -455,7 +460,18 @@ export const updateStrukturOrganisasi = async (
       });
     }
 
+    assertCanWriteCabangItem(req.scope, existing.periode.cabangUuid, "struktur organisasi");
+
     const finalPeriodeUuid = req.body.periodeUuid ?? existing.periodeUuid;
+    if (req.body.periodeUuid && req.body.periodeUuid !== existing.periodeUuid) {
+      const targetPeriode = await prisma.periodeKepengurusan.findUnique({
+        where: { uuid: String(req.body.periodeUuid) },
+      });
+      if (!targetPeriode) {
+        return res.status(400).json({ message: "Periode tujuan tidak ditemukan" });
+      }
+      assertCanWriteCabangItem(req.scope, targetPeriode.cabangUuid, "struktur organisasi");
+    }
     const finalAnggotaUuid = req.body.anggotaUuid ?? existing.anggotaUuid;
     const finalJabatanUuid = req.body.jabatanUuid ?? existing.jabatanUuid;
     const finalBidangUuid = req.body.bidangUuid ?? existing.bidangUuid ?? null;
@@ -519,7 +535,7 @@ export const updateStrukturOrganisasi = async (
       })
     );
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
@@ -533,10 +549,11 @@ export const deleteStrukturOrganisasi = async (
   res: Response
 ) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
 
     const existing = await prisma.strukturOrganisasi.findUnique({
       where: { uuid },
+      include: { periode: { select: { cabangUuid: true } } },
     });
 
     if (!existing) {
@@ -544,6 +561,8 @@ export const deleteStrukturOrganisasi = async (
         message: "Struktur organisasi tidak ditemukan",
       });
     }
+
+    assertCanWriteCabangItem(req.scope, existing.periode.cabangUuid, "struktur organisasi");
 
     await prisma.strukturOrganisasi.delete({
       where: { uuid },
@@ -555,7 +574,7 @@ export const deleteStrukturOrganisasi = async (
       })
     );
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message || "Failed to delete struktur organisasi",
     });
   }

@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
+import {
+  buildCabangRelationScopeWhere,
+  resolveCreateCabangUuid,
+  assertCanReadCabangItem,
+  assertCanWriteCabangItem,
+} from "../middlewares/scope.middleware";
 
 ////////////////////////////////////////////////////
 // GET ALL
@@ -24,10 +30,10 @@ export const getAlbumGaleri = async (req: Request, res: Response) => {
       whereCondition.isPublic = true;
       whereCondition.statusAlbum = "ACTIVE";
     } else {
-      // ADMIN
-      if (!scope.isSuperAdmin) {
-        // ADMIN CABANG: hanya album cabang sendiri
-        whereCondition.cabangUuid = scope.cabangId;
+      // ADMIN (Hierarki DPP > DPD > DPC)
+      const scopeWhere = buildCabangRelationScopeWhere(scope);
+      if (scopeWhere) {
+        whereCondition.AND = [scopeWhere];
       }
 
       // Admin status filter from query
@@ -97,7 +103,7 @@ export const getAlbumGaleri = async (req: Request, res: Response) => {
 
 export const getAlbumGaleriById = async (req: Request, res: Response) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
 
     const data = await prisma.albumGaleri.findUnique({
       where: { uuid },
@@ -107,13 +113,15 @@ export const getAlbumGaleriById = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Album not found" });
     }
 
+    await assertCanReadCabangItem(req.scope, data.cabangUuid, "album galeri");
+
     return res.status(200).json(
       ApiResponse.success({
         data,
       })
     );
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
@@ -139,9 +147,7 @@ export const createAlbumGaleri = async (
         // =================================================
         // AUTO INJECT CABANG
         // =================================================
-        cabangUuid: scope?.isSuperAdmin
-          ? null
-          : scope?.cabangId,
+        cabangUuid: resolveCreateCabangUuid(scope, d.cabangUuid),
 
         insert_by: user.sub,
       })),
@@ -155,7 +161,7 @@ export const createAlbumGaleri = async (
 
   } catch (error: any) {
 
-    res.status(500).json({
+    res.status(error.statusCode || 500).json({
       message: error.message,
     });
   }
@@ -169,10 +175,20 @@ export const updateAlbumGaleri = async (req: Request, res: Response) => {
     const { uuid } = req.params;
     const user = req.user!;
 
+    const existing = await prisma.albumGaleri.findUnique({ where: { uuid: String(uuid) } });
+    if (!existing) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "album galeri");
+
+    const { cabangUuid: bodyCabangUuid, ...restBody } = req.body;
+
     const updated = await prisma.albumGaleri.update({
-      where: { uuid },
+      where: { uuid: String(uuid) },
       data: {
-        ...req.body,
+        ...restBody,
+        ...(req.scope?.isSuperAdmin && bodyCabangUuid !== undefined && { cabangUuid: bodyCabangUuid }),
         update_by: user.sub,
       },
     });
@@ -184,7 +200,7 @@ export const updateAlbumGaleri = async (req: Request, res: Response) => {
       })
     );
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
@@ -196,8 +212,15 @@ export const deleteAlbumGaleri = async (req: Request, res: Response) => {
     const { uuid } = req.params;
     const user = req.user!;
 
+    const existing = await prisma.albumGaleri.findUnique({ where: { uuid: String(uuid) } });
+    if (!existing) {
+      return res.status(404).json({ message: "Album not found" });
+    }
+
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "album galeri");
+
     await prisma.albumGaleri.update({
-      where: { uuid },
+      where: { uuid: String(uuid) },
       data: {
         statusAlbum: "ARCHIVED",
         update_by: user.sub,
@@ -210,6 +233,6 @@ export const deleteAlbumGaleri = async (req: Request, res: Response) => {
       })
     );
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };

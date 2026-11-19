@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
+import {
+  buildCabangHierarchyWhere,
+  assertCanReadCabangItem,
+  assertCanWriteCabangItem,
+} from "../middlewares/scope.middleware";
 
 export const getCabang = async (req: Request, res: Response) => {
   try {
@@ -41,11 +46,10 @@ export const getCabang = async (req: Request, res: Response) => {
       // PUBLIC
       whereCondition.statusCabang = "ACTIVE";
     } else {
-      // 🛠 ADMIN
-
-      if (!scope.isSuperAdmin) {
-        // ADMIN CABANG → hanya cabangnya sendiri
-        whereCondition.uuid = scope.cabangId;
+      // 🛠 ADMIN (DPP > DPD > DPC)
+      const scopeWhere = buildCabangHierarchyWhere(scope);
+      if (scopeWhere) {
+        whereCondition.AND = [scopeWhere];
       }
 
       // default tetap hanya ACTIVE kecuali fixed=all
@@ -158,7 +162,7 @@ export const getCabang = async (req: Request, res: Response) => {
 
 export const getCabangById = async (req: Request, res: Response) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
 
     const cabang = await prisma.cabang.findUnique({
       where: { uuid },
@@ -207,6 +211,8 @@ export const getCabangById = async (req: Request, res: Response) => {
       });
     }
 
+    await assertCanReadCabangItem(req.scope, cabang.uuid, "profil cabang");
+
     const { periodeList, ...rest } = cabang;
 
     const struktur =
@@ -225,9 +231,8 @@ export const getCabangById = async (req: Request, res: Response) => {
       })
     );
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch cabang",
-      error: error.message,
+    res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to fetch cabang",
     });
   }
 };
@@ -276,6 +281,11 @@ const cekTautanWilayah = async (
 export const createCabang = async (req: Request, res: Response) => {
   try {
     const user = req.user!;
+    if (!req.scope?.isSuperAdmin) {
+      return res.status(403).json({
+        message: "Hanya DPP (Super Admin) yang dapat membuat cabang baru",
+      });
+    }
 
     const payload = Array.isArray(req.body)
       ? req.body
@@ -345,10 +355,26 @@ export const createCabang = async (req: Request, res: Response) => {
 
 export const updateCabang = async (req: Request, res: Response) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
     const user = req.user!;
+    const scope = req.scope;
+
+    assertCanWriteCabangItem(scope, uuid, "profil cabang");
 
     const { misi, ...otherData } = req.body;
+
+    if (
+      !scope?.isSuperAdmin &&
+      ("dpdId" in otherData ||
+        "dpcId" in otherData ||
+        "isCabang" in otherData ||
+        "statusCabang" in otherData ||
+        "ketuaUuid" in otherData)
+    ) {
+      return res.status(403).json({
+        message: "Hanya DPP yang dapat mengubah tautan wilayah, status, atau ketua cabang",
+      });
+    }
 
     if ("dpdId" in otherData || "dpcId" in otherData) {
       const existing = await prisma.cabang.findUnique({
@@ -426,7 +452,7 @@ export const updateCabang = async (req: Request, res: Response) => {
       })
     );
   } catch (error: any) {
-    return res.status(500).json({
+    return res.status(error.statusCode || 500).json({
       message: error.message || "Failed to update cabang",
     });
   }
@@ -434,8 +460,14 @@ export const updateCabang = async (req: Request, res: Response) => {
 
 export const deleteCabang = async (req: Request, res: Response) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
     const user = req.user!;
+
+    if (!req.scope?.isSuperAdmin) {
+      return res.status(403).json({
+        message: "Hanya DPP (Super Admin) yang dapat menonaktifkan cabang",
+      });
+    }
 
     await prisma.cabang.update({
       where: { uuid },

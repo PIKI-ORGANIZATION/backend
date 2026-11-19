@@ -26,15 +26,15 @@ const router = Router();
 router.get('/search', getNewsUtamaSearch);
 router.get('/', optionalAuthenticate, scope, getNewsUtama); // utk get semua news utama, bisa diakses public
 
-// Admin route untuk get news utama berdasarkan cabang, hanya bisa diakses oleh user dengan role MANAGE_ALL_CABANG
-router.get('/admin', authenticate, authorize("CABANG_READ", "MANAGE_ALL_CABANG"), getNewsUtamaAdminByCabang);
+// Admin route untuk get news utama sesuai scope wilayah (DPP / DPD / DPC)
+router.get('/admin', authenticate, scope, authorize("CABANG_READ", "MANAGE_ALL_CABANG"), getNewsUtamaAdminByCabang);
 
-router.get('/:uuid', getNewsUtamaById); // utk get news utama by id, bisa diakses public
+router.get('/:uuid', optionalAuthenticate, scope, getNewsUtamaById); // utk get news utama by id, bisa diakses public
 router.get('/cabang/:cabangUuid', getNewsUtamaByCabang); // utk get news utama dari cabang tertentu, bisa diakses public
 
 router.get('/tags/:tag', getNewsUtamaByTag);
 router.get('/kategori/:kategori', getNewsUtamaByKategori);
-router.get('/slug/:slug', getNewsUtamaBySlug);
+router.get('/slug/:slug', optionalAuthenticate, scope, getNewsUtamaBySlug);
 
 router.post('/', authenticate, scope, authorize("NEWS_UTAMA_CREATE", "MANAGE_ALL_CABANG"), validate(createNewsUtamaBulkSchema), createNewsUtama);
 router.post('/:uuid/update', authenticate, scope, authorize("NEWS_UTAMA_UPDATE", "MANAGE_ALL_CABANG"), validate(updateNewsUtamaSchema), updateNewsUtama);

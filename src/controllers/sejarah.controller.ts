@@ -3,6 +3,12 @@ import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
 import { clearCachePattern } from "../utils/cacheInvalidation";
 import { CreateSejarahInput, UpdateSejarahInput } from "../validators/sejarah.schema";
+import {
+  buildCabangRelationScopeWhere,
+  resolveCreateCabangUuid,
+  assertCanReadCabangItem,
+  assertCanWriteCabangItem,
+} from "../middlewares/scope.middleware";
 
 ////////////////////////////////////////////////////
 // URUTAN TAMPIL: urutan (jika diisi) -> tahun -> waktu input
@@ -35,16 +41,17 @@ const cariSejarah = async (uuid: string) => {
 
 ////////////////////////////////////////////////////
 // GET ALL SEJARAH
-// Publik: hanya PUBLISHED. Pengelola CMS: ?status=DRAFT|PUBLISHED|ARCHIVED atau ?fixed=all (semua status).
+// Publik: hanya PUBLISHED. Pengelola CMS: hierarki DPP > DPD > DPC, ?status=DRAFT|PUBLISHED|ARCHIVED atau ?fixed=all.
 ////////////////////////////////////////////////////
 export const getSejarah = async (req: Request, res: Response) => {
   try {
-    const { search, currentPage, pageSize, fixed, status } = req.query as {
+    const { search, currentPage, pageSize, fixed, status, cabangUuid } = req.query as {
       search?: string;
       currentPage?: string;
       pageSize?: string;
       fixed?: string;
       status?: string;
+      cabangUuid?: string;
     };
 
     const page = Number(currentPage) || 1;
@@ -52,13 +59,23 @@ export const getSejarah = async (req: Request, res: Response) => {
     const skip = (page - 1) * size;
 
     const whereCondition: any = { deleted_at: null };
+    const scope = req.scope;
 
     if (!isPengelola(req)) {
       whereCondition.statusSejarah = "PUBLISHED";
-    } else if (status) {
-      whereCondition.statusSejarah = status.toUpperCase();
-    } else if (fixed !== "all") {
-      whereCondition.statusSejarah = "PUBLISHED";
+      if (cabangUuid) whereCondition.cabangUuid = cabangUuid;
+    } else {
+      const scopeWhere = buildCabangRelationScopeWhere(scope);
+      const andFilters: any[] = [];
+      if (scopeWhere) andFilters.push(scopeWhere);
+      if (cabangUuid) andFilters.push({ cabangUuid });
+      if (andFilters.length > 0) whereCondition.AND = andFilters;
+
+      if (status) {
+        whereCondition.statusSejarah = status.toUpperCase();
+      } else if (fixed !== "all") {
+        whereCondition.statusSejarah = "PUBLISHED";
+      }
     }
 
     if (search) {
@@ -103,6 +120,7 @@ export const getSejarah = async (req: Request, res: Response) => {
 export const getSejarahById = async (req: Request, res: Response) => {
   try {
     const sejarah = await cariSejarah(String(req.params.uuid));
+    await assertCanReadCabangItem(req.scope, sejarah.cabangUuid, "sejarah");
     return res.status(200).json(ApiResponse.success(sejarah));
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -124,6 +142,7 @@ export const createSejarah = async (req: Request, res: Response) => {
       data: data.map((item) => ({
         ...item,
         statusSejarah: item.statusSejarah ?? "DRAFT",
+        cabangUuid: resolveCreateCabangUuid(req.scope, item.cabangUuid),
         insert_by: user.sub,
       })),
     });
@@ -152,6 +171,7 @@ export const updateSejarah = async (req: Request, res: Response) => {
     const body = req.body as UpdateSejarahInput;
 
     const existing = await cariSejarah(uuid);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "sejarah");
 
     if (existing.statusSejarah === "ARCHIVED" && body.statusSejarah === "DRAFT") {
       return res.status(400).json({
@@ -159,10 +179,13 @@ export const updateSejarah = async (req: Request, res: Response) => {
       });
     }
 
+    const { cabangUuid: bodyCabangUuid, ...restBody } = body;
+
     const updated = await prisma.sejarah.update({
       where: { uuid },
       data: {
-        ...body,
+        ...restBody,
+        ...(req.scope?.isSuperAdmin && bodyCabangUuid !== undefined && { cabangUuid: bodyCabangUuid }),
         update_by: user.sub,
       },
     });
@@ -190,6 +213,7 @@ export const toggleStatusSejarah = async (req: Request, res: Response) => {
     const uuid = String(req.params.uuid);
     const user = req.user!;
     const existing = await cariSejarah(uuid);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "sejarah");
 
     const statusSejarah = existing.statusSejarah === "PUBLISHED" ? "DRAFT" : "PUBLISHED";
 
@@ -220,7 +244,8 @@ export const archiveSejarah = async (req: Request, res: Response) => {
   try {
     const uuid = String(req.params.uuid);
     const user = req.user!;
-    await cariSejarah(uuid);
+    const existing = await cariSejarah(uuid);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "sejarah");
 
     const updated = await prisma.sejarah.update({
       where: { uuid },
@@ -249,7 +274,8 @@ export const deleteSejarah = async (req: Request, res: Response) => {
   try {
     const uuid = String(req.params.uuid);
     const user = req.user!;
-    await cariSejarah(uuid);
+    const existing = await cariSejarah(uuid);
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "sejarah");
 
     await prisma.sejarah.update({
       where: { uuid },

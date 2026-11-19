@@ -69,6 +69,8 @@ const baseGaleriSchema = z.object({
   featured: z.boolean().optional(),
 
   urutan: z.coerce.number().int().nullable().optional(),
+
+  cabangUuid: z.string().uuid().nullable().optional(),
 });
 
 ////////////////////////////////////////////////////

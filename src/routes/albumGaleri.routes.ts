@@ -18,12 +18,12 @@ const router = Router();
 
 router.get("/", optionalAuthenticate, scope, getAlbumGaleri);
 
-router.get("/:uuid", authenticate, authorize("CABANG_READ", "MANAGE_ALL_CABANG"), getAlbumGaleriById);
+router.get("/:uuid", authenticate, scope, authorize("CABANG_READ", "GALERI_READ", "GALERI_MANAGE", "MANAGE_ALL_CABANG"), getAlbumGaleriById);
 
-router.post("/", authenticate, authorize("CABANG_CREATE", "MANAGE_ALL_CABANG"), validate(createAlbumGaleriSchema), createAlbumGaleri);
+router.post("/", authenticate, scope, authorize("CABANG_CREATE", "CABANG_UPDATE", "GALERI_CREATE", "GALERI_MANAGE", "MANAGE_ALL_CABANG"), validate(createAlbumGaleriSchema), createAlbumGaleri);
 
-router.post("/:uuid/update", authenticate, authorize("CABANG_UPDATE", "MANAGE_ALL_CABANG"), validate(updateAlbumGaleriSchema), updateAlbumGaleri);
+router.post("/:uuid/update", authenticate, scope, authorize("CABANG_UPDATE", "GALERI_UPDATE", "GALERI_MANAGE", "MANAGE_ALL_CABANG"), validate(updateAlbumGaleriSchema), updateAlbumGaleri);
 
-router.post("/:uuid/delete", authenticate, authorize("CABANG_DELETE", "MANAGE_ALL_CABANG"), deleteAlbumGaleri);
+router.post("/:uuid/delete", authenticate, scope, authorize("CABANG_DELETE", "CABANG_UPDATE", "GALERI_DELETE", "GALERI_MANAGE", "MANAGE_ALL_CABANG"), deleteAlbumGaleri);
 
 export default router;

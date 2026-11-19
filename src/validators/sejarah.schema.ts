@@ -25,6 +25,8 @@ const baseSejarahSchema = z.object({
   gambar: z.string().trim().nullable().optional(),
 
   urutan: z.coerce.number().int().nullable().optional(),
+
+  cabangUuid: z.string().uuid().nullable().optional(),
 });
 
 ////////////////////////////////////////////////////

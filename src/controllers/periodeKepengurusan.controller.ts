@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { ApiResponse } from "../utils/apiResponse";
-import ta from "zod/v4/locales/ta.js";
+import {
+  buildCabangRelationScopeWhere,
+  resolveCreateCabangUuid,
+  assertCanReadCabangItem,
+  assertCanWriteCabangItem,
+} from "../middlewares/scope.middleware";
 
 ////////////////////////////////////////////////////
 // GET ALL PERIODE
@@ -51,11 +56,10 @@ export const getPeriodeKepengurusan = async (req: Request, res: Response) => {
       // PUBLIC → hanya aktif
       where.isAktif = true;
     } else {
-      // ADMIN
-
-      // ADMIN CABANG
-      if (!scope.isSuperAdmin) {
-        where.cabangUuid = scope.cabangId;
+      // ADMIN (Hierarki DPP > DPD > DPC)
+      const scopeWhere = buildCabangRelationScopeWhere(scope);
+      if (scopeWhere) {
+        where.AND = [scopeWhere];
       }
 
       // default tetap aktif kecuali fixed=all
@@ -111,18 +115,8 @@ export const getPeriodeKepengurusanAdminByCabang = async (
     const size = Number(pageSize) || 10;
     const skip = (page - 1) * size;
 
-    const uuid = req.user?.cabangId;
-    const isManageAllCabang =
-      req.user?.permissions.includes("MANAGE_ALL_CABANG");
-
-    const where: any = {};
-
-    ////////////////////////////////////////////////////
-    // FILTER CABANG (IMPORTANT)
-    ////////////////////////////////////////////////////
-    if (!isManageAllCabang) {
-      where.cabangUuid = uuid;
-    }
+    const scopeWhere = buildCabangRelationScopeWhere(req.scope);
+    const where: any = scopeWhere ? { AND: [scopeWhere] } : {};
 
     ////////////////////////////////////////////////////
     // SEARCH
@@ -181,7 +175,7 @@ export const getPeriodeKepengurusanAdminByCabang = async (
 
 export const getPeriodeKepengurusanById = async (req: Request, res: Response) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
 
     const data = await prisma.periodeKepengurusan.findUnique({
       where: { uuid },
@@ -200,9 +194,11 @@ export const getPeriodeKepengurusanById = async (req: Request, res: Response) =>
       return res.status(404).json({ message: "Periode tidak ditemukan" });
     }
 
+    await assertCanReadCabangItem(req.scope, data.cabangUuid, "periode kepengurusan");
+
     return res.status(200).json(ApiResponse.success(data));
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
@@ -212,19 +208,24 @@ export const getPeriodeKepengurusanById = async (req: Request, res: Response) =>
 export const createPeriodeKepengurusan = async (req: Request, res: Response) => {
   try {
     const user = req.user!;
+    const targetCabangUuid = resolveCreateCabangUuid(req.scope, req.body.cabangUuid);
 
-    // jika set aktif → nonaktifkan lainnya
-    if (req.body.isAktif) {
-      await prisma.periodeKepengurusan.updateMany({
-        data: { isAktif: false },
+    const created = await prisma.$transaction(async (tx) => {
+      // jika set aktif → nonaktifkan periode lain di cabang yang sama
+      if (req.body.isAktif) {
+        await tx.periodeKepengurusan.updateMany({
+          where: { cabangUuid: targetCabangUuid },
+          data: { isAktif: false },
+        });
+      }
+
+      return tx.periodeKepengurusan.create({
+        data: {
+          ...req.body,
+          cabangUuid: targetCabangUuid,
+          insert_by: user.sub,
+        },
       });
-    }
-
-    const created = await prisma.periodeKepengurusan.create({
-      data: {
-        ...req.body,
-        insert_by: user.sub,
-      },
     });
 
     return res.status(201).json(
@@ -234,7 +235,7 @@ export const createPeriodeKepengurusan = async (req: Request, res: Response) => 
       })
     );
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
@@ -243,7 +244,7 @@ export const createPeriodeKepengurusan = async (req: Request, res: Response) => 
 ////////////////////////////////////////////////////
 export const updatePeriodeKepengurusan = async (req: Request, res: Response) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
     const user = req.user!;
 
     const existing = await prisma.periodeKepengurusan.findUnique({
@@ -254,19 +255,30 @@ export const updatePeriodeKepengurusan = async (req: Request, res: Response) => 
       return res.status(404).json({ message: "Periode tidak ditemukan" });
     }
 
-    if (req.body.isAktif) {
-      await prisma.periodeKepengurusan.updateMany({
-        where: { NOT: { uuid } },
-        data: { isAktif: false },
-      });
-    }
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "periode kepengurusan");
 
-    const updated = await prisma.periodeKepengurusan.update({
-      where: { uuid },
-      data: {
-        ...req.body,
-        update_by: user.sub,
-      },
+    const { cabangUuid: bodyCabangUuid, ...restBody } = req.body;
+    const nextCabangUuid =
+      req.scope?.isSuperAdmin && bodyCabangUuid !== undefined
+        ? bodyCabangUuid
+        : existing.cabangUuid;
+
+    const updated = await prisma.$transaction(async (tx) => {
+      if (restBody.isAktif) {
+        await tx.periodeKepengurusan.updateMany({
+          where: { cabangUuid: nextCabangUuid, NOT: { uuid } },
+          data: { isAktif: false },
+        });
+      }
+
+      return tx.periodeKepengurusan.update({
+        where: { uuid },
+        data: {
+          ...restBody,
+          ...(req.scope?.isSuperAdmin && bodyCabangUuid !== undefined && { cabangUuid: bodyCabangUuid }),
+          update_by: user.sub,
+        },
+      });
     });
 
     return res.status(200).json(
@@ -276,7 +288,7 @@ export const updatePeriodeKepengurusan = async (req: Request, res: Response) => 
       })
     );
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 
@@ -285,7 +297,17 @@ export const updatePeriodeKepengurusan = async (req: Request, res: Response) => 
 ////////////////////////////////////////////////////
 export const deletePeriodeKepengurusan = async (req: Request, res: Response) => {
   try {
-    const { uuid } = req.params;
+    const uuid = String(req.params.uuid);
+
+    const existing = await prisma.periodeKepengurusan.findUnique({
+      where: { uuid },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ message: "Periode tidak ditemukan" });
+    }
+
+    assertCanWriteCabangItem(req.scope, existing.cabangUuid, "periode kepengurusan");
 
     await prisma.periodeKepengurusan.delete({
       where: { uuid },
@@ -297,6 +319,6 @@ export const deletePeriodeKepengurusan = async (req: Request, res: Response) => 
       })
     );
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
